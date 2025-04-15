@@ -94,7 +94,11 @@ export default function SoundsPage() {
     }))
   }
 
-  const { dispatchData, loading, error: err } = useAcceptJs({ authData })
+  const {
+    dispatchData,
+    loading,
+    error: err,
+  } = useAcceptJs({ environment: "PRODUCTION", authData })
   const [month, year] = cardData.expiration.split("/")
 
   const [isDownloading, setIsDownloading] = useState<Record<string, boolean>>(

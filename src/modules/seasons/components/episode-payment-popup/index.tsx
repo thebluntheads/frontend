@@ -51,7 +51,11 @@ const EpisodePaymentPopup = ({
     fullName: "",
   })
 
-  const { dispatchData, loading, error: err } = useAcceptJs({ authData })
+  const {
+    dispatchData,
+    loading,
+    error: err,
+  } = useAcceptJs({ environment: "PRODUCTION", authData })
   const [month, year] = cardData.expiration.split("/")
 
   // Use the custom hook to get customer information

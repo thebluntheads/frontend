@@ -77,7 +77,11 @@ const Payment = ({
 
   const isAuthorizeNet = isAuthorizeNetFunc(activeSession?.provider_id)
 
-  const { dispatchData, loading, error: err } = useAcceptJs({ authData })
+  const {
+    dispatchData,
+    loading,
+    error: err,
+  } = useAcceptJs({ environment: "PRODUCTION", authData })
   console.log({ err })
   const [month, year] = cardData.expiration.split("/")
 
