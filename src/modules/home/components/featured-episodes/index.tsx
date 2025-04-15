@@ -72,7 +72,7 @@ const FeaturedEpisodes = ({ season, episodes }: FeaturedEpisodesProps) => {
                   href={`/seasons/${season.handle}/${episode.handle}`}
                   className="w-full"
                 >
-                  <Button className="w-full bg-gray-800 hover:bg-gray-700 text-white border-none">
+                  <Button className="w-full bg-dark-green hover:bg-light-green text-white border-none">
                     Watch Now
                   </Button>
                 </LocalizedClientLink>

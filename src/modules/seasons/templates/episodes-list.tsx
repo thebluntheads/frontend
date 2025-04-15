@@ -91,7 +91,7 @@ export default function EpisodesList({
                       )}
                       <Button
                         variant="secondary"
-                        className="bg-black/20 hover:bg-black/30 text-white border-0 text-sm"
+                        className="bg-dark-green/20 hover:bg-light-green/30 text-white border-0 text-sm"
                       >
                         Watch Now
                       </Button>

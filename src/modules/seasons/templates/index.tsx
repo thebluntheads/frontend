@@ -258,7 +258,7 @@ export default function SeasonTemplate({
                   <div className="flex items-center">
                     <Button
                       variant="secondary"
-                      className="bg-black/20 hover:bg-black/30 text-white border-0"
+                      className="bg-dark-green/20 hover:bg-light-green/30 text-white border-0"
                       onClick={handleAddToCart}
                       disabled={isAddingToCart}
                     >

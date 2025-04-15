@@ -122,7 +122,7 @@ const EnhancedEpisodeDetails = ({
                       href={`/seasons/${season.handle}/episodes/${ep.handle}`}
                       className="w-full"
                     >
-                      <Button className="w-full bg-gray-800 hover:bg-gray-700 text-white border-none">
+                      <Button className="w-full bg-dark-green hover:bg-light-green text-white border-none">
                         {hasPurchased ? "Watch Now" : "View Details"}
                       </Button>
                     </LocalizedClientLink>
