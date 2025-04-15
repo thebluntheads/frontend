@@ -34,7 +34,7 @@ const AccountNav = ({
             data-testid="account-main-link"
           >
             <>
-              <ChevronDown className="transform rotate-90 text-blue-400" />
+              <ChevronDown className="transform rotate-90 text-light-green" />
               <span>Account</span>
             </>
           </LocalizedClientLink>
@@ -43,7 +43,7 @@ const AccountNav = ({
             <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-5 mb-6">
               <div className="flex items-center gap-3 mb-3">
                 <div className="bg-blue-500/10 p-2 rounded-lg">
-                  <User className="text-blue-400 h-5 w-5" />
+                  <User className="text-light-green h-5 w-5" />
                 </div>
                 <div className="text-xl font-bold text-white">
                   Hello {customer?.first_name}
@@ -61,7 +61,7 @@ const AccountNav = ({
                     <>
                       <div className="flex items-center gap-x-3">
                         <div className="bg-blue-500/10 p-1.5 rounded-lg">
-                          <User className="text-blue-400 h-4 w-4" />
+                          <User className="text-light-green h-4 w-4" />
                         </div>
                         <span className="text-white">Profile</span>
                       </div>
@@ -78,7 +78,7 @@ const AccountNav = ({
                     <>
                       <div className="flex items-center gap-x-3">
                         <div className="bg-blue-500/10 p-1.5 rounded-lg">
-                          <MapPin className="text-blue-400 h-4 w-4" />
+                          <MapPin className="text-light-green h-4 w-4" />
                         </div>
                         <span className="text-white">Addresses</span>
                       </div>
@@ -94,7 +94,7 @@ const AccountNav = ({
                   >
                     <div className="flex items-center gap-x-3">
                       <div className="bg-blue-500/10 p-1.5 rounded-lg">
-                        <Package className="text-blue-400 h-4 w-4" />
+                        <Package className="text-light-green h-4 w-4" />
                       </div>
                       <span className="text-white">Orders</span>
                     </div>
@@ -127,7 +127,7 @@ const AccountNav = ({
           <div className="pb-4 border-b border-white/10 mb-4">
             <div className="flex items-center gap-3">
               <div className="bg-blue-500/10 p-2 rounded-lg">
-                <User className="text-blue-400 h-[18px] w-[18px]" />
+                <User className="text-light-green h-[18px] w-[18px]" />
               </div>
               <h3 className="text-lg font-semibold text-white">Account Menu</h3>
             </div>
@@ -142,8 +142,19 @@ const AccountNav = ({
                 >
                   <div className="flex items-center gap-x-3">
                     <div className="bg-blue-500/10 p-1.5 rounded-lg">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-light-green"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                        />
                       </svg>
                     </div>
                     <span>Overview</span>
@@ -158,7 +169,7 @@ const AccountNav = ({
                 >
                   <div className="flex items-center gap-x-3">
                     <div className="bg-blue-500/10 p-1.5 rounded-lg">
-                      <User className="text-blue-400 h-4 w-4" />
+                      <User className="text-light-green h-4 w-4" />
                     </div>
                     <span>Profile</span>
                   </div>
@@ -172,7 +183,7 @@ const AccountNav = ({
                 >
                   <div className="flex items-center gap-x-3">
                     <div className="bg-blue-500/10 p-1.5 rounded-lg">
-                      <MapPin className="text-blue-400 h-4 w-4" />
+                      <MapPin className="text-light-green h-4 w-4" />
                     </div>
                     <span>Addresses</span>
                   </div>
@@ -186,7 +197,7 @@ const AccountNav = ({
                 >
                   <div className="flex items-center gap-x-3">
                     <div className="bg-blue-500/10 p-1.5 rounded-lg">
-                      <Package className="text-blue-400 h-4 w-4" />
+                      <Package className="text-light-green h-4 w-4" />
                     </div>
                     <span>Orders</span>
                   </div>
@@ -232,9 +243,12 @@ const AccountNavLink = ({
   return (
     <LocalizedClientLink
       href={href}
-      className={clx("py-2 px-3 w-full block rounded-lg transition-colors duration-200 text-white/80 hover:text-white hover:bg-white/5", {
-        "bg-white/10 text-white font-medium": active,
-      })}
+      className={clx(
+        "py-2 px-3 w-full block rounded-lg transition-colors duration-200 text-white/80 hover:text-white hover:bg-white/5",
+        {
+          "bg-white/10 text-white font-medium": active,
+        }
+      )}
       data-testid={dataTestId}
     >
       {children}

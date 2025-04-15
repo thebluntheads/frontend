@@ -13,7 +13,7 @@ type AccountInfoProps = {
   errorMessage?: string
   clearState: () => void
   children?: React.ReactNode
-  'data-testid'?: string
+  "data-testid"?: string
 }
 
 const AccountInfo = ({
@@ -24,7 +24,7 @@ const AccountInfo = ({
   clearState,
   errorMessage = "An error occurred, please try again",
   children,
-  'data-testid': dataTestid
+  "data-testid": dataTestid,
 }: AccountInfoProps) => {
   const { state, close, toggle } = useToggleState()
 
@@ -45,10 +45,17 @@ const AccountInfo = ({
     <div className="text-base" data-testid={dataTestid}>
       <div className="flex items-center justify-between p-5">
         <div className="flex flex-col">
-          <span className="text-white/60 text-sm font-medium mb-1">{label}</span>
+          <span className="text-white/60 text-sm font-medium mb-1">
+            {label}
+          </span>
           <div className="flex items-center flex-1 basis-0 justify-start gap-x-4">
             {typeof currentInfo === "string" ? (
-              <span className="text-white font-semibold" data-testid="current-info">{currentInfo}</span>
+              <span
+                className="text-white font-semibold"
+                data-testid="current-info"
+              >
+                {currentInfo}
+              </span>
             ) : (
               currentInfo
             )}
@@ -59,9 +66,9 @@ const AccountInfo = ({
             variant="secondary"
             className={clx(
               "min-h-[36px] px-4 rounded-lg transition-colors duration-200",
-              state 
-                ? "bg-white/10 hover:bg-white/20 text-white border border-white/10" 
-                : "bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/20"
+              state
+                ? "bg-white/10 hover:bg-white/20 text-white border border-white/10"
+                : "bg-blue-500/20 hover:bg-blue-500/30 text-light-green border border-blue-500/20"
             )}
             onClick={handleToggle}
             type={state ? "reset" : "button"}
@@ -87,8 +94,19 @@ const AccountInfo = ({
           data-testid="success-message"
         >
           <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 my-4 text-green-400 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
             <span>{label} updated successfully</span>
           </div>
@@ -109,8 +127,19 @@ const AccountInfo = ({
           data-testid="error-message"
         >
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 my-4 text-red-400 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
             <span>{errorMessage}</span>
           </div>

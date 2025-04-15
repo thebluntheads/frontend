@@ -23,7 +23,7 @@ const PaymentDetails = ({ order }: PaymentDetailsProps) => {
               <div className="flex items-center mb-3 border-b border-gray-700 pb-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-blue-500 mr-2"
+                  className="h-5 w-5 text-dark-green mr-2"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -54,7 +54,7 @@ const PaymentDetails = ({ order }: PaymentDetailsProps) => {
               <div className="flex items-center mb-3 border-b border-gray-700 pb-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-blue-500 mr-2"
+                  className="h-5 w-5 text-dark-green mr-2"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

@@ -34,6 +34,8 @@ module.exports = {
           80: "#1F2937",
           90: "#111827",
         },
+        "dark-green": "#057E03",
+        "light-green": "#61C65F",
       },
       borderRadius: {
         none: "0px",
@@ -48,32 +50,32 @@ module.exports = {
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        'sound-wave-1': {
-          '0%, 100%': { height: '0.5rem' },
-          '50%': { height: '1rem' },
+        "sound-wave-1": {
+          "0%, 100%": { height: "0.5rem" },
+          "50%": { height: "1rem" },
         },
-        'sound-wave-2': {
-          '0%, 100%': { height: '0.75rem' },
-          '25%': { height: '1.5rem' },
+        "sound-wave-2": {
+          "0%, 100%": { height: "0.75rem" },
+          "25%": { height: "1.5rem" },
         },
-        'sound-wave-3': {
-          '0%, 100%': { height: '1rem' },
-          '30%': { height: '1.75rem' },
+        "sound-wave-3": {
+          "0%, 100%": { height: "1rem" },
+          "30%": { height: "1.75rem" },
         },
-        'sound-wave-4': {
-          '0%, 100%': { height: '0.5rem' },
-          '40%': { height: '1.25rem' },
+        "sound-wave-4": {
+          "0%, 100%": { height: "0.5rem" },
+          "40%": { height: "1.25rem" },
         },
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-out forwards',
-        'sound-wave-1': 'sound-wave-1 1.2s infinite ease-in-out',
-        'sound-wave-2': 'sound-wave-2 1.4s infinite ease-in-out',
-        'sound-wave-3': 'sound-wave-3 1s infinite ease-in-out',
-        'sound-wave-4': 'sound-wave-4 1.3s infinite ease-in-out',
+        "fade-in": "fadeIn 0.5s ease-out forwards",
+        "sound-wave-1": "sound-wave-1 1.2s infinite ease-in-out",
+        "sound-wave-2": "sound-wave-2 1.4s infinite ease-in-out",
+        "sound-wave-3": "sound-wave-3 1s infinite ease-in-out",
+        "sound-wave-4": "sound-wave-4 1.3s infinite ease-in-out",
       },
       screens: {
         "2xsmall": "320px",

@@ -165,7 +165,7 @@ const Shipping: React.FC<ShippingProps> = ({
         >
           Delivery
           {!isOpen && (cart.shipping_methods?.length ?? 0) > 0 && (
-            <CheckCircleSolid className="text-blue-400" />
+            <CheckCircleSolid className="text-light-green" />
           )}
         </Heading>
         {!isOpen &&
@@ -175,7 +175,7 @@ const Shipping: React.FC<ShippingProps> = ({
             <Text>
               <button
                 onClick={handleEdit}
-                className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
+                className="text-light-green hover:text-light-green transition-colors duration-200"
                 data-testid="edit-delivery-button"
               >
                 Edit

@@ -13,7 +13,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         {product.collection && (
           <LocalizedClientLink
             href={`/collections/${product.collection.handle}`}
-            className="text-blue-400 hover:text-blue-300 transition-colors duration-200 text-sm font-medium"
+            className="text-light-green hover:text-light-green transition-colors duration-200 text-sm font-medium"
           >
             {product.collection.title}
           </LocalizedClientLink>
@@ -26,12 +26,15 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           >
             {product.title}
           </Heading>
-          
+
           <div className="flex items-center mt-2 space-x-4">
             {product.tags && product.tags.length > 0 && (
               <div className="flex gap-2 flex-wrap">
                 {product.tags.map((tag) => (
-                  <span key={tag.id} className="bg-white/10 text-white/80 text-xs px-2 py-1 rounded-full">
+                  <span
+                    key={tag.id}
+                    className="bg-white/10 text-white/80 text-xs px-2 py-1 rounded-full"
+                  >
                     {tag.value}
                   </span>
                 ))}

@@ -28,7 +28,7 @@ const FilterRadioGroup = ({
             <div
               key={i.value}
               className={clx(
-                "flex items-center p-2 rounded-lg transition-all duration-200", 
+                "flex items-center p-2 rounded-lg transition-all duration-200",
                 {
                   "bg-blue-500/20 border border-blue-500/30": i.value === value,
                   "hover:bg-white/5": i.value !== value,
@@ -36,17 +36,17 @@ const FilterRadioGroup = ({
               )}
             >
               <div className="flex items-center gap-x-3">
-                <div 
+                <div
                   className={clx(
                     "w-4 h-4 rounded-full border flex items-center justify-center",
                     {
                       "border-blue-400": i.value === value,
-                      "border-white/40": i.value !== value
+                      "border-white/40": i.value !== value,
                     }
                   )}
                 >
                   {i.value === value && (
-                    <div className="w-2 h-2 rounded-full bg-blue-400" />
+                    <div className="w-2 h-2 rounded-full bg-light-green" />
                   )}
                 </div>
                 <RadioGroup.Item
@@ -57,13 +57,10 @@ const FilterRadioGroup = ({
                 />
                 <Label
                   htmlFor={i.value}
-                  className={clx(
-                    "text-sm font-medium hover:cursor-pointer",
-                    {
-                      "text-white": i.value === value,
-                      "text-white/70": i.value !== value,
-                    }
-                  )}
+                  className={clx("text-sm font-medium hover:cursor-pointer", {
+                    "text-white": i.value === value,
+                    "text-white/70": i.value !== value,
+                  })}
                   data-testid="radio-label"
                   data-active={i.value === value}
                 >

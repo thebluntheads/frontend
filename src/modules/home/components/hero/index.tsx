@@ -415,7 +415,7 @@ const Hero = ({
                             key={speed}
                             className={`block w-full text-left px-3 py-1 text-sm ${
                               playbackRate === speed
-                                ? "text-blue-400"
+                                ? "text-light-green"
                                 : "text-white"
                             } hover:bg-black/10 rounded`}
                             onClick={() => changePlaybackSpeed(speed)}

@@ -110,7 +110,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
                 1
               </option>
             </CartItemSelect>
-            {updating && <Spinner className="text-blue-500" />}
+            {updating && <Spinner className="text-dark-green" />}
           </div>
           <ErrorMessage
             error={error}

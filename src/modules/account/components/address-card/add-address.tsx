@@ -54,7 +54,7 @@ const AddAddress = ({
         data-testid="add-address-button"
       >
         <div className="bg-blue-500/10 p-4 rounded-full">
-          <Plus className="text-blue-400 h-6 w-6" />
+          <Plus className="text-light-green h-6 w-6" />
         </div>
         <span className="text-white font-medium">Add New Address</span>
       </button>
@@ -157,7 +157,7 @@ const AddAddress = ({
               >
                 Cancel
               </Button>
-              <SubmitButton 
+              <SubmitButton
                 data-testid="save-button"
                 className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 py-2.5 px-6"
               >

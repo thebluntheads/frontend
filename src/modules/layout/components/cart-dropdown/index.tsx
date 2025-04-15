@@ -86,8 +86,19 @@ const CartDropdown = ({
             href="/cart"
             data-testid="nav-cart-link"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+              />
             </svg>
             {totalItems > 0 && (
               <span className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
@@ -113,8 +124,8 @@ const CartDropdown = ({
           >
             <div className="p-5 flex items-center justify-between bg-black/40 border-b border-white/10">
               <h3 className="text-xl font-bold text-white">Your Cart</h3>
-              <span className="bg-blue-500/20 text-blue-400 text-sm font-medium px-3 py-1 rounded-full">
-                {totalItems} {totalItems === 1 ? 'item' : 'items'}
+              <span className="bg-blue-500/20 text-light-green text-sm font-medium px-3 py-1 rounded-full">
+                {totalItems} {totalItems === 1 ? "item" : "items"}
               </span>
             </div>
             {cartState && cartState.items?.length ? (
@@ -153,7 +164,7 @@ const CartDropdown = ({
                                     <LocalizedClientLink
                                       href={`/products/${item.product_handle}`}
                                       data-testid="product-link"
-                                      className="hover:text-blue-400 transition-colors duration-200"
+                                      className="hover:text-light-green transition-colors duration-200"
                                     >
                                       {item.title}
                                     </LocalizedClientLink>
@@ -202,7 +213,9 @@ const CartDropdown = ({
                   <div className="flex items-center justify-between">
                     <span className="text-white font-medium">
                       Subtotal{" "}
-                      <span className="text-white/60 text-sm">(excl. taxes)</span>
+                      <span className="text-white/60 text-sm">
+                        (excl. taxes)
+                      </span>
                     </span>
                     <span
                       className="text-xl font-bold text-white"
@@ -216,7 +229,11 @@ const CartDropdown = ({
                     </span>
                   </div>
                   <div className="flex gap-3 mt-2">
-                    <LocalizedClientLink href="/cart" passHref className="flex-1">
+                    <LocalizedClientLink
+                      href="/cart"
+                      passHref
+                      className="flex-1"
+                    >
                       <Button
                         className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-lg transition-colors duration-200 py-2.5"
                         size="large"
@@ -225,7 +242,11 @@ const CartDropdown = ({
                         View Cart
                       </Button>
                     </LocalizedClientLink>
-                    <LocalizedClientLink href="/checkout" passHref className="flex-1">
+                    <LocalizedClientLink
+                      href="/checkout"
+                      passHref
+                      className="flex-1"
+                    >
                       <Button
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 py-2.5"
                         size="large"
@@ -240,19 +261,34 @@ const CartDropdown = ({
               <div className="p-8">
                 <div className="flex py-12 flex-col gap-y-6 items-center justify-center text-center">
                   <div className="bg-black/30 border border-white/10 p-6 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-10 w-10 text-white/50"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                      />
                     </svg>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-white">Your cart is empty</h3>
-                    <p className="text-white/60 max-w-xs">Looks like you haven't added anything to your cart yet.</p>
+                    <h3 className="text-xl font-bold text-white">
+                      Your cart is empty
+                    </h3>
+                    <p className="text-white/60 max-w-xs">
+                      Looks like you haven't added anything to your cart yet.
+                    </p>
                   </div>
                   <div className="pt-4">
                     <LocalizedClientLink href="/store">
                       <>
                         <span className="sr-only">Go to all products page</span>
-                        <Button 
+                        <Button
                           onClick={close}
                           className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 px-6 py-2.5"
                         >

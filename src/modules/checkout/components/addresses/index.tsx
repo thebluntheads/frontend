@@ -26,7 +26,8 @@ const Addresses = ({
   const pathname = usePathname()
 
   // Make the address form open by default if no step is specified or if step is address
-  const isOpen = !searchParams.get("step") || searchParams.get("step") === "address"
+  const isOpen =
+    !searchParams.get("step") || searchParams.get("step") === "address"
 
   const { state: sameAsBilling, toggle: toggleSameAsBilling } = useToggleState(
     cart?.shipping_address && cart?.billing_address
@@ -48,13 +49,13 @@ const Addresses = ({
           className="flex flex-row text-[2rem] leading-[2.5rem] font-bold text-white gap-x-2 items-baseline"
         >
           Shipping Address
-          {!isOpen && <CheckCircleSolid className="text-blue-400" />}
+          {!isOpen && <CheckCircleSolid className="text-light-green" />}
         </Heading>
         {!isOpen && cart?.shipping_address && (
           <Text>
             <button
               onClick={handleEdit}
-              className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
+              className="text-light-green hover:text-light-green transition-colors duration-200"
               data-testid="edit-address-button"
             >
               Edit
@@ -84,8 +85,8 @@ const Addresses = ({
                 <BillingAddress cart={cart} />
               </div>
             )}
-            <SubmitButton 
-              className="mt-6 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 backdrop-blur-sm bg-opacity-80 border border-white/10 shadow-lg hover:shadow-blue-500/20 h-12" 
+            <SubmitButton
+              className="mt-6 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 backdrop-blur-sm bg-opacity-80 border border-white/10 shadow-lg hover:shadow-blue-500/20 h-12"
               data-testid="submit-address-button"
             >
               Continue to delivery
@@ -174,7 +175,7 @@ const Addresses = ({
               </div>
             ) : (
               <div>
-                <Spinner className="text-blue-400" />
+                <Spinner className="text-light-green" />
               </div>
             )}
           </div>

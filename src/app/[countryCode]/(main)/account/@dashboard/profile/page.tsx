@@ -28,8 +28,19 @@ export default async function Profile() {
       <div className="mb-8 flex flex-col gap-y-4">
         <div className="flex items-center gap-4 mb-2">
           <div className="bg-blue-500/20 p-3 rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-light-green"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-white">Your Profile</h1>
@@ -47,7 +58,7 @@ export default async function Profile() {
           <Divider />
           <ProfilePhone customer={customer} />
         </div>
-        
+
         <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden mt-6">
           <ProfileBillingAddress customer={customer} regions={regions} />
         </div>

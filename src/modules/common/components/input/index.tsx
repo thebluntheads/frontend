@@ -36,7 +36,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col w-full">
         {topLabel && (
-          <Label className="mb-2 text-sm font-medium text-white/70">{topLabel}</Label>
+          <Label className="mb-2 text-sm font-medium text-white/70">
+            {topLabel}
+          </Label>
         )}
         <div className="flex relative z-0 w-full">
           <input
@@ -54,7 +56,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className="flex items-center justify-center mx-3 px-1 transition-all absolute duration-300 top-3 -z-1 origin-0 text-white/50"
           >
             {label}
-            {required && <span className="text-blue-400 ml-1">*</span>}
+            {required && <span className="text-light-green ml-1">*</span>}
           </label>
           {type === "password" && (
             <button

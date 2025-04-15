@@ -75,8 +75,19 @@ const EditAddress: React.FC<EditAddressProps> = ({
         <div className="flex flex-col">
           <div className="flex items-center gap-2 mb-3">
             <div className="bg-blue-500/10 p-1.5 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-light-green"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
               </svg>
             </div>
             <Heading
@@ -124,7 +135,11 @@ const EditAddress: React.FC<EditAddressProps> = ({
             onClick={removeAddress}
             data-testid="address-delete-button"
           >
-            {removing ? <Spinner className="h-4 w-4" /> : <Trash className="h-4 w-4" />}
+            {removing ? (
+              <Spinner className="h-4 w-4" />
+            ) : (
+              <Trash className="h-4 w-4" />
+            )}
             Remove
           </button>
         </div>
@@ -236,7 +251,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
               >
                 Cancel
               </Button>
-              <SubmitButton 
+              <SubmitButton
                 data-testid="save-button"
                 className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 py-2.5 px-6"
               >

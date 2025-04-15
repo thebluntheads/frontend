@@ -242,7 +242,7 @@ const Payment = ({
               <div className="flex justify-end">
                 <p
                   onClick={() => redirect("/checkout?step=payment")}
-                  className="w-fit text-blue-400 transition-all duration-200 rounded z-40 px-2 py-1 cursor-pointer hover:text-white hover:bg-blue-600"
+                  className="w-fit text-light-green transition-all duration-200 rounded z-40 px-2 py-1 cursor-pointer hover:text-white hover:bg-blue-600"
                 >
                   Edit
                 </p>

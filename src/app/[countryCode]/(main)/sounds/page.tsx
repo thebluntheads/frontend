@@ -645,7 +645,7 @@ export default function SoundsPage() {
               {/* Title and description */}
               <div className="relative z-10 py-12">
                 <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-                  <span className="text-blue-500">Sound</span>Track Library
+                  <span className="text-dark-green">Sound</span>Track Library
                 </h1>
                 <p className="text-xl text-gray-300 max-w-2xl mx-auto">
                   Explore our curated collection of premium audio tracks and
@@ -727,7 +727,7 @@ export default function SoundsPage() {
                           <>
                             <span className="text-gray-400">
                               {album.product_variant && (
-                                <span className="text-blue-500 font-medium text-xs">
+                                <span className="text-dark-green font-medium text-xs">
                                   {getDigitalProductPrice({
                                     variant: album.product_variant,
                                   }).cheapestPrice?.calculated_price || "$1.99"}
@@ -828,7 +828,7 @@ export default function SoundsPage() {
                             </span>
                             <div className="w-20 text-right">
                               {track.product_variant && (
-                                <span className="text-blue-500 font-medium text-xs">
+                                <span className="text-dark-green font-medium text-xs">
                                   {getDigitalProductPrice({
                                     variant: track.product_variant,
                                   }).cheapestPrice?.calculated_price || "$1.99"}
@@ -923,7 +923,7 @@ export default function SoundsPage() {
                   {currentSound.description || "Premium audio content"}
                 </p>
                 {currentSound.product_variant && (
-                  <div className="text-blue-500 font-medium">
+                  <div className="text-dark-green font-medium">
                     {getDigitalProductPrice({
                       variant: currentSound.product_variant,
                     }).cheapestPrice?.calculated_price || "$1.99"}
