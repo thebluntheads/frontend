@@ -67,14 +67,14 @@ const EditAddress: React.FC<EditAddressProps> = ({
         className={clx(
           "bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-5 min-h-[220px] h-full w-full flex flex-col justify-between transition-colors",
           {
-            "border-blue-500/50 bg-black/40": isActive,
+            "border-dark-green/50 bg-black/40": isActive,
           }
         )}
         data-testid="address-container"
       >
         <div className="flex flex-col">
           <div className="flex items-center gap-2 mb-3">
-            <div className="bg-blue-500/10 p-1.5 rounded-lg">
+            <div className="bg-dark-green/10 p-1.5 rounded-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4 text-light-green"
@@ -253,7 +253,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
               </Button>
               <SubmitButton
                 data-testid="save-button"
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 py-2.5 px-6"
+                className="bg-dark-green hover:bg-dark-green text-white rounded-lg transition-colors duration-200 py-2.5 px-6"
               >
                 Save Changes
               </SubmitButton>

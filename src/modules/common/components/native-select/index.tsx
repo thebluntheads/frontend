@@ -18,7 +18,14 @@ export type NativeSelectProps = {
 
 const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
   (
-    { placeholder = "Select...", defaultValue, className, children, label, ...props },
+    {
+      placeholder = "Select...",
+      defaultValue,
+      className,
+      children,
+      label,
+      ...props
+    },
     ref
   ) => {
     const innerRef = useRef<HTMLSelectElement>(null)
@@ -57,7 +64,7 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
             ref={innerRef}
             defaultValue={defaultValue}
             {...props}
-            className="appearance-none flex-1 bg-transparent border-none px-4 py-3 text-white transition-colors duration-150 outline-none focus:ring-1 focus:ring-blue-500/50"
+            className="appearance-none flex-1 bg-transparent border-none px-4 py-3 text-white transition-colors duration-150 outline-none focus:ring-1 focus:ring-dark-green/50"
           >
             <option disabled value="">
               {placeholder}
@@ -68,7 +75,9 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
             <ChevronUpDown />
           </span>
         </div>
-        <p className="text-xs text-white/50 mt-1">Please select from the options above</p>
+        <p className="text-xs text-white/50 mt-1">
+          Please select from the options above
+        </p>
       </div>
     )
   }

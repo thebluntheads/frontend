@@ -124,7 +124,7 @@ const CartDropdown = ({
           >
             <div className="p-5 flex items-center justify-between bg-black/40 border-b border-white/10">
               <h3 className="text-xl font-bold text-white">Your Cart</h3>
-              <span className="bg-blue-500/20 text-light-green text-sm font-medium px-3 py-1 rounded-full">
+              <span className="bg-dark-green/20 text-light-green text-sm font-medium px-3 py-1 rounded-full">
                 {totalItems} {totalItems === 1 ? "item" : "items"}
               </span>
             </div>
@@ -248,7 +248,7 @@ const CartDropdown = ({
                       className="flex-1"
                     >
                       <Button
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 py-2.5"
+                        className="w-full bg-dark-green hover:bg-dark-green text-white rounded-lg transition-colors duration-200 py-2.5"
                         size="large"
                       >
                         Checkout
@@ -290,7 +290,7 @@ const CartDropdown = ({
                         <span className="sr-only">Go to all products page</span>
                         <Button
                           onClick={close}
-                          className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 px-6 py-2.5"
+                          className="bg-dark-green hover:bg-dark-green text-white rounded-lg transition-colors duration-200 px-6 py-2.5"
                         >
                           Browse Products
                         </Button>

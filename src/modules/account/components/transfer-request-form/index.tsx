@@ -27,7 +27,7 @@ export default function TransferRequestForm() {
       <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-6 grid sm:grid-cols-2 items-center gap-x-8 gap-y-6 w-full">
         <div className="flex flex-col gap-y-3">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-500/10 p-2 rounded-lg">
+            <div className="bg-dark-green/10 p-2 rounded-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 text-light-green"
@@ -66,12 +66,12 @@ export default function TransferRequestForm() {
               </label>
               <Input
                 id="order_id"
-                className="w-full bg-black/40 border-white/20 text-white placeholder:text-white/60 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-white/40 transition-colors"
+                className="w-full bg-black/40 border-white/20 text-white placeholder:text-white/60 rounded-lg focus:border-dark-green focus:ring-1 focus:ring-dark-green hover:border-white/40 transition-colors"
                 name="order_id"
                 placeholder="Enter your Order ID"
               />
             </div>
-            <SubmitButton className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 py-2.5 px-6 w-fit whitespace-nowrap self-end mt-2 font-medium">
+            <SubmitButton className="bg-dark-green hover:bg-dark-green text-white rounded-lg transition-colors duration-200 py-2.5 px-6 w-fit whitespace-nowrap self-end mt-2 font-medium">
               Request Transfer
             </SubmitButton>
           </div>

@@ -48,7 +48,7 @@ export const AuthorizeNetContainer: React.FC<AuthorizeNetContainerProps> = ({
                       setCardData({ ...cardData, cardNumber: formattedValue })
                     }}
                     maxLength={19} // 16 digits + 3 spaces
-                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
                   />
                 </div>
               </div>
@@ -65,7 +65,7 @@ export const AuthorizeNetContainer: React.FC<AuthorizeNetContainerProps> = ({
                   onChange={(e) =>
                     setCardData({ ...cardData, fullName: e.target.value })
                   }
-                  className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
                 />
               </div>
 
@@ -97,7 +97,7 @@ export const AuthorizeNetContainer: React.FC<AuthorizeNetContainerProps> = ({
                       })
                     }}
                     maxLength={5} // MM/YY format (5 characters)
-                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
                   />
                 </div>
                 <div className="space-y-2">
@@ -112,7 +112,7 @@ export const AuthorizeNetContainer: React.FC<AuthorizeNetContainerProps> = ({
                     onChange={(e) =>
                       setCardData({ ...cardData, cardCode: e.target.value })
                     }
-                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
                   />
                 </div>
               </div>

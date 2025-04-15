@@ -68,7 +68,7 @@ const AccountInfo = ({
               "min-h-[36px] px-4 rounded-lg transition-colors duration-200",
               state
                 ? "bg-white/10 hover:bg-white/20 text-white border border-white/10"
-                : "bg-blue-500/20 hover:bg-blue-500/30 text-light-green border border-blue-500/20"
+                : "bg-dark-green/20 hover:bg-dark-green/30 text-light-green border border-dark-green/20"
             )}
             onClick={handleToggle}
             type={state ? "reset" : "button"}
@@ -162,7 +162,7 @@ const AccountInfo = ({
             <div className="flex items-center justify-end mt-2">
               <Button
                 isLoading={pending}
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 px-6 py-2.5"
+                className="bg-dark-green hover:bg-dark-green text-white rounded-lg transition-colors duration-200 px-6 py-2.5"
                 type="submit"
                 data-testid="save-button"
               >

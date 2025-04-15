@@ -22,7 +22,7 @@ export default async function Orders() {
     <div className="w-full" data-testid="orders-page-wrapper">
       <div className="mb-8 flex flex-col gap-y-4">
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-blue-500/10 p-3 rounded-lg">
+          <div className="bg-dark-green/10 p-3 rounded-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-light-green"

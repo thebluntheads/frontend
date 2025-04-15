@@ -590,7 +590,7 @@ export default function SoundsPage() {
     return (
       <div className="bg-black min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-16 h-16 border-4 border-dark-green border-t-transparent rounded-full animate-spin"></div>
           <p className="mt-4 text-white text-lg">Loading sounds...</p>
         </div>
       </div>
@@ -631,7 +631,7 @@ export default function SoundsPage() {
                   {Array.from({ length: 50 }).map((_, i) => (
                     <div
                       key={i}
-                      className="h-full w-1 bg-blue-500 rounded-full"
+                      className="h-full w-1 bg-dark-green rounded-full"
                       style={{
                         height: `${Math.sin(i * 0.2) * 50 + 50}%`,
                         animationDelay: `${i * 0.05}s`,
@@ -683,7 +683,7 @@ export default function SoundsPage() {
                 <TabsTrigger
                   key={album.id}
                   value={album.id}
-                  className="rounded-md px-4 py-2 data-[state=active]:bg-blue-600 whitespace-nowrap"
+                  className="rounded-md px-4 py-2 data-[state=active]:bg-dark-green whitespace-nowrap"
                 >
                   {album.name}
                 </TabsTrigger>
@@ -739,7 +739,7 @@ export default function SoundsPage() {
                               size="sm"
                               onClick={() => handleAddToCart(album)}
                               disabled={isAddingToCart}
-                              className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 h-8"
+                              className="text-xs bg-dark-green hover:bg-dark-green text-white px-3 py-1 h-8"
                             >
                               {isAddingToCart ? "Adding..." : "Buy"}
                             </Button>
@@ -788,13 +788,13 @@ export default function SoundsPage() {
                           className="p-4 flex justify-between items-center hover:bg-gray-800/30 transition-colors group relative"
                         >
                           {playingTrackId === track.id && (
-                            <div className="absolute left-0 top-0 bottom-0 w-full h-full bg-blue-600/10 z-0"></div>
+                            <div className="absolute left-0 top-0 bottom-0 w-full h-full bg-dark-green/10 z-0"></div>
                           )}
 
                           {/* Progress bar at the bottom of the track */}
                           {playingTrackId === track.id && (
                             <div
-                              className="absolute left-0 bottom-0 h-2 bg-blue-600 z-10"
+                              className="absolute left-0 bottom-0 h-2 bg-dark-green z-10"
                               style={{
                                 width: `${audioProgress * 100}%`,
                                 transition: "width 0.1s linear",
@@ -805,7 +805,7 @@ export default function SoundsPage() {
                             <PlayButton
                               isPlaying={playingTrackId === track.id}
                               onClick={() => togglePlay(track.id)}
-                              className="opacity-100 bg-blue-600 hover:bg-blue-700"
+                              className="opacity-100 bg-dark-green hover:bg-dark-green"
                             />
                             <div className="w-8 flex justify-center items-center">
                               <span className="text-center text-gray-500">
@@ -842,7 +842,7 @@ export default function SoundsPage() {
                                   size="sm"
                                   onClick={() => handleAddToCart(track)}
                                   disabled={isAddingToCart}
-                                  className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 h-8"
+                                  className="text-xs bg-dark-green hover:bg-dark-green text-white px-3 py-1 h-8"
                                 >
                                   {isAddingToCart ? "Adding..." : "Buy"}
                                 </Button>
@@ -940,7 +940,7 @@ export default function SoundsPage() {
               <div className="bg-gray-800 p-4 rounded-lg">
                 {isLoadingCustomer ? (
                   <div className="flex items-center justify-center py-2">
-                    <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <div className="w-5 h-5 border-2 border-dark-green border-t-transparent rounded-full animate-spin mr-2"></div>
                     <span className="text-gray-400">
                       Loading customer information...
                     </span>

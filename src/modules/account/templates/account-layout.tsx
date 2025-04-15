@@ -24,7 +24,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
         <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-white/10 py-12 gap-8">
           <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-6 max-w-md">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-blue-500/10 p-2 rounded-lg">
+              <div className="bg-dark-green/10 p-2 rounded-lg">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-light-green"

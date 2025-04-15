@@ -91,7 +91,7 @@ const ShippingInfoTab = () => {
     <div className="py-6 px-2 text-white/80">
       <div className="grid grid-cols-1 gap-6">
         <div className="bg-black/20 backdrop-blur-sm rounded-lg p-5 border border-white/5 flex items-start gap-x-4">
-          <div className="bg-blue-500/20 p-3 rounded-full">
+          <div className="bg-dark-green/20 p-3 rounded-full">
             <FastDelivery className="text-light-green w-6 h-6" />
           </div>
           <div>
@@ -119,8 +119,8 @@ const ShippingInfoTab = () => {
           </div>
         </div>
         <div className="bg-black/20 backdrop-blur-sm rounded-lg p-5 border border-white/5 flex items-start gap-x-4">
-          <div className="bg-purple-500/20 p-3 rounded-full">
-            <Back className="text-purple-400 w-6 h-6" />
+          <div className="bg-dark-green/20 p-3 rounded-full">
+            <Back className="text-light-green w-6 h-6" />
           </div>
           <div>
             <span className="font-semibold text-white block mb-2 text-lg">

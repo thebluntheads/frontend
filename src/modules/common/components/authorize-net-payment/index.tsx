@@ -65,7 +65,7 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
                         })
                       }}
                       maxLength={19} // 16 digits + 3 spaces
-                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
                     />
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                       {paymentInfoMap[paymentMethod]?.icon}
@@ -92,7 +92,7 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
                       })
                     }}
                     autoComplete="off" // 🔥 or try "name" if "off" fails
-                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
                   />
                 </div>
 
@@ -124,7 +124,7 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
                         })
                       }}
                       maxLength={5} // MM/YY format (5 characters)
-                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
                     />
                   </div>
                   <div className="space-y-2">
@@ -142,7 +142,7 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
                           cardCode: e.target.value,
                         })
                       }
-                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -195,7 +195,7 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
       </div>
 
       <button
-        className="mt-6 w-full h-14 text-base px-8 rounded-full bg-blue-600 hover:bg-blue-700 shadow-md text-white flex items-center justify-center"
+        className="mt-6 w-full h-14 text-base px-8 rounded-full bg-dark-green hover:bg-dark-green shadow-md text-white flex items-center justify-center"
         onClick={handleSubmit}
         disabled={isLoading}
       >

@@ -91,7 +91,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
             <CartItemSelect
               value={item.quantity}
               onChange={(value) => changeQuantity(parseInt(value.target.value))}
-              className="w-14 h-10 p-4 bg-black/30 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-14 h-10 p-4 bg-black/30 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-dark-green focus:border-transparent"
               data-testid="product-select-button"
             >
               {/* TODO: Update this with the v2 way of managing inventory */}

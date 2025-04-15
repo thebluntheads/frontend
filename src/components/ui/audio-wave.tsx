@@ -1,32 +1,32 @@
-'use client';
+"use client"
 
-import React from 'react';
-import { cn } from '../../lib/utils';
+import React from "react"
+import { cn } from "../../lib/utils"
 
 interface AudioWaveProps {
-  isPlaying?: boolean;
-  className?: string;
+  isPlaying?: boolean
+  className?: string
 }
 
 // Keeping this component for backwards compatibility, but not using the wave animation
 export function AudioWave({ isPlaying = false, className }: AudioWaveProps) {
-  return null;
+  return null
 }
 
-export function PlayButton({ 
-  isPlaying = false, 
+export function PlayButton({
+  isPlaying = false,
   onClick,
-  className
-}: { 
-  isPlaying?: boolean; 
-  onClick?: () => void;
-  className?: string;
+  className,
+}: {
+  isPlaying?: boolean
+  onClick?: () => void
+  className?: string
 }) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        'flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-colors',
+        "flex items-center justify-center w-8 h-8 rounded-full bg-dark-green hover:bg-dark-green text-white transition-colors",
         className
       )}
     >
@@ -55,5 +55,5 @@ export function PlayButton({
         </svg>
       )}
     </button>
-  );
+  )
 }

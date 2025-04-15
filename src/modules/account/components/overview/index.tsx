@@ -15,7 +15,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
     <div data-testid="overview-page-wrapper" className="w-full">
       <div className="hidden small:block">
         <div className="flex items-center gap-4 mb-6">
-          <div className="bg-blue-500/20 p-3 rounded-full">
+          <div className="bg-dark-green/20 p-3 rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-light-green"
@@ -55,7 +55,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-blue-500/10 p-2 rounded-lg">
+              <div className="bg-dark-green/10 p-2 rounded-lg">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-light-green"
@@ -78,7 +78,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
             <div className="mt-2">
               <div className="w-full bg-black/40 rounded-full h-2.5 mb-3">
                 <div
-                  className="bg-blue-500 h-2.5 rounded-full"
+                  className="bg-dark-green h-2.5 rounded-full"
                   style={{ width: `${getProfileCompletion(customer)}%` }}
                   data-testid="customer-profile-completion"
                   data-value={getProfileCompletion(customer)}
@@ -100,7 +100,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
 
           <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-blue-500/10 p-2 rounded-lg">
+              <div className="bg-dark-green/10 p-2 rounded-lg">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-light-green"
@@ -152,7 +152,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
 
         <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden p-6 mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="bg-blue-500/10 p-2 rounded-lg">
+            <div className="bg-dark-green/10 p-2 rounded-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 text-light-green"
@@ -258,7 +258,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                 </span>
                 <LocalizedClientLink
                   href="/store"
-                  className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 text-sm"
+                  className="mt-4 bg-dark-green hover:bg-dark-green text-white px-4 py-2 rounded-lg transition-colors duration-200 text-sm"
                 >
                   Browse Products
                 </LocalizedClientLink>

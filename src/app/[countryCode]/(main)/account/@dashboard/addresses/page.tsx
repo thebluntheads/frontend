@@ -27,7 +27,7 @@ export default async function Addresses(props: {
     <div className="w-full" data-testid="addresses-page-wrapper">
       <div className="mb-8 flex flex-col gap-y-4">
         <div className="flex items-center gap-4 mb-2">
-          <div className="bg-blue-500/20 p-3 rounded-full">
+          <div className="bg-dark-green/20 p-3 rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-light-green"

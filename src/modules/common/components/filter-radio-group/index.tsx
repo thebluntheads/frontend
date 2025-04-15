@@ -30,7 +30,8 @@ const FilterRadioGroup = ({
               className={clx(
                 "flex items-center p-2 rounded-lg transition-all duration-200",
                 {
-                  "bg-blue-500/20 border border-blue-500/30": i.value === value,
+                  "bg-dark-green/20 border border-dark-green/30":
+                    i.value === value,
                   "hover:bg-white/5": i.value !== value,
                 }
               )}
@@ -40,7 +41,7 @@ const FilterRadioGroup = ({
                   className={clx(
                     "w-4 h-4 rounded-full border flex items-center justify-center",
                     {
-                      "border-blue-400": i.value === value,
+                      "border-light-green": i.value === value,
                       "border-white/40": i.value !== value,
                     }
                   )}

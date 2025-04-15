@@ -45,7 +45,11 @@ const Review = ({ cart }: { cart: any }) => {
               </Text>
             </div>
           </div>
-          <PaymentButton cart={cart} data-testid="submit-order-button" className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 backdrop-blur-sm bg-opacity-80 border border-white/10 shadow-lg hover:shadow-blue-500/20 h-12" />
+          <PaymentButton
+            cart={cart}
+            data-testid="submit-order-button"
+            className="bg-dark-green hover:bg-dark-green text-white rounded-lg transition-all duration-200 backdrop-blur-sm bg-opacity-80 border border-white/10 shadow-lg hover:shadow-dark-green/20 h-12"
+          />
         </>
       )}
     </div>

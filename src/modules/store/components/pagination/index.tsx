@@ -6,11 +6,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 export function Pagination({
   page,
   totalPages,
-  'data-testid': dataTestid
+  "data-testid": dataTestid,
 }: {
   page: number
   totalPages: number
-  'data-testid'?: string
+  "data-testid"?: string
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -38,7 +38,7 @@ export function Pagination({
       className={clx(
         "w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200",
         {
-          "bg-blue-500/30 text-white border border-blue-400/50": isCurrent,
+          "bg-dark-green/30 text-white border border-light-green/50": isCurrent,
           "text-white/70 hover:bg-white/10 hover:text-white": !isCurrent,
         }
       )}
@@ -112,8 +112,8 @@ export function Pagination({
   // Render the component
   return (
     <div className="flex justify-center w-full mt-6">
-      <div 
-        className="bg-black/30 backdrop-blur-md rounded-xl p-3 border border-white/5 shadow-lg flex items-center gap-x-2" 
+      <div
+        className="bg-black/30 backdrop-blur-md rounded-xl p-3 border border-white/5 shadow-lg flex items-center gap-x-2"
         data-testid={dataTestid}
       >
         {renderPageButtons()}

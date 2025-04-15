@@ -242,7 +242,7 @@ const Payment = ({
               <div className="flex justify-end">
                 <p
                   onClick={() => redirect("/checkout?step=payment")}
-                  className="w-fit text-light-green transition-all duration-200 rounded z-40 px-2 py-1 cursor-pointer hover:text-white hover:bg-blue-600"
+                  className="w-fit text-light-green transition-all duration-200 rounded z-40 px-2 py-1 cursor-pointer hover:text-white hover:bg-dark-green"
                 >
                   Edit
                 </p>
@@ -313,7 +313,7 @@ const Payment = ({
       <div className=" mt-10 flex items-center justify-end gap-4">
         <Button
           size="large"
-          className="h-14 text-base px-8 rounded-full bg-blue-600 hover:bg-blue-700 shadow-md text-white"
+          className="h-14 text-base px-8 rounded-full bg-dark-green hover:bg-dark-green shadow-md text-white"
           onClick={handleSubmit}
           isLoading={isLoading}
           disabled={

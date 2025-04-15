@@ -380,7 +380,7 @@ const EpisodePaymentPopup = ({
               <div className="bg-gray-50 p-4 rounded-lg">
                 {isLoadingCustomer ? (
                   <div className="flex items-center justify-center py-4">
-                    <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-6 h-6 border-2 border-dark-green border-t-transparent rounded-full animate-spin"></div>
                     <span className="ml-2 text-gray-600">
                       Loading customer information...
                     </span>

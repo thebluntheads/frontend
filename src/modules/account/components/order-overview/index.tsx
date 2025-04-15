@@ -27,7 +27,7 @@ const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
       className="w-full flex flex-col items-center gap-y-6 bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-8 text-center"
       data-testid="no-orders-container"
     >
-      <div className="bg-blue-500/10 p-4 rounded-full">
+      <div className="bg-dark-green/10 p-4 rounded-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-10 w-10 text-light-green"
@@ -51,7 +51,7 @@ const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
         <LocalizedClientLink href="/" passHref>
           <Button
             data-testid="continue-shopping-button"
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 py-2.5 px-6"
+            className="bg-dark-green hover:bg-dark-green text-white rounded-lg transition-colors duration-200 py-2.5 px-6"
           >
             Browse Products
           </Button>

@@ -42,7 +42,7 @@ const AccountNav = ({
           <>
             <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-5 mb-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="bg-blue-500/10 p-2 rounded-lg">
+                <div className="bg-dark-green/10 p-2 rounded-lg">
                   <User className="text-light-green h-5 w-5" />
                 </div>
                 <div className="text-xl font-bold text-white">
@@ -60,7 +60,7 @@ const AccountNav = ({
                   >
                     <>
                       <div className="flex items-center gap-x-3">
-                        <div className="bg-blue-500/10 p-1.5 rounded-lg">
+                        <div className="bg-dark-green/10 p-1.5 rounded-lg">
                           <User className="text-light-green h-4 w-4" />
                         </div>
                         <span className="text-white">Profile</span>
@@ -77,7 +77,7 @@ const AccountNav = ({
                   >
                     <>
                       <div className="flex items-center gap-x-3">
-                        <div className="bg-blue-500/10 p-1.5 rounded-lg">
+                        <div className="bg-dark-green/10 p-1.5 rounded-lg">
                           <MapPin className="text-light-green h-4 w-4" />
                         </div>
                         <span className="text-white">Addresses</span>
@@ -93,7 +93,7 @@ const AccountNav = ({
                     data-testid="orders-link"
                   >
                     <div className="flex items-center gap-x-3">
-                      <div className="bg-blue-500/10 p-1.5 rounded-lg">
+                      <div className="bg-dark-green/10 p-1.5 rounded-lg">
                         <Package className="text-light-green h-4 w-4" />
                       </div>
                       <span className="text-white">Orders</span>
@@ -126,7 +126,7 @@ const AccountNav = ({
         <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-5 w-full">
           <div className="pb-4 border-b border-white/10 mb-4">
             <div className="flex items-center gap-3">
-              <div className="bg-blue-500/10 p-2 rounded-lg">
+              <div className="bg-dark-green/10 p-2 rounded-lg">
                 <User className="text-light-green h-[18px] w-[18px]" />
               </div>
               <h3 className="text-lg font-semibold text-white">Account Menu</h3>
@@ -141,7 +141,7 @@ const AccountNav = ({
                   data-testid="overview-link"
                 >
                   <div className="flex items-center gap-x-3">
-                    <div className="bg-blue-500/10 p-1.5 rounded-lg">
+                    <div className="bg-dark-green/10 p-1.5 rounded-lg">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-4 w-4 text-light-green"
@@ -168,7 +168,7 @@ const AccountNav = ({
                   data-testid="profile-link"
                 >
                   <div className="flex items-center gap-x-3">
-                    <div className="bg-blue-500/10 p-1.5 rounded-lg">
+                    <div className="bg-dark-green/10 p-1.5 rounded-lg">
                       <User className="text-light-green h-4 w-4" />
                     </div>
                     <span>Profile</span>
@@ -182,7 +182,7 @@ const AccountNav = ({
                   data-testid="addresses-link"
                 >
                   <div className="flex items-center gap-x-3">
-                    <div className="bg-blue-500/10 p-1.5 rounded-lg">
+                    <div className="bg-dark-green/10 p-1.5 rounded-lg">
                       <MapPin className="text-light-green h-4 w-4" />
                     </div>
                     <span>Addresses</span>
@@ -196,7 +196,7 @@ const AccountNav = ({
                   data-testid="orders-link"
                 >
                   <div className="flex items-center gap-x-3">
-                    <div className="bg-blue-500/10 p-1.5 rounded-lg">
+                    <div className="bg-dark-green/10 p-1.5 rounded-lg">
                       <Package className="text-light-green h-4 w-4" />
                     </div>
                     <span>Orders</span>

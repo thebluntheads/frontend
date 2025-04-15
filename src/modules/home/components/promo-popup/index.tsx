@@ -54,7 +54,7 @@ const PromoPopup = ({
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute -top-4 -right-4 bg-blue-600 rounded-full p-1 text-white hover:bg-blue-700 transition-colors z-10"
+          className="absolute -top-4 -right-4 bg-dark-green rounded-full p-1 text-white hover:bg-dark-green transition-colors z-10"
           aria-label="Close popup"
         >
           <X size={24} />
@@ -77,7 +77,7 @@ const PromoPopup = ({
           {/* Optional overlay button */}
           <div className="absolute bottom-6 right-6">
             <Button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-full"
+              className="bg-dark-green hover:bg-dark-green text-white font-medium px-6 py-2 rounded-full"
               onClick={handleClick}
             >
               View Offer

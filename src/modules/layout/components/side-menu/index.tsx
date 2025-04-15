@@ -94,7 +94,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                               onClick={close}
                               data-testid={`${name.toLowerCase()}-link`}
                             >
-                              <div className="bg-blue-500/10 p-2 rounded-lg">
+                              <div className="bg-dark-green/10 p-2 rounded-lg">
                                 {name === "Home" && (
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -228,7 +228,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                           onMouseLeave={toggleState.close}
                         >
                           <div className="flex items-center gap-3">
-                            <div className="bg-blue-500/10 p-2 rounded-lg">
+                            <div className="bg-dark-green/10 p-2 rounded-lg">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-light-green"

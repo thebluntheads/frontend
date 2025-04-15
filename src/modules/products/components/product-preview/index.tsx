@@ -40,7 +40,7 @@ export default async function ProductPreview({
           {product.created_at &&
             new Date(product.created_at).getTime() >
               Date.now() - 30 * 24 * 60 * 60 * 1000 && (
-              <div className="absolute top-3 right-3 bg-blue-500/80 backdrop-blur-sm text-white text-xs font-medium py-1 px-2 rounded-full">
+              <div className="absolute top-3 right-3 bg-dark-green/80 backdrop-blur-sm text-white text-xs font-medium py-1 px-2 rounded-full">
                 New
               </div>
             )}

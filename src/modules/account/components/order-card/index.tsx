@@ -30,7 +30,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
     >
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-3">
-          <div className="bg-blue-500/10 p-2 rounded-lg">
+          <div className="bg-dark-green/10 p-2 rounded-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 text-light-green"
@@ -127,7 +127,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
         <LocalizedClientLink href={`/account/orders/details/${order.id}`}>
           <Button
             data-testid="order-details-link"
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 py-2 px-4 text-sm"
+            className="bg-dark-green hover:bg-dark-green text-white rounded-lg transition-colors duration-200 py-2 px-4 text-sm"
           >
             View Order Details
           </Button>

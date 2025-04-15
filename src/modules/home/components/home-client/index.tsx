@@ -54,7 +54,7 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute -top-3 -right-3 bg-blue-600 rounded-full p-1 text-white hover:bg-blue-700 transition-colors z-10 shadow-lg"
+          className="absolute -top-3 -right-3 bg-dark-green rounded-full p-1 text-white hover:bg-dark-green transition-colors z-10 shadow-lg"
           aria-label="Close popup"
         >
           <X size={20} />
@@ -77,7 +77,7 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
           {/* Optional overlay button */}
           <div className="absolute bottom-4 right-4">
             <Button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-1 text-sm rounded-full"
+              className="bg-dark-green hover:bg-dark-green text-white font-medium px-4 py-1 text-sm rounded-full"
               onClick={handleClick}
             >
               View Offer
