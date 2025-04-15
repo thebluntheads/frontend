@@ -54,7 +54,7 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute -top-3 -right-3 bg-dark-green rounded-full p-1 text-white hover:bg-dark-green transition-colors z-10 shadow-lg"
+          className="absolute -top-3 -right-3 bg-yellow-500 rounded-full p-1 text-white hover:bg-yellow-600 transition-colors z-10 shadow-lg"
           aria-label="Close popup"
         >
           <X size={20} />
