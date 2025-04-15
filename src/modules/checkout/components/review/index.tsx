@@ -40,8 +40,8 @@ const Review = ({ cart }: { cart: any }) => {
               <Text className="text-base text-white/80 mb-4">
                 By clicking the Place Order button, you confirm that you have
                 read, understand and accept our Terms of Use, Terms of Sale and
-                Returns Policy and acknowledge that you have read Medusa
-                Store&apos;s Privacy Policy.
+                Returns Policy and acknowledge that you have read
+                TheBluntHead&apos;s Store&apos;s Privacy Policy.
               </Text>
             </div>
           </div>

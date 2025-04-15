@@ -5,9 +5,9 @@ import SeasonsList from "@modules/seasons/components/seasons-list/index"
 import Hero from "@modules/home/components/hero"
 
 export const metadata: Metadata = {
-  title: "Seasons | Streaming Platform",
+  title: "Seasons | TheBluntHeads",
   description:
-    "Browse all seasons of our premium content in our Apple TV-style streaming platform.",
+    "Browse all seasons of our premium content in TheBluntHeads plateform.",
 }
 
 export default async function SeasonsPage(props: {

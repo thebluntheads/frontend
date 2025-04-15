@@ -15,9 +15,8 @@ import FeaturedEpisodes from "@modules/home/components/featured-episodes"
 import FeaturedSounds from "@modules/home/components/featured-sounds"
 
 export const metadata: Metadata = {
-  title: "Streaming Platform",
-  description:
-    "Experience premium streaming content with our Apple TV-style platform.",
+  title: "TheBluntHeads",
+  description: "Experience premium series on our plateform TheBluntHeads.",
 }
 
 export default async function Home(props: {

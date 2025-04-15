@@ -58,7 +58,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   }
 
   const metadata = {
-    title: `${digital_products[0].name} | Streaming Platform`,
+    title: `${digital_products[0].name} | TheBluntHeads`,
     description:
       (digital_products?.[0]?.description as string) ||
       `Watch episodes from ${digital_products[0].name}`,
