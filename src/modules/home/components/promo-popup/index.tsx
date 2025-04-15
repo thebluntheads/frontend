@@ -13,7 +13,7 @@ interface PromoPopupProps {
 }
 
 const PromoPopup = ({
-  imageUrl = "/assets/Banner.png",
+  imageUrl = "/assets/Banner.jpeg",
   linkUrl = "/us/seasons/season-1",
   delay = 1500,
 }: PromoPopupProps) => {
@@ -23,13 +23,13 @@ const PromoPopup = ({
   // Check if the popup has been closed before
   useEffect(() => {
     const hasClosedPopup = localStorage.getItem("promoPopupClosed")
-    
+
     // Only show popup if it hasn't been closed in this session
     if (!hasClosedPopup) {
       const timer = setTimeout(() => {
         setIsVisible(true)
       }, delay)
-      
+
       return () => clearTimeout(timer)
     }
   }, [delay])
@@ -52,17 +52,17 @@ const PromoPopup = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
       <div className="relative max-w-2xl w-full mx-4 animate-fade-in-up">
         {/* Close button */}
-        <button 
+        <button
           onClick={handleClose}
           className="absolute -top-4 -right-4 bg-blue-600 rounded-full p-1 text-white hover:bg-blue-700 transition-colors z-10"
           aria-label="Close popup"
         >
           <X size={24} />
         </button>
-        
+
         {/* Banner image */}
-        <div 
-          className="relative cursor-pointer rounded-lg overflow-hidden shadow-2xl" 
+        <div
+          className="relative cursor-pointer rounded-lg overflow-hidden shadow-2xl"
           onClick={handleClick}
         >
           <Image
@@ -73,10 +73,10 @@ const PromoPopup = ({
             className="w-full h-auto"
             priority
           />
-          
+
           {/* Optional overlay button */}
           <div className="absolute bottom-6 right-6">
-            <Button 
+            <Button
               className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-full"
               onClick={handleClick}
             >
