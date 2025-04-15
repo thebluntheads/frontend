@@ -41,6 +41,11 @@ const nextConfig = {
         hostname: "onconnects-media.s3.us-east-1.amazonaws.com",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "thebluntheads.s3.us-east-2.amazonaws.com",
+        pathname: "**",
+      },
     ],
   },
 }
