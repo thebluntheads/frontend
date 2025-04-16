@@ -66,7 +66,7 @@ const EpisodePaymentPopup = ({
     "shipping_address.first_name": "",
     "shipping_address.last_name": "",
     "shipping_address.address_1": "Default Address",
-    "shipping_address.company": "",
+    // "shipping_address.company": "",
     "shipping_address.postal_code": "00000",
     "shipping_address.city": "Default City",
     "shipping_address.country_code": "us",
@@ -90,9 +90,9 @@ const EpisodePaymentPopup = ({
         "shipping_address.address_1":
           cart.shipping_address?.address_1 ||
           prevData["shipping_address.address_1"],
-        "shipping_address.company":
-          cart.shipping_address?.company ||
-          prevData["shipping_address.company"],
+        // "shipping_address.company":
+        //   cart.shipping_address?.company ||
+        //   prevData["shipping_address.company"],
         "shipping_address.postal_code":
           cart.shipping_address?.postal_code ||
           prevData["shipping_address.postal_code"],
@@ -261,7 +261,7 @@ const EpisodePaymentPopup = ({
               address_1:
                 formData["shipping_address.address_1"] || "Default Address",
               address_2: "",
-              company: formData["shipping_address.company"],
+              //company: formData["shipping_address.company"],
               postal_code: formData["shipping_address.postal_code"] || "00000",
               city: formData["shipping_address.city"] || "Default City",
               country_code: formData["shipping_address.country_code"],
@@ -275,7 +275,7 @@ const EpisodePaymentPopup = ({
               address_1:
                 formData["shipping_address.address_1"] || "Default Address",
               address_2: "",
-              company: formData["shipping_address.company"],
+              //company: formData["shipping_address.company"],
               postal_code: formData["shipping_address.postal_code"] || "00000",
               city: formData["shipping_address.city"] || "Default City",
               country_code: formData["shipping_address.country_code"],
@@ -321,11 +321,13 @@ const EpisodePaymentPopup = ({
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" aria-hidden="true" />
+      <div
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+        aria-hidden="true"
+      />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="mx-auto max-w-2xl rounded-xl bg-black border border-gray-800 p-8 w-full max-h-[90vh] overflow-y-auto shadow-xl">
-
           <div className="flex justify-between items-center mb-6">
             <Dialog.Title className="text-2xl font-medium text-white">
               Complete Your Purchase
@@ -341,7 +343,9 @@ const EpisodePaymentPopup = ({
           <div className="bg-black text-white">
             {/* Purchase Summary */}
             <div className="mb-8 border-b border-gray-800 pb-6">
-              <h3 className="text-lg font-medium mb-4 text-white">Purchase Summary</h3>
+              <h3 className="text-lg font-medium mb-4 text-white">
+                Purchase Summary
+              </h3>
               <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
                 <div className="flex justify-between mb-2">
                   <span className="text-gray-400">Item</span>
@@ -377,7 +381,9 @@ const EpisodePaymentPopup = ({
 
             {/* Customer Information Display */}
             <div className="mb-8 border-b border-gray-800 pb-6">
-              <h3 className="text-lg font-medium mb-4 text-white">Customer Information</h3>
+              <h3 className="text-lg font-medium mb-4 text-white">
+                Customer Information
+              </h3>
               <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
                 {isLoadingCustomer ? (
                   <div className="flex items-center justify-center py-4">

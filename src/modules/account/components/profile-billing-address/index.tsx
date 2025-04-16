@@ -76,7 +76,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
         <span>
           {billingAddress.first_name} {billingAddress.last_name}
         </span>
-        <span>{billingAddress.company}</span>
+        {/* <span>{billingAddress.company}</span> */}
         <span>
           {billingAddress.address_1}
           {billingAddress.address_2 ? `, ${billingAddress.address_2}` : ""}
@@ -117,12 +117,12 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
               data-testid="billing-last-name-input"
             />
           </div>
-          <Input
+          {/* <Input
             label="Company"
             name="company"
             defaultValue={billingAddress?.company || undefined}
             data-testid="billing-company-input"
-          />
+          /> */}
           <Input
             label="Address"
             name="address_1"

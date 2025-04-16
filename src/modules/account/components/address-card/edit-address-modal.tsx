@@ -97,14 +97,14 @@ const EditAddress: React.FC<EditAddressProps> = ({
               {address.first_name} {address.last_name}
             </Heading>
           </div>
-          {address.company && (
+          {/* {address.company && (
             <Text
               className="text-sm text-white/70 mb-1"
               data-testid="address-company"
             >
               {address.company}
             </Text>
-          )}
+          )} */}
           <div className="bg-black/20 border border-white/5 rounded-lg p-3 mt-1">
             <Text className="flex flex-col text-left text-white/80 text-sm">
               <span data-testid="address-address" className="mb-1">
@@ -171,13 +171,13 @@ const EditAddress: React.FC<EditAddressProps> = ({
                   data-testid="last-name-input"
                 />
               </div>
-              <Input
+              {/* <Input
                 label="Company"
                 name="company"
                 autoComplete="organization"
                 defaultValue={address.company || undefined}
                 data-testid="company-input"
-              />
+              /> */}
               <Input
                 label="Address"
                 name="address_1"

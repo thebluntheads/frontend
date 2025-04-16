@@ -512,7 +512,7 @@ export default function SoundsPage() {
               address_1:
                 formData["shipping_address.address_1"] || "Default Address",
               address_2: "",
-              company: formData["shipping_address.company"],
+              //company: formData["shipping_address.company"],
               postal_code: formData["shipping_address.postal_code"] || "00000",
               city: formData["shipping_address.city"] || "Default City",
               country_code: formData["shipping_address.country_code"],
@@ -526,7 +526,7 @@ export default function SoundsPage() {
               address_1:
                 formData["shipping_address.address_1"] || "Default Address",
               address_2: "",
-              company: formData["shipping_address.company"],
+              //company: formData["shipping_address.company"],
               postal_code: formData["shipping_address.postal_code"] || "00000",
               city: formData["shipping_address.city"] || "Default City",
               country_code: formData["shipping_address.country_code"],

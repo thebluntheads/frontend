@@ -81,11 +81,11 @@ const AddressSelect = ({
                       <span className="text-left text-base-semi">
                         {address.first_name} {address.last_name}
                       </span>
-                      {address.company && (
+                      {/* {address.company && (
                         <span className="text-small-regular text-gray-400">
                           {address.company}
                         </span>
-                      )}
+                      )} */}
                       <div className="flex flex-col text-left text-base-regular mt-2">
                         <span>
                           {address.address_1}
