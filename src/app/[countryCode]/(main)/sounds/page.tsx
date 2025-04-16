@@ -45,6 +45,15 @@ const authData = {
 
 export default function SoundsPage() {
   const { customer, isLoading: isLoadingCustomer } = useCustomer()
+  const [isRedirecting, setIsRedirecting] = useState(false)
+  
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoadingCustomer && !customer && !isRedirecting) {
+      setIsRedirecting(true)
+      window.location.href = "/account"
+    }
+  }, [customer, isLoadingCustomer, isRedirecting])
   const [sounds, setSounds] = useState<DigitalProduct[]>([])
   const [albums, setAlbums] = useState<DigitalProduct[]>([])
   const [activeAlbumId, setActiveAlbumId] = useState<string | null>(null)

@@ -7,6 +7,7 @@ import { useState, useEffect } from "react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { DigitalProduct } from "types/global"
 import { listSeasonsEpisodes } from "@lib/data/digital-products"
+import { useCustomer } from "@lib/hooks/use-customer"
 
 interface SeasonsListProps {
   seasons: DigitalProduct[]
@@ -22,6 +23,28 @@ interface SeasonMetadata {
 }
 
 const SeasonsList = ({ seasons }: SeasonsListProps) => {
+  const { customer, isLoading: isLoadingCustomer } = useCustomer()
+  const [isRedirecting, setIsRedirecting] = useState(false)
+  
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoadingCustomer && !customer && !isRedirecting) {
+      setIsRedirecting(true)
+      window.location.href = "/account"
+    }
+  }, [customer, isLoadingCustomer, isRedirecting])
+
+  // Show loading state while checking authentication
+  if (isLoadingCustomer || isRedirecting) {
+    return (
+      <div className="py-12">
+        <div className="text-center text-white/70">
+          <h2 className="text-2xl font-semibold mb-4">Loading...</h2>
+        </div>
+      </div>
+    )
+  }
+  
   if (!seasons.length) {
     return (
       <div className="py-12">
