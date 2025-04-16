@@ -42,7 +42,7 @@ export default function EpisodesList({
         return (
           <div
             key={episode.id}
-            className="bg-black/5 rounded-xl overflow-hidden hover:bg-black/10 transition-all duration-300 animate-fade-in"
+            className="bg-black/5 rounded-xl overflow-hidden hover:bg-black/10 transition-all duration-300 animate-fade-in h-full"
             style={{ animationDelay: `${index * 100}ms` }}
           >
             <LocalizedClientLink
@@ -51,12 +51,13 @@ export default function EpisodesList({
             >
               <div className="flex flex-col md:flex-row">
                 {/* Episode Thumbnail */}
-                <div className="relative w-full md:w-64 h-48">
+                <div className="relative w-full md:w-80 h-48 md:h-44 flex-shrink-0">
                   <Image
                     src={thumbnailUrl || "/placeholder-image.jpg"}
                     alt={episode.name}
                     fill
                     className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 320px"
                   />
 
                   <div className="absolute top-2 left-2 bg-black/20 backdrop-blur-md text-white text-xs px-2 py-1 rounded">
@@ -65,7 +66,7 @@ export default function EpisodesList({
                 </div>
 
                 {/* Episode Details */}
-                <div className="p-4 flex flex-col justify-between flex-grow">
+                <div className="p-4 flex flex-col justify-between flex-grow w-full">
                   <div>
                     <h3 className="text-xl font-medium text-white mb-2">
                       {episode.name}
