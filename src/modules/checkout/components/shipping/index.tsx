@@ -162,9 +162,35 @@ const Shipping: React.FC<ShippingProps> = ({
     setError(null)
   }, [isOpen])
 
+  // Effect to auto-proceed to payment step for digital items
+  useEffect(() => {
+    if (
+      isDigital &&
+      isOpen &&
+      cart.shipping_methods &&
+      cart.shipping_methods.length > 0
+    ) {
+      handleSetShippingMethod(_shippingMethods?.[0]?.id!, "shipping")
+
+      // Auto-proceed to payment step after a short delay
+      const timer = setTimeout(() => {
+        router.push(pathname + "?step=payment", { scroll: false })
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+  }, [isDigital, isOpen, cart.shipping_methods, router, pathname])
+
+  if (isDigital) {
+    return
+  }
   return (
     <div className="bg-transparent">
-      <div className="flex flex-row items-center justify-between mb-6">
+      {/* Hide the delivery section heading if the cart contains digital items */}
+      <div
+        className={`flex flex-row items-center justify-between mb-6 ${
+          isDigital ? "hidden" : ""
+        }`}
+      >
         <Heading
           level="h2"
           className={clx(

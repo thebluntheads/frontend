@@ -51,6 +51,8 @@ const Payment = ({
     (paymentSession: any) => paymentSession.status === "pending"
   )
 
+  console.log({ cart })
+
   const isDigital = cart?.items?.some(
     //@ts-ignore
     (i) => i?.product_type_id === "ptyp_01JRX8NFV7EZVBXKBJ9ZHSEJ0W"

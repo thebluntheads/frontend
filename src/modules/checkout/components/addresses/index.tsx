@@ -94,7 +94,7 @@ const Addresses = ({
               className="mt-6 bg-dark-green hover:bg-dark-green text-white rounded-lg transition-all duration-200 backdrop-blur-sm bg-opacity-80 border border-white/10 shadow-lg hover:shadow-dark-green/20 h-12"
               data-testid="submit-address-button"
             >
-              Continue to delivery
+              {isDigital ? "Continue to payment" : "Continue to delivery"}
             </SubmitButton>
             <ErrorMessage error={message} data-testid="address-error-message" />
           </div>
@@ -110,7 +110,7 @@ const Addresses = ({
                     data-testid="shipping-address-summary"
                   >
                     <Text className="text-lg font-medium text-white mb-2">
-                      Shipping Address
+                      {isDigital ? "Checkout Details" : "Shipping Address"}
                     </Text>
                     <Text className="text-base text-white/80">
                       {cart.shipping_address.first_name}{" "}
