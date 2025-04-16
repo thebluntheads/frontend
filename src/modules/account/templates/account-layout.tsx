@@ -15,6 +15,16 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
   customer,
   children,
 }) => {
+  // Different layout for login/register vs dashboard
+  if (!customer) {
+    return (
+      <div className="w-full min-h-screen bg-black" data-testid="account-page">
+        {children}
+      </div>
+    )
+  }
+  
+  // Dashboard layout for logged-in users
   return (
     <div className="flex-1 small:py-12" data-testid="account-page">
       <div className="flex-1 content-container h-full max-w-5xl mx-auto flex flex-col">

@@ -17,7 +17,7 @@ const Register = ({ setCurrentView }: Props) => {
 
   return (
     <div
-      className="max-w-sm flex flex-col items-center"
+      className="w-full flex flex-col items-center"
       data-testid="register-page"
     >
       <h1 className="text-large-semi uppercase mb-6">
@@ -89,16 +89,9 @@ const Register = ({ setCurrentView }: Props) => {
           Join
         </SubmitButton>
       </form>
-      <span className="text-center text-dark-green text-medium-regular mt-6">
-        Already a member?{" "}
-        <button
-          onClick={() => setCurrentView(LOGIN_VIEW.SIGN_IN)}
-          className="underline"
-        >
-          Sign in
-        </button>
-        .
-      </span>
+      <div className="text-center text-dark-green text-medium-regular mt-6">
+        <p>Create an account to access exclusive content and features.</p>
+      </div>
     </div>
   )
 }
