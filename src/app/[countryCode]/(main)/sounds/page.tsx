@@ -72,6 +72,7 @@ export default function SoundsPage() {
   const [availableShippingMethods, setAvailableShippingMethods] = useState<
     StoreCartShippingOption[]
   >([])
+  const [enlargedAlbumCover, setEnlargedAlbumCover] = useState<string | null>(null)
 
   const activeSession = cart?.payment_collection?.payment_sessions?.find(
     (paymentSession: any) => paymentSession.status === "pending"
@@ -724,7 +725,7 @@ export default function SoundsPage() {
           </div>
 
           {albums.map((album) => (
-            <TabsContent key={album.id} value={album.id} className="space-y-12">
+            <TabsContent key={album.id} value={album.id} className="space-y-6">
               {(albumTracks[album.id] || []).length === 0 ? (
                 <p className="text-white text-center">
                   No tracks available for this album.
@@ -732,28 +733,29 @@ export default function SoundsPage() {
               ) : (
                 <div className="bg-gray-900/30 rounded-xl overflow-hidden border border-gray-800 w-full">
                   {/* Album Info - Only once */}
-                  <div className="p-4 sm:p-6 flex flex-col md:flex-row gap-4 sm:gap-6">
+                  <div className="p-3 sm:p-4 md:p-6 flex flex-col md:flex-row gap-3 sm:gap-4">
                     <div
-                      className="w-full md:w-48 h-40 sm:h-48 rounded-lg overflow-hidden flex-shrink-0"
+                      className="w-full md:w-60 lg:w-72 h-40 sm:h-48 md:h-60 lg:h-72 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
                       style={{ maxWidth: "100%" }}
+                      onClick={() => setEnlargedAlbumCover("/assets/album-cover.png")}
                     >
                       <Image
                         src="/assets/album-cover.png"
                         alt={album.name}
-                        width={192}
-                        height={192}
+                        width={300}
+                        height={300}
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-2xl font-bold text-white mb-2">
+                      <h2 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">
                         {album.name}
                       </h2>
-                      <p className="text-gray-400 mb-4">
+                      <p className="text-gray-400 text-sm sm:text-base mb-2 sm:mb-3">
                         {album.description || "No description available."}
                       </p>
 
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 sm:gap-4">
                         <span className="text-gray-400">
                           {albumTracks[album.id].length} tracks
                         </span>
@@ -914,6 +916,32 @@ export default function SoundsPage() {
           ))}
         </Tabs>
       </div>
+
+      {/* Album Cover Modal */}
+      {enlargedAlbumCover && (
+        <div 
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+          onClick={() => setEnlargedAlbumCover(null)}
+        >
+          <div className="relative max-w-3xl max-h-[90vh] p-2">
+            <button
+              onClick={() => setEnlargedAlbumCover(null)}
+              className="absolute top-4 right-4 bg-gray-900/70 text-white rounded-full p-2 hover:bg-gray-800"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <Image
+              src={enlargedAlbumCover}
+              alt="Album Cover"
+              width={800}
+              height={800}
+              className="max-h-[80vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Payment Popup */}
       {isPaymentPopupOpen && currentSound && (
