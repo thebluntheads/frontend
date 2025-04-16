@@ -348,6 +348,13 @@ export default function EpisodeTemplate({
                       >
                         {isAddingToCart ? "Adding..." : "Buy Episode"}
                       </Button>
+                      <Button
+                        variant="secondary"
+                        className="bg-dark-green/20 hover:bg-light-green/30 text-white border-0"
+                        onClick={() => (window.location.href = "/season-1")}
+                      >
+                        {isAddingToCart ? "Adding..." : "Buy Full Season 1"}
+                      </Button>
                     </>
                   )}
                 </div>
