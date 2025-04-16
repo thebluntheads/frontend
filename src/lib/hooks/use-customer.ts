@@ -1,5 +1,6 @@
 "use client"
 
+import { retrieveCustomer } from "@lib/data/customer"
 import { useEffect, useState } from "react"
 
 export type Customer = {
@@ -40,20 +41,12 @@ export function useCustomer() {
     const fetchCustomer = async () => {
       setIsLoading(true)
       setError(null)
-      
+
       try {
-        const response = await fetch('/api/customer')
-        
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to fetch customer data')
-        }
-        
-        const data = await response.json()
-        setCustomer(data.customer)
+        const customer = await retrieveCustomer()
+
+        setCustomer(customer)
       } catch (err) {
-        console.error('Error fetching customer:', err)
-        setError(err instanceof Error ? err.message : 'An unknown error occurred')
         setCustomer(null)
       } finally {
         setIsLoading(false)
@@ -63,5 +56,5 @@ export function useCustomer() {
     fetchCustomer()
   }, [])
 
-  return { customer, isLoading, error }
+  return { customer, isLoading }
 }
