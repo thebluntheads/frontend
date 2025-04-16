@@ -171,28 +171,29 @@ const Hero = ({
     <div className="w-full relative bg-black">
       {/* Main featured content with gradient overlay */}
       <div
-        className="relative h-[80vh] w-full overflow-hidden"
+        className="relative h-[85vh] w-full overflow-hidden"
         style={{ isolation: "isolate" }}
       >
         {isPlaying ? (
           // Video container - only shown when playing
           <div
             ref={videoContainerRef}
-            className="absolute inset-0 w-full h-full"
-            style={{ zIndex: 50 }}
+            className="absolute inset-0 w-full h-full flex items-center justify-center"
+            style={{ zIndex: 50, backgroundColor: '#000' }}
             onMouseEnter={() => setShowControls(true)}
             onMouseLeave={() => setShowControls(false)}
           >
             <video
               ref={videoRef}
               src={videoUrl}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
               onEnded={handleVideoEnd}
               onTimeUpdate={handleTimeUpdate}
               onLoadedMetadata={handleLoadedMetadata}
               playsInline
               autoPlay
               controls={false}
+              style={{ backgroundColor: '#000' }}
             />
 
             {/* Video controls overlay */}
@@ -471,13 +472,17 @@ const Hero = ({
           </div>
         ) : (
           // Thumbnail image
-          <Image
-            src={thumbnailUrl}
-            alt="Featured Content"
-            fill
-            className="object-cover object-center brightness-75"
-            priority
-          />
+          <div className="absolute inset-0 w-full h-full">
+            <Image
+              src={thumbnailUrl}
+              alt="Featured Content"
+              fill
+              className="object-cover brightness-75"
+              sizes="100vw"
+              priority
+              style={{ objectPosition: '50% 50%' }}
+            />
+          </div>
         )}
 
         {/* Gradient overlay - only visible when video is not playing */}
