@@ -134,6 +134,14 @@ export default async function Footer() {
                     Privacy Policy
                   </LocalizedClientLink>
                 </li>
+                <li>
+                  <LocalizedClientLink
+                    className="hover:text-white transition-colors"
+                    href="/terms"
+                  >
+                    Terms & Conditions
+                  </LocalizedClientLink>
+                </li>
               </ul>
             </div>
           </div>
