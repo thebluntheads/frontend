@@ -182,7 +182,7 @@ export default function EpisodeTemplate({
       {hasPurchased && videoUrl ? (
         <Hero
           title={episode.name}
-          description={episode.description || "Watch this episode now"}
+          description={""}
           ctaText="Watch Now"
           ctaLink="#"
           thumbnailUrl={bannerUrl}
@@ -229,9 +229,6 @@ export default function EpisodeTemplate({
                 <h1 className="text-white text-5xl font-bold mb-4">
                   {episode.name}
                 </h1>
-                <p className="text-white/90 text-xl mb-6">
-                  {episode.description || "Watch this episode now"}
-                </p>
 
                 {/* Episode metadata */}
                 <div className="flex flex-wrap gap-x-6 gap-y-2 text-white/70 text-sm mb-6">

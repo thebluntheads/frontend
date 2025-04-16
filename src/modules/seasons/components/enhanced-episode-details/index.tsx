@@ -150,7 +150,7 @@ const EnhancedEpisodeDetails = ({
             </LocalizedClientLink>
             <LocalizedClientLink href="/sounds">
               <Button className="bg-gray-800 hover:bg-gray-700 text-white border-none px-6">
-                Explore Sounds
+                Explore Music
               </Button>
             </LocalizedClientLink>
             <LocalizedClientLink href="/products">
