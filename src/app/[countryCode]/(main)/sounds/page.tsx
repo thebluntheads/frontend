@@ -645,11 +645,10 @@ export default function SoundsPage() {
               {/* Title and description */}
               <div className="relative z-10 py-12">
                 <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-                  <span className="text-dark-green">Sound</span>Track Library
+                  <span className="text-dark-green">Blunt</span>Heads Soundtrack
                 </h1>
                 <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                  Explore our curated collection of premium audio tracks and
-                  albums
+                  All the music from Season 1 in one place.
                 </p>
               </div>
             </div>

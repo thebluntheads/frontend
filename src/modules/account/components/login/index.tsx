@@ -19,7 +19,8 @@ const Login = ({ setCurrentView }: Props) => {
     >
       <h1 className="text-large-semi uppercase mb-6">Welcome back</h1>
       <p className="text-center text-base-regular text-white mb-8">
-        Sign in to access an enhanced shopping experience.
+        Sign in to unlock your account, view seasons, and stay lit with the
+        latest drops.{" "}
       </p>
       <form className="w-full" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">

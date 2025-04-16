@@ -19,8 +19,10 @@ export default async function Footer() {
               />
             </LocalizedClientLink>
             <p className="mt-4 text-white/60 text-sm">
-              Premium streaming content for enthusiasts. Watch episodes, listen
-              to sounds, and shop for exclusive products.
+              The Blunt Heads is a premium animated series created for cannabis
+              culture lovers and comedy fans alike. Stream original episodes,
+              vibe to the official soundtrack, and shop exclusive merch — all in
+              one place.
             </p>
           </div>
 

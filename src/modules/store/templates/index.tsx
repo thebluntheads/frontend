@@ -30,13 +30,15 @@ const StoreTemplate = ({
       </div>
       <div className="w-full small:pl-8">
         <div className="mb-8">
-          <h1 
-            className="text-[2.5rem] leading-[3rem] font-bold text-white" 
+          <h1
+            className="text-[2.5rem] leading-[3rem] font-bold text-white"
             data-testid="store-page-title"
           >
-            Store
+            Blunt Heads Shop
           </h1>
-          <p className="text-white/70 mt-2 text-lg">Browse our collection of premium products</p>
+          <p className="text-white/70 mt-2 text-lg">
+            Gear up with official merch.
+          </p>
         </div>
         <div className="bg-black/20 backdrop-blur-sm rounded-xl p-6 border border-white/5 shadow-xl">
           <Suspense fallback={<SkeletonProductGrid />}>
