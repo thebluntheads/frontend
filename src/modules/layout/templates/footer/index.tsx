@@ -164,7 +164,8 @@ export default async function Footer() {
         {/* Copyright and Social Links */}
         <div className="flex flex-col md:flex-row items-center justify-between py-8 border-t border-white/5">
           <Text className="text-sm text-white/60">
-            © {new Date().getFullYear()} TheBluntHeads All rights reserved.
+            © {new Date().getFullYear()} John Boy Entertainment, Inc All rights
+            reserved.
           </Text>
           <div className="flex gap-4 mt-4 md:mt-0">
             <a

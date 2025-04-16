@@ -321,35 +321,36 @@ const EpisodePaymentPopup = ({
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-white/30" aria-hidden="true" />
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" aria-hidden="true" />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="mx-auto max-w-2xl rounded bg-white p-8 w-full max-h-[90vh] overflow-y-auto">
+        <Dialog.Panel className="mx-auto max-w-2xl rounded-xl bg-black border border-gray-800 p-8 w-full max-h-[90vh] overflow-y-auto shadow-xl">
+
           <div className="flex justify-between items-center mb-6">
-            <Dialog.Title className="text-2xl font-medium">
+            <Dialog.Title className="text-2xl font-medium text-white">
               Complete Your Purchase
             </Dialog.Title>
             <button
               onClick={onClose}
-              className="p-1 rounded-full hover:bg-gray-100"
+              className="p-1 rounded-full hover:bg-gray-800 text-white"
             >
               <XMark />
             </button>
           </div>
 
-          <div className="bg-white">
+          <div className="bg-black text-white">
             {/* Purchase Summary */}
-            <div className="mb-8 border-b border-gray-200 pb-6">
-              <h3 className="text-lg font-medium mb-4">Purchase Summary</h3>
-              <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="mb-8 border-b border-gray-800 pb-6">
+              <h3 className="text-lg font-medium mb-4 text-white">Purchase Summary</h3>
+              <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
                 <div className="flex justify-between mb-2">
-                  <span className="text-gray-600">Item</span>
+                  <span className="text-gray-400">Item</span>
                   <span className="font-medium">
                     {cart?.items?.[0]?.title || "Episode"}
                   </span>
                 </div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-gray-600">Price</span>
+                  <span className="text-gray-400">Price</span>
                   <span className="font-medium">
                     {cart?.region?.currency_code?.toUpperCase()}{" "}
                     {cart?.subtotal || 0}
@@ -364,7 +365,7 @@ const EpisodePaymentPopup = ({
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between mt-4 pt-4 border-t border-gray-200">
+                <div className="flex justify-between mt-4 pt-4 border-t border-gray-700">
                   <span className="font-medium">Total</span>
                   <span className="font-bold">
                     {cart?.region?.currency_code?.toUpperCase()}{" "}
@@ -375,31 +376,31 @@ const EpisodePaymentPopup = ({
             </div>
 
             {/* Customer Information Display */}
-            <div className="mb-8 border-b border-gray-200 pb-6">
-              <h3 className="text-lg font-medium mb-4">Customer Information</h3>
-              <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="mb-8 border-b border-gray-800 pb-6">
+              <h3 className="text-lg font-medium mb-4 text-white">Customer Information</h3>
+              <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
                 {isLoadingCustomer ? (
                   <div className="flex items-center justify-center py-4">
                     <div className="w-6 h-6 border-2 border-dark-green border-t-transparent rounded-full animate-spin"></div>
-                    <span className="ml-2 text-gray-600">
+                    <span className="text-gray-400">
                       Loading customer information...
                     </span>
                   </div>
                 ) : (
                   <>
                     <div className="flex justify-between mb-2">
-                      <span className="text-gray-600">Name</span>
+                      <span className="text-gray-400">Name</span>
                       <span className="font-medium">
                         {formData["shipping_address.first_name"]}{" "}
                         {formData["shipping_address.last_name"]}
                       </span>
                     </div>
                     <div className="flex justify-between mb-2">
-                      <span className="text-gray-600">Email</span>
+                      <span className="text-gray-400">Email</span>
                       <span className="font-medium">{formData.email}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Country</span>
+                      <span className="text-gray-400">Country</span>
                       <span className="font-medium">
                         {formData[
                           "shipping_address.country_code"

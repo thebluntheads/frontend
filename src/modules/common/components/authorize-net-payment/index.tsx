@@ -65,7 +65,7 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
                         })
                       }}
                       maxLength={19} // 16 digits + 3 spaces
-                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
+                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-[#057E03] focus:border-transparent"
                     />
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                       {paymentInfoMap[paymentMethod]?.icon}
@@ -92,57 +92,57 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
                       })
                     }}
                     autoComplete="off" // 🔥 or try "name" if "off" fails
-                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
+                    className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-[#057E03] focus:border-transparent"
                   />
                 </div>
 
                 {/* Expiry and CVV */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
+                <div className="flex items-center justify-between space-x-4">
+                  <div className="w-1/2 space-y-2">
                     <Text className="text-base font-medium text-gray-300 mb-1">
-                      Expiry Date
+                      Expiration
                     </Text>
                     <Input
-                      name="expiration"
+                      name="card-expiration"
                       type="text"
                       label="MM/YY"
                       value={cardData.expiration}
                       onChange={(e) => {
-                        // Apply mask: MM/YY format
+                        // Apply mask: only allow numbers and add / after 2 digits
                         const value = e.target.value.replace(/[^0-9]/g, "")
                         let formattedValue = value
-
-                        // Format as MM/YY
                         if (value.length > 2) {
                           formattedValue =
-                            value.slice(0, 2) + "/" + value.slice(2)
+                            value.substring(0, 2) + "/" + value.substring(2)
                         }
-
                         setCardData({
                           ...cardData,
                           expiration: formattedValue,
                         })
                       }}
-                      maxLength={5} // MM/YY format (5 characters)
-                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
+                      maxLength={5} // MM/YY format
+                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-[#057E03] focus:border-transparent"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="w-1/2 space-y-2">
                     <Text className="text-base font-medium text-gray-300 mb-1">
-                      Security Code (CVV)
+                      CVV
                     </Text>
                     <Input
-                      name="cvv"
+                      name="card-cvv"
                       type="text"
                       label="123"
                       value={cardData.cardCode}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        // Only allow numbers
+                        const value = e.target.value.replace(/[^0-9]/g, "")
                         setCardData({
                           ...cardData,
-                          cardCode: e.target.value,
+                          cardCode: value,
                         })
-                      }
-                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-dark-green focus:border-transparent"
+                      }}
+                      maxLength={4} // CVV is usually 3-4 digits
+                      className="bg-gray-800 border-gray-700 text-white text-base h-12 px-4 py-3 w-full rounded-lg focus:ring-2 focus:ring-[#057E03] focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -169,13 +169,12 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
 
               {errorMessage && (
                 <div className="mt-4 p-3 bg-red-900/50 border border-red-700 rounded-lg text-red-300 text-sm font-medium">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center text-red-400 mt-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
+                      className="h-5 w-5 mr-2"
                       fill="none"
+                      viewBox="0 0 24 24"
                       stroke="currentColor"
                       strokeWidth="2"
                       strokeLinecap="round"
@@ -195,7 +194,7 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
       </div>
 
       <button
-        className="mt-6 w-full h-14 text-base px-8 rounded-full bg-dark-green hover:bg-dark-green shadow-md text-white flex items-center justify-center"
+        className="mt-6 w-full h-14 text-base px-8 rounded-full bg-[#057E03] hover:bg-[#61C65F] shadow-md text-white flex items-center justify-center transition-colors duration-200"
         onClick={handleSubmit}
         disabled={isLoading}
       >
