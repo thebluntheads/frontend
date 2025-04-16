@@ -101,19 +101,33 @@ async function getCountryCode(
 }
 
 /**
- * Middleware to handle region selection and onboarding status.
+ * Middleware to handle region selection, onboarding status, and age verification.
  */
 export async function middleware(request: NextRequest) {
+  // Check for age verification cookie
+  const ageVerifiedCookie = request.cookies.get("ageVerified")
+  const isAgeVerified = ageVerifiedCookie?.value === "true"
+  
+  // Get current path segments
+  const pathSegments = request.nextUrl.pathname.split("/")
+  const countryCodeFromUrl = pathSegments[1]?.toLowerCase()
+  
+  // Check if the current path is the restricted page
+  const isRestrictedPage = pathSegments.length > 2 && pathSegments[2] === "restricted"
+  
+  // If age verification is false and not already on restricted page, redirect to restricted
+  if (ageVerifiedCookie?.value === "false" && !isRestrictedPage) {
+    const restrictedUrl = `${request.nextUrl.origin}/${countryCodeFromUrl}/restricted`
+    return NextResponse.redirect(restrictedUrl, 307)
+  }
+  
+  // Continue with normal region handling
   let redirectUrl = request.nextUrl.href
-
   let response = NextResponse.redirect(redirectUrl, 307)
-
   let cacheIdCookie = request.cookies.get("_medusa_cache_id")
-
   let cacheId = cacheIdCookie?.value || crypto.randomUUID()
 
   const regionMap = await getRegionMap(cacheId)
-
   const countryCode = regionMap && (await getCountryCode(request, regionMap))
 
   const urlHasCountryCode =
