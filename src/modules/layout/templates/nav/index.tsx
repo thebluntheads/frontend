@@ -13,7 +13,13 @@ export default async function Nav() {
     <div className="absolute top-0 inset-x-0 z-50 group">
       <header className="h-20 mx-auto duration-200">
         <nav className="px-8 md:px-12 text-white flex items-center justify-between w-full h-full text-small-regular max-w-[1440px] mx-auto">
-          <div className="flex items-center h-full">
+          {/* Mobile burger menu */}
+          <div className="sm:hidden flex items-center h-full">
+            <SideMenu regions={regions} />
+          </div>
+          
+          {/* Logo - centered on mobile */}
+          <div className="flex items-center h-full justify-center sm:justify-start w-full sm:w-auto">
             <LocalizedClientLink
               href="/"
               className="hover:opacity-80 transition-opacity"
@@ -22,13 +28,9 @@ export default async function Nav() {
               <img
                 src="/assets/logo.png"
                 alt="Logo"
-                className="h-10 object-contain"
+                className="h-8 sm:h-10 object-contain" /* Smaller on mobile */
               />
             </LocalizedClientLink>
-          </div>
-
-          <div className="sm:hidden flex items-center h-full">
-            <SideMenu regions={regions} />
           </div>
 
           <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
