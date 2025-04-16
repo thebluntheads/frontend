@@ -4,6 +4,7 @@ import UnderlineLink from "@modules/common/components/interactive-link"
 
 import AccountNav from "../components/account-nav"
 import { HttpTypes } from "@medusajs/types"
+import Link from "next/link"
 
 interface AccountLayoutProps {
   customer: HttpTypes.StoreCustomer | null
@@ -47,7 +48,9 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
               page.
             </p>
             <div className="text-light-green hover:text-light-green transition-colors duration-200">
-              <UnderlineLink href="/faq">Visit FAQs Page</UnderlineLink>
+              <Link href="/faq" className="text-light-green">
+                Visit FAQs Page
+              </Link>
             </div>
           </div>
         </div>
