@@ -20,10 +20,12 @@ const Register = ({ setCurrentView }: Props) => {
       className="max-w-sm flex flex-col items-center"
       data-testid="register-page"
     >
-      <h1 className="text-large-semi uppercase mb-6">Become a Member</h1>
+      <h1 className="text-large-semi uppercase mb-6">
+        Sign Up For Full Access
+      </h1>
       <p className="text-center text-base-regular text-white mb-4">
-        Create your Member profile, and get access to our serie and shopping
-        experience.
+        Create your profile, and get full access to our series, exclusive drops
+        and member-only shopping experience.
       </p>
       <form className="w-full flex flex-col" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
