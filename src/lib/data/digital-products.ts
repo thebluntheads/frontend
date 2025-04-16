@@ -10,26 +10,29 @@ export const getCustomerDigitalProducts = async (
   product_id?: string,
   parent_id?: string
 ) => {
-  console.log({ parent_id })
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
-
-  const next = {
-    ...(await getCacheOptions("products")),
-  }
-  const { digital_product } = await sdk.client.fetch<{
-    digital_product: DigitalProduct
-  }>(
-    `/store/customers/me/digital-products?product_id=${product_id}&parent_id=${parent_id}`,
-    {
-      headers,
-      next,
-      cache: "force-cache",
+  try {
+    const headers = {
+      ...(await getAuthHeaders()),
     }
-  )
 
-  return digital_product as DigitalProduct
+    // Use no-store cache policy to always get fresh data
+    // This prevents the 5-second issue where purchases appear and then disappear
+    const { digital_product } = await sdk.client.fetch<{
+      digital_product: DigitalProduct
+    }>(
+      `/store/customers/me/digital-products?product_id=${product_id}&parent_id=${parent_id}`,
+      {
+        headers,
+        cache: "no-store", // Force fresh data every time
+        next: { revalidate: 0 }, // Ensure no caching
+      }
+    )
+
+    return digital_product as DigitalProduct
+  } catch (error) {
+    console.error(`Error verifying purchase for product ${product_id}:`, error)
+    return {} as DigitalProduct // Return empty object instead of throwing
+  }
 }
 
 export const getDigitalProductByMediaType = async (mediaType: string) => {

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@medusajs/ui"
 import { X } from "lucide-react"
 import { addToCart } from "@lib/data/cart"
+import { retrieveCustomer } from "@lib/data/customer"
 
 interface PromoPopupProps {
   countryCode: string
@@ -40,6 +41,11 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
   const handleAddToCartAndCheckout = async (e: React.MouseEvent) => {
     e.stopPropagation()
     setIsLoading(true)
+    const customer = await retrieveCustomer()
+
+    if (!customer) {
+      return router.push(`/${countryCode}/account?callbackUrl=/${countryCode}`)
+    }
 
     try {
       // Add first item to cart

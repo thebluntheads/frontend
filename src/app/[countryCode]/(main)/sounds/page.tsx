@@ -58,6 +58,9 @@ export default function SoundsPage() {
   const [purchasedSounds, setPurchasedSounds] = useState<
     Record<string, boolean>
   >({})
+  const [purchasedAlbums, setPurchasedAlbums] = useState<
+    Record<string, boolean>
+  >({})
   const [purchasedContentUrl, setPurchasedContentUrl] = useState<
     Record<string, string>
   >({})
@@ -186,6 +189,36 @@ export default function SoundsPage() {
 
   // Use a ref to track if we're currently switching tracks to prevent rapid state changes
   const isChangingTrack = useRef(false)
+
+  useEffect(() => {
+    const checkPurchases = async () => {
+      try {
+        // Create a map to store purchase status for each sound
+        const purchaseAlbumStatus: Record<string, boolean> = {}
+
+        // Check purchase status for each sound
+        for (const album of albums) {
+          try {
+            const digitalProduct = await getCustomerDigitalProducts(album.id)
+            purchaseAlbumStatus[album.id] = !!digitalProduct?.id
+          } catch (error) {
+            console.log(`Error checking purchase for sound ${album.id}:`, error)
+            purchaseAlbumStatus[album.id] = false
+          }
+        }
+
+        setPurchasedAlbums(purchaseAlbumStatus)
+
+        console.log("Purchased sounds:", purchaseAlbumStatus)
+      } catch (error) {
+        console.log("Error checking purchases:", error)
+      }
+    }
+
+    if (albums.length > 0) {
+      checkPurchases()
+    }
+  }, [albums])
 
   // Check if user has purchased sounds
   useEffect(() => {
@@ -721,8 +754,9 @@ export default function SoundsPage() {
                         <span className="text-gray-400">
                           {albumTracks[album.id].length} tracks
                         </span>
-                        {Object.values(purchasedSounds).filter((ps) => !ps)
-                          .length === albumTracks[album.id].length ? (
+                        {Object.keys(purchasedAlbums).length &&
+                        Object.values(purchasedAlbums).filter((ps) => !ps)
+                          .length ? (
                           <>
                             <span className="text-gray-400">
                               {album.product_variant && (
