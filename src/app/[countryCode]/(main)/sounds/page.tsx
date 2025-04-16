@@ -735,7 +735,7 @@ export default function SoundsPage() {
                   <div className="p-6 flex flex-col md:flex-row gap-6">
                     <div className="w-full md:w-48 h-48 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
-                        src="/assets/preview.png"
+                        src="/assets/music-cover.png"
                         alt={album.name}
                         width={192}
                         height={192}
@@ -941,7 +941,7 @@ export default function SoundsPage() {
             <div className="mb-6 flex gap-4">
               <div className="w-24 h-24 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
                 <Image
-                  src="/assets/preview.png"
+                  src="/assets/music-cover.png"
                   alt={currentSound.name || "Sound"}
                   width={96}
                   height={96}

@@ -41,7 +41,7 @@ const FeaturedSounds = ({ sounds }: FeaturedSoundsProps) => {
             >
               <div className="relative aspect-square">
                 <Image
-                  src="/assets/preview.png"
+                  src="/assets/music-cover.png"
                   alt={sound.name || "Sound thumbnail"}
                   fill
                   className="object-cover"
