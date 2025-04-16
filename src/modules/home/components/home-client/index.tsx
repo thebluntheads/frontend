@@ -106,21 +106,17 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
             priority
           />
 
-          {/* Overlay button */}
-          <div className="absolute bottom-4 right-4">
+          {/* Overlay buttons */}
+          <div className="absolute bottom-4 right-4 flex gap-3">
             <Button
               className="bg-dark-green hover:bg-light-green text-white font-medium px-4 py-1 text-sm rounded-full"
-              onClick={handleAddToCartAndCheckout}
-              disabled={isLoading}
+              onClick={(e) => {
+                e.stopPropagation()
+                router.push(`/${countryCode}/giveaway-rules`)
+                setIsVisible(false)
+              }}
             >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  <span>Adding...</span>
-                </div>
-              ) : (
-                "Buy Now"
-              )}
+              Giveaway Rules
             </Button>
           </div>
         </div>
