@@ -11,7 +11,7 @@ import ErrorMessage from "@modules/checkout/components/error-message"
 import Divider from "@modules/common/components/divider"
 import MedusaRadio from "@modules/common/components/radio"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 const PICKUP_OPTION_ON = "__PICKUP_ON"
 const PICKUP_OPTION_OFF = "__PICKUP_OFF"
@@ -163,22 +163,21 @@ const Shipping: React.FC<ShippingProps> = ({
   }, [isOpen])
 
   // Effect to auto-proceed to payment step for digital items
+  const hasAutoProcessedRef = useRef(false);
+  
   useEffect(() => {
-    if (
-      isDigital &&
-      isOpen &&
-      cart.shipping_methods &&
-      cart.shipping_methods.length > 0
-    ) {
+    // Only run this effect once when shipping methods are available
+    if (isDigital && Number(_shippingMethods?.length) > 0 && !hasAutoProcessedRef.current) {
+      hasAutoProcessedRef.current = true;
       handleSetShippingMethod(_shippingMethods?.[0]?.id!, "shipping")
-
+      
       // Auto-proceed to payment step after a short delay
       const timer = setTimeout(() => {
         router.push(pathname + "?step=payment", { scroll: false })
       }, 300)
       return () => clearTimeout(timer)
     }
-  }, [isDigital, isOpen, cart.shipping_methods, router, pathname])
+  }, [isDigital, _shippingMethods, handleSetShippingMethod, pathname, router])
 
   if (isDigital) {
     return
