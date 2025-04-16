@@ -46,7 +46,7 @@ const VideoPlayer = ({
       <video
         ref={videoRef}
         src={videoUrl}
-        className={`absolute inset-0 w-full h-full object-cover ${
+        className={`absolute inset-0 w-full h-full object-contain ${
           isPlaying ? "opacity-100" : "opacity-0"
         }`}
         onEnded={handleVideoEnd}

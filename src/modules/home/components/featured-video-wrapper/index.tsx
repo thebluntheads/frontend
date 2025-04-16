@@ -46,7 +46,7 @@ const FeaturedVideoWrapper = () => {
             <video
               ref={videoRef}
               src={videoUrl}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
               onEnded={handleVideoEnd}
               playsInline
               autoPlay
