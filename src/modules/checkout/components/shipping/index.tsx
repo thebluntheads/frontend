@@ -63,17 +63,29 @@ const Shipping: React.FC<ShippingProps> = ({
   const [shippingMethodId, setShippingMethodId] = useState<string | null>(
     cart.shipping_methods?.at(-1)?.shipping_option_id || null
   )
-
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
 
   const isOpen = searchParams.get("step") === "delivery"
+  const isDigital = cart?.items?.some(
+    //@ts-ignore
+    (i) => i?.product_type_id === "ptyp_01JRX8NFV7EZVBXKBJ9ZHSEJ0W"
+  )
 
-  const _shippingMethods = availableShippingMethods?.filter(
+  const digitalShipping = availableShippingMethods?.filter(
+    (sm) =>
+      //@ts-ignore
+      sm.service_zone?.fulfillment_set?.type !== "pickup" &&
+      sm.shipping_profile_id === "sp_01JRVCE07071J57SJ5663VGA02"
+  )
+
+  const normalShipping = availableShippingMethods?.filter(
     //@ts-ignore
     (sm) => sm.service_zone?.fulfillment_set?.type !== "pickup"
   )
+
+  const _shippingMethods = isDigital ? digitalShipping : normalShipping
 
   const _pickupMethods = availableShippingMethods?.filter(
     //@ts-ignore

@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from "react"
 import PaymentIcon from "@modules/common/icons/paymentIcon"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import { AuthorizeNetContainer } from "../payment-container/authorize-net-container"
+import { placeDigitalProductOrder } from "@lib/data/digital-cart"
 
 const paymentMethods = [
   "/images/payment/master.png",
@@ -48,6 +49,11 @@ const Payment = ({
 }) => {
   const activeSession = cart.payment_collection?.payment_sessions?.find(
     (paymentSession: any) => paymentSession.status === "pending"
+  )
+
+  const isDigital = cart?.items?.some(
+    //@ts-ignore
+    (i) => i?.product_type_id === "ptyp_01JRX8NFV7EZVBXKBJ9ZHSEJ0W"
   )
 
   const [isLoading, setIsLoading] = useState(false)
@@ -98,13 +104,23 @@ const Payment = ({
   )
 
   const onPaymentCompleted = async () => {
-    await placeOrder()
-      .catch((err) => {
-        setErrorMessage(err.message)
-      })
-      .finally(() => {
-        setSubmitting(false)
-      })
+    if (!isDigital) {
+      await placeOrder()
+        .catch((err) => {
+          setErrorMessage(err.message)
+        })
+        .finally(() => {
+          setSubmitting(false)
+        })
+    } else {
+      await placeDigitalProductOrder()
+        .catch((err) => {
+          setErrorMessage(err.message)
+        })
+        .finally(() => {
+          setSubmitting(false)
+        })
+    }
   }
 
   const handleSubmit = async () => {

@@ -35,6 +35,11 @@ const Addresses = ({
       : true
   )
 
+  const isDigital = cart?.items?.some(
+    //@ts-ignore
+    (i) => i?.product_type_id === "ptyp_01JRX8NFV7EZVBXKBJ9ZHSEJ0W"
+  )
+
   const handleEdit = () => {
     router.push(pathname + "?step=address")
   }
@@ -48,7 +53,7 @@ const Addresses = ({
           level="h2"
           className="flex flex-row text-[2rem] leading-[2.5rem] font-bold text-white gap-x-2 items-baseline"
         >
-          Shipping Address
+          {isDigital ? "Checkout Details" : "Shipping Address"}
           {!isOpen && <CheckCircleSolid className="text-light-green" />}
         </Heading>
         {!isOpen && cart?.shipping_address && (

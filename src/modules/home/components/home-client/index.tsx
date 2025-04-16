@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Button } from "@medusajs/ui"
 import { X } from "lucide-react"
+import { addToCart } from "@lib/data/cart"
 
 interface PromoPopupProps {
   countryCode: string
@@ -12,6 +13,7 @@ interface PromoPopupProps {
 
 const HomeClient = ({ countryCode }: PromoPopupProps) => {
   const [isVisible, setIsVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   // Check if the popup has been closed before
@@ -35,9 +37,33 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
     localStorage.setItem("promoPopupClosed", "true")
   }
 
-  const handleClick = () => {
-    setIsVisible(false)
-    router.push(`/${countryCode}/seasons/season-1`)
+  const handleAddToCartAndCheckout = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsLoading(true)
+
+    try {
+      // Add first item to cart
+      await addToCart({
+        variantId: "variant_01JRVR3PRSEV42K0Q9KKN9WX94",
+        quantity: 1,
+        countryCode,
+      })
+
+      // Add second item to cart
+      await addToCart({
+        variantId: "variant_01JRVTERWFJQ9HXWZP17H13HXT",
+        quantity: 1,
+        countryCode,
+      })
+
+      // Close popup and redirect to checkout
+      setIsVisible(false)
+      router.push(`/${countryCode}/checkout`)
+    } catch (error) {
+      console.error("Error adding items to cart:", error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   if (!isVisible) return null
@@ -54,7 +80,7 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute -top-3 -right-3 bg-yellow-500 rounded-full p-1 text-white hover:bg-yellow-600 transition-colors z-10 shadow-lg"
+          className="absolute -top-3 -right-3 bg-dark-green rounded-full p-1 text-white hover:bg-light-green transition-colors z-10 shadow-lg"
           aria-label="Close popup"
         >
           <X size={20} />
@@ -63,7 +89,7 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
         {/* Banner image */}
         <div
           className="relative cursor-pointer rounded-lg overflow-hidden shadow-xl"
-          onClick={handleClick}
+          onClick={handleAddToCartAndCheckout}
         >
           <Image
             src="/assets/Banner.jpeg"
@@ -74,13 +100,21 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
             priority
           />
 
-          {/* Optional overlay button */}
+          {/* Overlay button */}
           <div className="absolute bottom-4 right-4">
             <Button
-              className="bg-dark-green hover:bg-dark-green text-white font-medium px-4 py-1 text-sm rounded-full"
-              onClick={handleClick}
+              className="bg-dark-green hover:bg-light-green text-white font-medium px-4 py-1 text-sm rounded-full"
+              onClick={handleAddToCartAndCheckout}
+              disabled={isLoading}
             >
-              View Offer
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  <span>Adding...</span>
+                </div>
+              ) : (
+                "Buy Now"
+              )}
             </Button>
           </div>
         </div>
