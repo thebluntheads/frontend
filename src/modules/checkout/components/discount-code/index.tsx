@@ -59,7 +59,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="txt-medium text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+              className="txt-medium text-dark-green hover:text-light-green"
               data-testid="add-discount-button"
             >
               Add Promotion Code(s)
@@ -128,6 +128,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                               "percentage"
                                 ? `${promotion.application_method.value}%`
                                 : convertToLocale({
+                                    //@ts-ignore
                                     amount: promotion.application_method.value,
                                     currency_code:
                                       promotion.application_method

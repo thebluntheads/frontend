@@ -36,7 +36,7 @@ const AddressSelect = ({
     <Listbox onChange={handleSelect} value={selectedAddress?.id}>
       <div className="relative">
         <Listbox.Button
-          className="relative w-full flex justify-between items-center px-4 py-[10px] text-left bg-black cursor-default focus:outline-none border rounded-rounded focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-gray-300 focus-visible:ring-offset-2 focus-visible:border-gray-300 text-base-regular"
+          className="relative w-full flex justify-between items-center px-4 py-[10px] text-left bg-gray-800 text-white cursor-default focus:outline-none border border-gray-700 rounded-lg focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-[#057E03] focus-visible:ring-offset-gray-900 focus-visible:ring-offset-2 focus-visible:border-[#057E03] text-base-regular"
           data-testid="shipping-address-select"
         >
           {({ open }) => (
@@ -61,7 +61,7 @@ const AddressSelect = ({
           leaveTo="opacity-0"
         >
           <Listbox.Options
-            className="absolute z-20 w-full overflow-auto text-small-regular bg-black border border-top-0 max-h-60 focus:outline-none sm:text-sm"
+            className="absolute z-20 w-full overflow-auto text-small-regular bg-gray-900 border border-gray-800 rounded-b-lg max-h-60 focus:outline-none sm:text-sm shadow-lg"
             data-testid="shipping-address-options"
           >
             {addresses.map((address) => {
@@ -69,7 +69,7 @@ const AddressSelect = ({
                 <Listbox.Option
                   key={address.id}
                   value={address.id}
-                  className="cursor-default select-none relative pl-6 pr-10 hover:bg-gray-50 py-4"
+                  className="cursor-default select-none relative pl-6 pr-10 hover:bg-gray-800 py-4 text-white transition-colors duration-150"
                   data-testid="shipping-address-option"
                 >
                   <div className="flex gap-x-4 items-start">
@@ -82,7 +82,7 @@ const AddressSelect = ({
                         {address.first_name} {address.last_name}
                       </span>
                       {address.company && (
-                        <span className="text-small-regular text-ui-fg-base">
+                        <span className="text-small-regular text-gray-400">
                           {address.company}
                         </span>
                       )}
