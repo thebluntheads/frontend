@@ -1,5 +1,6 @@
 import { Text } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import NewsletterForm from "./newsletter-form"
 
 export default async function Footer() {
   return (
@@ -24,6 +25,17 @@ export default async function Footer() {
               vibe to the official soundtrack, and shop exclusive merch — all in
               one place.
             </p>
+          </div>
+
+          {/* Newsletter Signup */}
+          <div className="max-w-sm">
+            <h3 className="text-base font-medium text-white mb-4">
+              SIGNUP FOR EMAILS
+            </h3>
+            <p className="text-white/60 text-sm mb-4">
+              Sign up to get updates, exclusives and more
+            </p>
+            <NewsletterForm />
           </div>
 
           {/* Navigation Links */}
