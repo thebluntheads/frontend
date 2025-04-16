@@ -55,17 +55,17 @@ export default async function Footer() {
                 <li>
                   <LocalizedClientLink
                     className="hover:text-white transition-colors"
-                    href="/sounds"
+                    href="/store"
                   >
-                    Sounds
+                    Store
                   </LocalizedClientLink>
                 </li>
                 <li>
                   <LocalizedClientLink
                     className="hover:text-white transition-colors"
-                    href="/store"
+                    href="/sounds"
                   >
-                    Store
+                    Music
                   </LocalizedClientLink>
                 </li>
                 <li>

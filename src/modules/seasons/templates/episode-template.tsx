@@ -349,7 +349,7 @@ export default function EpisodeTemplate({
                         onClick={handleAddToCart}
                         disabled={isAddingToCart}
                       >
-                        {isAddingToCart ? "Adding..." : "Buy Now"}
+                        {isAddingToCart ? "Adding..." : "Buy Episode"}
                       </Button>
                     </>
                   )}

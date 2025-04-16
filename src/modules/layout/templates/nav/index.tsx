@@ -17,7 +17,7 @@ export default async function Nav() {
           <div className="sm:hidden flex items-center h-full">
             <SideMenu regions={regions} />
           </div>
-          
+
           {/* Logo - centered on mobile */}
           <div className="flex items-center h-full justify-center sm:justify-start w-full sm:w-auto">
             <LocalizedClientLink
@@ -37,13 +37,6 @@ export default async function Nav() {
             <div className="hidden small:flex items-center gap-x-6 h-full">
               <LocalizedClientLink
                 className="text-white hover:text-white/80 transition-colors text-sm font-medium"
-                href="/store"
-                data-testid="nav-store-link"
-              >
-                Store
-              </LocalizedClientLink>
-              <LocalizedClientLink
-                className="text-white hover:text-white/80 transition-colors text-sm font-medium"
                 href="/seasons"
                 data-testid="nav-episodes-link"
               >
@@ -51,10 +44,17 @@ export default async function Nav() {
               </LocalizedClientLink>
               <LocalizedClientLink
                 className="text-white hover:text-white/80 transition-colors text-sm font-medium"
+                href="/store"
+                data-testid="nav-store-link"
+              >
+                Store
+              </LocalizedClientLink>
+              <LocalizedClientLink
+                className="text-white hover:text-white/80 transition-colors text-sm font-medium"
                 href="/sounds"
                 data-testid="nav-sounds-link"
               >
-                Sounds
+                Music
               </LocalizedClientLink>
               <LocalizedClientLink
                 className="text-white hover:text-white/80 transition-colors text-sm font-medium"

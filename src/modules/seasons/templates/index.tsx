@@ -262,7 +262,7 @@ export default function SeasonTemplate({
                       onClick={handleAddToCart}
                       disabled={isAddingToCart}
                     >
-                      {isAddingToCart ? "Adding..." : "Buy Now"}
+                      {isAddingToCart ? "Adding..." : `Buy Full ${season.name}`}
                     </Button>
                   </div>
                 ) : (
