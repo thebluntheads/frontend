@@ -655,9 +655,9 @@ export default function SoundsPage() {
       </div>
       {/* Elegant sound browser header with waveform */}
       <div className="w-full bg-black py-10">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col items-center justify-center text-center mb-8">
-            <div className="w-full max-w-4xl relative">
+        <div className="w-full px-3 sm:px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center text-center mb-4 sm:mb-6">
+            <div className="w-full relative">
               {/* Animated waveform background */}
               <div className="absolute inset-0 flex items-center justify-center opacity-20">
                 <div className="w-full h-20 flex items-center justify-center gap-1">
@@ -676,11 +676,11 @@ export default function SoundsPage() {
               </div>
 
               {/* Title and description */}
-              <div className="relative z-10 py-12">
-                <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
+              <div className="relative z-10 py-6 sm:py-8">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
                   <span className="text-dark-green">Blunt</span>Heads Soundtrack
                 </h1>
-                <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                <p className="text-lg sm:text-xl text-gray-300 max-w-full sm:max-w-2xl mx-auto">
                   All the music from Season 1 in one place.
                 </p>
               </div>
@@ -703,13 +703,13 @@ export default function SoundsPage() {
       `}</style>
 
       {/* Main content */}
-      <div className="container mx-auto px-6 py-12">
+      <div className="w-full px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
         <Tabs
           value={activeAlbumId || ""}
           onValueChange={setActiveAlbumId}
           className="w-full"
         >
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-4 sm:mb-6 md:mb-8">
             <TabsList className="bg-gray-900/50 p-1 rounded-lg overflow-x-auto">
               {albums.map((album) => (
                 <TabsTrigger
@@ -730,16 +730,19 @@ export default function SoundsPage() {
                   No tracks available for this album.
                 </p>
               ) : (
-                <div className="bg-gray-900/30 rounded-xl overflow-hidden border border-gray-800">
+                <div className="bg-gray-900/30 rounded-xl overflow-hidden border border-gray-800 w-full">
                   {/* Album Info - Only once */}
-                  <div className="p-6 flex flex-col md:flex-row gap-6">
-                    <div className="w-full md:w-48 h-48 rounded-lg overflow-hidden flex-shrink-0">
+                  <div className="p-4 sm:p-6 flex flex-col md:flex-row gap-4 sm:gap-6">
+                    <div
+                      className="w-full md:w-48 h-40 sm:h-48 rounded-lg overflow-hidden flex-shrink-0"
+                      style={{ maxWidth: "100%" }}
+                    >
                       <Image
-                        src="/assets/music-cover.png"
+                        src="/assets/album-cover.png"
                         alt={album.name}
                         width={192}
                         height={192}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="flex-1">
@@ -801,16 +804,20 @@ export default function SoundsPage() {
 
                   {/* Track List */}
                   <div className="border-t border-gray-800">
-                    <div className="p-4 flex justify-between text-gray-400 text-sm uppercase font-medium">
-                      <div className="flex items-center gap-4">
-                        <span className="w-10"></span>
-                        <span className="w-8 text-center">#</span>
+                    <div className="p-3 sm:p-4 flex justify-between text-gray-400 text-xs sm:text-sm uppercase font-medium">
+                      <div className="flex items-center gap-2 sm:gap-4">
+                        <span className="w-8 sm:w-10"></span>
+                        <span className="w-6 sm:w-8 text-center hidden sm:inline">
+                          #
+                        </span>
                         <span>Title</span>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className="w-16 text-right">Duration</span>
-                        <span className="w-20 text-right">Price</span>
-                        <span className="w-20 text-right">Action</span>
+                      <div className="flex items-center gap-2 sm:gap-4">
+                        <span className="w-14 sm:w-16 text-right hidden sm:inline">
+                          Duration
+                        </span>
+                        <span className="w-16 sm:w-20 text-right">Price</span>
+                        <span className="w-16 sm:w-20 text-right">Action</span>
                       </div>
                     </div>
 
@@ -818,7 +825,7 @@ export default function SoundsPage() {
                       {albumTracks[album.id].map((track, index) => (
                         <div
                           key={track.id}
-                          className="p-4 flex justify-between items-center hover:bg-gray-800/30 transition-colors group relative"
+                          className="p-3 sm:p-4 flex justify-between items-center hover:bg-gray-800/30 transition-colors group relative"
                         >
                           {playingTrackId === track.id && (
                             <div className="absolute left-0 top-0 bottom-0 w-full h-full bg-dark-green/10 z-0"></div>
@@ -834,32 +841,33 @@ export default function SoundsPage() {
                               }}
                             ></div>
                           )}
-                          <div className="flex items-center gap-4 relative z-10">
+                          <div className="flex items-center gap-2 sm:gap-4 relative z-10">
                             <PlayButton
                               isPlaying={playingTrackId === track.id}
                               onClick={() => togglePlay(track.id)}
-                              className="opacity-100 bg-dark-green hover:bg-dark-green"
+                              className="opacity-100 bg-dark-green hover:bg-dark-green w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0"
                             />
-                            <div className="w-8 flex justify-center items-center">
+                            <div className="w-6 sm:w-8 justify-center items-center hidden sm:flex">
                               <span className="text-center text-gray-500">
                                 {index + 1}
                               </span>
                             </div>
-                            <div>
-                              <h4 className="text-white font-medium">
+                            <div className="max-w-[180px] sm:max-w-full overflow-hidden">
+                              <h4 className="text-white font-medium text-sm sm:text-base truncate">
                                 {track.name}
                               </h4>
-                              <p className="text-gray-500 text-sm">
-                                Artist Name
+                              <p className="text-gray-500 text-xs sm:text-sm truncate">
+                                {(track?.product_variant?.metadata
+                                  ?.artist as string) || "TheBluntHeads"}
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-4 relative z-10">
-                            <span className="text-gray-400 w-16 text-right">
+                          <div className="flex items-center gap-2 sm:gap-4 relative z-10">
+                            <span className="text-gray-400 w-14 sm:w-16 text-right hidden sm:inline">
                               {(track?.product_variant?.metadata
                                 ?.duration as string) || "3:00"}
                             </span>
-                            <div className="w-20 text-right">
+                            <div className="w-16 sm:w-20 text-right">
                               {track.product_variant && (
                                 <span className="text-dark-green font-medium text-xs">
                                   {getDigitalProductPrice({
@@ -868,14 +876,14 @@ export default function SoundsPage() {
                                 </span>
                               )}
                             </div>
-                            <div className="w-20 text-right">
+                            <div className="w-16 sm:w-20 text-right">
                               {!purchasedSounds[track.id] ? (
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleAddToCart(track)}
                                   disabled={isAddingToCart}
-                                  className="text-xs bg-dark-green hover:bg-dark-green text-white px-3 py-1 h-8"
+                                  className="text-xs bg-dark-green hover:bg-dark-green text-white px-2 sm:px-3 py-1 h-7 sm:h-8"
                                 >
                                   {isAddingToCart ? "Adding..." : "Buy"}
                                 </Button>
@@ -886,7 +894,7 @@ export default function SoundsPage() {
                                     size="sm"
                                     onClick={() => handleDownloadSound(track)}
                                     disabled={isDownloading[track.id]}
-                                    className="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 h-8"
+                                    className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 sm:px-3 py-1 h-7 sm:h-8"
                                   >
                                     {isDownloading[track.id]
                                       ? "preparing..."
