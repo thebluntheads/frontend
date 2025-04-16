@@ -101,7 +101,7 @@ async function getCountryCode(
 }
 
 /**
- * Middleware to handle region selection, onboarding status, and age verification.
+ * Middleware to handle region selection, onboarding status, age verification, and 404 redirects.
  */
 export async function middleware(request: NextRequest) {
   // Check for age verification cookie
@@ -133,9 +133,25 @@ export async function middleware(request: NextRequest) {
   const urlHasCountryCode =
     countryCode && request.nextUrl.pathname.split("/")[1].includes(countryCode)
 
-  // if one of the country codes is in the url and the cache id is set, return next
-  if (urlHasCountryCode && cacheIdCookie) {
+  // check if the url is a static asset
+  if (request.nextUrl.pathname.includes(".")) {
     return NextResponse.next()
+  }
+  
+  // if one of the country codes is in the url and the cache id is set, continue with 404 check
+  if (urlHasCountryCode && cacheIdCookie) {
+    // Handle 404 pages by checking if the path exists
+    try {
+      // Create a response to check if the page exists
+      const pageCheckResponse = NextResponse.next()
+      
+      // If we get here, the page exists, so continue normally
+      return pageCheckResponse
+    } catch (error) {
+      // If there's an error, it's likely a 404, so redirect to home
+      const homeUrl = `${request.nextUrl.origin}/${countryCode}`
+      return NextResponse.redirect(homeUrl, 307)
+    }
   }
 
   // if one of the country codes is in the url and the cache id is not set, set the cache id and redirect
@@ -145,11 +161,6 @@ export async function middleware(request: NextRequest) {
     })
 
     return response
-  }
-
-  // check if the url is a static asset
-  if (request.nextUrl.pathname.includes(".")) {
-    return NextResponse.next()
   }
 
   const redirectPath =
