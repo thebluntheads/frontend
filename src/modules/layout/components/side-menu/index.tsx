@@ -220,7 +220,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                         )
                       })}
                     </ul>
-                    <div className="flex flex-col gap-y-6">
+                    {/* <div className="flex flex-col gap-y-6">
                       <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-4 mb-4">
                         <div
                           className="flex justify-between items-center text-white/80 hover:text-white transition-colors"
@@ -263,7 +263,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                         © {new Date().getFullYear()} TheBluntHeads All rights
                         reserved.
                       </Text>
-                    </div>
+                    </div> */}
                   </div>
                 </PopoverPanel>
               </Transition>
