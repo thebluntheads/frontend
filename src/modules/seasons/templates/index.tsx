@@ -24,6 +24,7 @@ import {
 import { StoreCart, StoreCartShippingOption } from "@medusajs/types"
 import { listCartPaymentMethods } from "@lib/data/payment"
 import EpisodePaymentPopup from "../components/episode-payment-popup"
+import { useCustomer } from "@lib/hooks/use-customer"
 
 export default function SeasonTemplate({
   season,
@@ -32,6 +33,17 @@ export default function SeasonTemplate({
   season: DigitalProduct
   countryCode: string
 }) {
+  const { customer, isLoading: isLoadingCustomer } = useCustomer()
+  const [isRedirecting, setIsRedirecting] = useState(false)
+  
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoadingCustomer && !customer && !isRedirecting) {
+      setIsRedirecting(true)
+      window.location.href = `/${countryCode}/account`
+    }
+  }, [customer, isLoadingCustomer, isRedirecting, countryCode])
+
   const [region, setRegion] = useState<any>(null)
   const [episodes, setEpisodes] = useState<DigitalProduct[]>([])
   const [count, setCount] = useState(0)
