@@ -719,8 +719,8 @@ export default function SoundsPage() {
           onValueChange={setActiveAlbumId}
           className="w-full"
         >
-          <div className="flex justify-between items-center mb-4 sm:mb-6 md:mb-8">
-            <TabsList className="bg-gray-900/50 p-1 rounded-lg overflow-x-auto">
+          <div className="flex justify-center items-center mb-4 sm:mb-6 md:mb-8 mx-auto max-w-screen-xl lg:max-w-4xl xl:max-w-5xl">
+            <TabsList className="bg-gray-900/50 p-1 rounded-lg overflow-x-auto mx-auto">
               {albums.map((album) => (
                 <TabsTrigger
                   key={album.id}
@@ -734,13 +734,13 @@ export default function SoundsPage() {
           </div>
 
           {albums.map((album) => (
-            <TabsContent key={album.id} value={album.id} className="space-y-6">
+            <TabsContent key={album.id} value={album.id} className="space-y-6 mx-auto">
               {(albumTracks[album.id] || []).length === 0 ? (
                 <p className="text-white text-center">
                   No tracks available for this album.
                 </p>
               ) : (
-                <div className="bg-gray-900/30 rounded-xl overflow-hidden border border-gray-800 w-full">
+                <div className="bg-gray-900/30 rounded-xl overflow-hidden border border-gray-800 w-full mx-auto max-w-screen-xl lg:max-w-4xl xl:max-w-5xl">
                   {/* Album Info - Only once */}
                   <div className="p-3 sm:p-4 md:p-6 flex flex-col md:flex-row gap-3 sm:gap-4">
                     <div
