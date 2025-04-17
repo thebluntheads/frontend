@@ -49,7 +49,8 @@ const ShippingDetails = ({ order }: ShippingDetailsProps) => {
               {order.shipping_address?.address_2}
             </p>
             <p className="text-gray-300">
-              {order.shipping_address?.postal_code},{" "}
+              {order.shipping_address?.postal_code}
+              {order.shipping_address?.postal_code ?? ","}
               {order.shipping_address?.city}
             </p>
             <p className="text-gray-300">

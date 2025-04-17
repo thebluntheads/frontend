@@ -35,7 +35,7 @@ export default function SeasonTemplate({
 }) {
   const { customer, isLoading: isLoadingCustomer } = useCustomer()
   const [isRedirecting, setIsRedirecting] = useState(false)
-  
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoadingCustomer && !customer && !isRedirecting) {
@@ -274,7 +274,9 @@ export default function SeasonTemplate({
                       onClick={handleAddToCart}
                       disabled={isAddingToCart}
                     >
-                      {isAddingToCart ? "Adding..." : `Buy Full ${season.name}`}
+                      {isAddingToCart
+                        ? "Processing..."
+                        : `Buy Full ${season.name}`}
                     </Button>
                   </div>
                 ) : (
@@ -305,9 +307,9 @@ export default function SeasonTemplate({
       </div>
 
       {/* Payment Popup */}
-      {cart && (
+      {Number(cart?.items?.length) > 0 && (
         <EpisodePaymentPopup
-          cart={cart}
+          cart={cart!}
           availablePaymentMethods={availablePaymentMethods}
           availableShippingMethods={availableShippingMethods}
           isOpen={isPaymentPopupOpen}
