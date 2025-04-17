@@ -199,48 +199,39 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
         )}
       </div>
 
-      {shippingNotSet ? (
-        <button
-          className="mt-6 w-full h-14 text-base px-8 rounded-full bg-red-700 hover:bg-red-600 shadow-md text-white flex items-center justify-center transition-colors duration-200"
-          onClick={onShippingFix}
-        >
-          Something went wrong – Refresh
-        </button>
-      ) : (
-        <button
-          className="mt-6 w-full h-14 text-base px-8 rounded-full bg-[#057E03] hover:bg-[#61C65F] shadow-md text-white flex items-center justify-center transition-colors duration-200"
-          onClick={handleSubmit}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <div className="flex items-center gap-2">
-              <svg
-                className="animate-spin h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Processing...
-            </div>
-          ) : (
-            buttonText
-          )}
-        </button>
-      )}
+      <button
+        className="mt-6 w-full h-14 text-base px-8 rounded-full bg-[#057E03] hover:bg-[#61C65F] shadow-md text-white flex items-center justify-center transition-colors duration-200"
+        onClick={handleSubmit}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <div className="flex items-center gap-2">
+            <svg
+              className="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            Processing...
+          </div>
+        ) : (
+          buttonText
+        )}
+      </button>
     </div>
   )
 }
