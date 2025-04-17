@@ -91,12 +91,23 @@ const EpisodePaymentPopup = ({
     return availableShippingMethods?.filter((sm) => sm.amount === 0)[0]
   }, [availableShippingMethods])
 
-  console.log({ shippingMethod })
-
   // Handle payment completion
   const handlePaymentComplete = async () => {
     setIsLoading(true)
     setErrorMessage(null)
+
+    if (cart?.shipping_methods?.length === 0) {
+      try {
+        await setStreamShippingMethod({
+          cartId: cart.id,
+          shippingMethodId: shippingMethod.id,
+        })
+      } catch (err: any) {
+        setErrorMessage(err.message)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
     try {
       console.log(cardData)

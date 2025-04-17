@@ -20,6 +20,7 @@ type AuthorizeNetPaymentProps = {
   handleSubmit: () => void
   isLoading: boolean
   buttonText?: string
+  disabled?: boolean
 }
 
 const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
@@ -31,6 +32,7 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
   handleSubmit,
   isLoading,
   buttonText = "Complete Purchase",
+  disabled,
 }) => {
   return (
     <div className="w-full">
