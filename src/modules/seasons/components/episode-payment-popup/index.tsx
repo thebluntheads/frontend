@@ -20,6 +20,7 @@ const authData = {
   apiLoginID: process.env.NEXT_PUBLIC_AUTHORIZE_NET_LOGIN_ID || "",
   clientKey: process.env.NEXT_PUBLIC_AUTHORIZE_NET_CLIENT_KEY || "",
 }
+
 const EpisodePaymentPopup = ({
   cart,
   availablePaymentMethods,
@@ -58,74 +59,56 @@ const EpisodePaymentPopup = ({
   } = useAcceptJs({ environment: "PRODUCTION", authData })
   const [month, year] = cardData.expiration.split("/")
 
-  // Use the custom hook to get customer information
   const { customer, isLoading: isLoadingCustomer } = useCustomer()
 
-  // Shipping address state with minimal default values
   const [formData, setFormData] = useState<Record<string, any>>({
     "shipping_address.first_name": "",
     "shipping_address.last_name": "",
     "shipping_address.address_1": "Default Address",
-    // "shipping_address.company": "",
     "shipping_address.postal_code": "00000",
     "shipping_address.city": "Default City",
     "shipping_address.country_code": "us",
     "shipping_address.province": "",
     "shipping_address.phone": "",
-    email: customer?.email,
+    email: customer?.email || "",
   })
-
-  useEffect(() => {
-    if (customer) {
-      setFormData({
-        email: customer.email || "",
-        "shipping_address.first_name": customer?.first_name || "",
-        "shipping_address.last_name": customer?.last_name || "",
-        "shipping_address.country_code":
-          customer?.billing_address?.country_code || "us",
-      })
-    }
-  }, [customer])
 
   const shippingMethod = useMemo(() => {
     return availableShippingMethods?.filter((sm) => sm.amount === 0)[0]
   }, [availableShippingMethods])
 
-  // Handle payment completion
+  useEffect(() => {
+    if (customer && isOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        email: customer.email || "",
+        "shipping_address.first_name": customer.first_name || "",
+        "shipping_address.last_name": customer.last_name || "",
+        "shipping_address.country_code":
+          customer.billing_address?.country_code || "us",
+      }))
+    }
+  }, [customer, isOpen])
+
   const handlePaymentComplete = async () => {
     setIsLoading(true)
     setErrorMessage(null)
 
-    if (cart?.shipping_methods?.length === 0) {
-      try {
-        await setStreamShippingMethod({
-          cartId: cart.id,
-          shippingMethodId: shippingMethod.id,
-        })
-      } catch (err: any) {
-        setErrorMessage(err.message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
     try {
-      console.log(cardData)
       const shouldInputCard =
         isAuthorizeNetFunc(selectedPaymentMethod) && !activeSession
-      if (cardData.cardNumber) {
-        // Step 1: Send card data to Authorize.Net
+
+      if (cardData.cardNumber && shouldInputCard) {
         const transactionResponse = await dispatchData({
           cardData: {
             cardNumber: cardData.cardNumber.replace(/\s+/g, ""),
             month,
             year,
             cardCode: cardData.cardCode,
-            fullName: cardData.fullName, // Include full name in the dispatch
+            fullName: cardData.fullName,
           },
         })
-        console.log({ transactionResponse })
-        // Handle transaction errors
+
         if (transactionResponse?.messages?.resultCode === "Error") {
           const errorText =
             transactionResponse.messages.message[0]?.text || "Payment failed"
@@ -133,35 +116,27 @@ const EpisodePaymentPopup = ({
           return
         }
 
-        // Step 2: Initiate payment session with opaque data
-        if (transactionResponse?.messages?.resultCode === "Ok") {
-          const opaqueData = transactionResponse.opaqueData.dataValue
-          const payc = await initiatePaymentSession(cart!, {
-            provider_id: selectedPaymentMethod,
-            data: {
-              billing_address: cart?.billing_address,
-              opaqueData,
-              fullName: cardData.fullName, // Include full name in payment session data
-            },
-          })
-          console.log(JSON.stringify(payc))
-          // Handle successful payment initiation
-          const pendingSession =
-            payc?.payment_collection?.payment_sessions?.find(
-              (session: any) => session.status === "pending"
-            )
+        const opaqueData = transactionResponse.opaqueData.dataValue
+        const payc = await initiatePaymentSession(cart!, {
+          provider_id: selectedPaymentMethod,
+          data: {
+            billing_address: cart?.billing_address,
+            opaqueData,
+            fullName: cardData.fullName,
+          },
+        })
 
-          if (pendingSession) {
-            setSubmitting(true)
-            await placeDigitalProductOrder()
-            return
-          }
+        const pendingSession = payc?.payment_collection?.payment_sessions?.find(
+          (session: any) => session.status === "pending"
+        )
 
-          // Handle unexpected session state
-          setErrorMessage(
-            "Payment session initiation failed. Please try again."
-          )
+        if (pendingSession) {
+          setSubmitting(true)
+          await placeDigitalProductOrder()
+          return
         }
+
+        setErrorMessage("Payment session initiation failed. Please try again.")
       }
 
       const checkActiveSession =
@@ -173,7 +148,6 @@ const EpisodePaymentPopup = ({
         })
       }
     } catch (err: any) {
-      console.log(err)
       const msg = err?.messages?.message?.[0]?.text || err.message
       setErrorMessage(msg)
     } finally {
@@ -181,77 +155,58 @@ const EpisodePaymentPopup = ({
     }
   }
 
-  // Auto-save address data when component loads
+  const assignShippingMethod = async () => {
+    if (!cart?.shipping_methods?.length && shippingMethod?.id) {
+      await setStreamShippingMethod({
+        cartId: cart.id,
+        shippingMethodId: shippingMethod.id,
+      })
+    }
+  }
+
   useEffect(() => {
-    const saveAddressData = async () => {
-      if (!cart?.shipping_address) {
+    const setupCart = async () => {
+      if (!cart?.id || !isOpen) return
+
+      try {
         setIsLoading(true)
-        try {
-          // Save address to cart
-          const data = {
-            shipping_address: {
-              first_name: formData["shipping_address.first_name"],
-              last_name: formData["shipping_address.last_name"],
-              address_1:
-                formData["shipping_address.address_1"] || "Default Address",
-              address_2: "",
-              //company: formData["shipping_address.company"],
-              postal_code: formData["shipping_address.postal_code"] || "00000",
-              city: formData["shipping_address.city"] || "Default City",
-              country_code: formData["shipping_address.country_code"],
-              province: formData["shipping_address.province"],
-              phone: formData["shipping_address.phone"],
-            },
-            email: formData.email,
-            billing_address: {
-              first_name: formData["shipping_address.first_name"],
-              last_name: formData["shipping_address.last_name"],
-              address_1:
-                formData["shipping_address.address_1"] || "Default Address",
-              address_2: "",
-              //company: formData["shipping_address.company"],
-              postal_code: formData["shipping_address.postal_code"] || "00000",
-              city: formData["shipping_address.city"] || "Default City",
-              country_code: formData["shipping_address.country_code"],
-              province: formData["shipping_address.province"],
-              phone: formData["shipping_address.phone"],
-            },
+
+        // 1. Set address only if it's not already set
+        if (!cart.shipping_address) {
+          const defaultAddress = {
+            first_name: customer?.first_name || "",
+            last_name: customer?.last_name || "",
+            address_1: "Default Address",
+            city: "Default City",
+            country_code: customer?.billing_address?.country_code || "us",
+            postal_code: "00000",
+            province: "",
+            phone: "",
           }
 
-          await updateStreamCart(data)
-        } catch (err: any) {
-          setErrorMessage(err.message)
-        } finally {
-          setIsLoading(false)
+          await updateStreamCart({
+            shipping_address: defaultAddress,
+            billing_address: defaultAddress,
+            email: customer?.email || "",
+          })
         }
-      }
-    }
 
-    const saveShippingOption = async () => {
-      if (cart?.shipping_methods?.length === 0) {
-        try {
+        // 2. Set shipping method if not already set
+        if (!cart?.shipping_methods?.length && shippingMethod?.id) {
           await setStreamShippingMethod({
             cartId: cart.id,
             shippingMethodId: shippingMethod.id,
           })
-        } catch (err: any) {
-          setErrorMessage(err.message)
-        } finally {
-          setIsLoading(false)
         }
+      } catch (err: any) {
+        setErrorMessage(err.message)
+      } finally {
+        setIsLoading(false)
       }
     }
 
-    if (isOpen) {
-      saveAddressData()
-      saveShippingOption()
-    }
-  }, [cart?.id, isOpen])
-
-  // Clear errors when dialog opens
-  useEffect(() => {
-    setErrorMessage(null)
-  }, [isOpen])
+    setupCart()
+  }, [cart?.id, isOpen, customer, shippingMethod])
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
@@ -362,6 +317,11 @@ const EpisodePaymentPopup = ({
                 handleSubmit={handlePaymentComplete}
                 isLoading={isLoading}
                 buttonText="Complete Purchase"
+                shippingNotSet={cart.shipping_methods?.length === 0} // conditionally pass this
+                onShippingFix={() => {
+                  // Reassign shipping method here
+                  assignShippingMethod() // your function to fix it
+                }}
               />
             </div>
           </div>
