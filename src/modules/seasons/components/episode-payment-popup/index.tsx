@@ -14,7 +14,7 @@ import {
 import { StoreCart, StoreCartShippingOption } from "@medusajs/types"
 import { useCustomer } from "@lib/hooks/use-customer"
 import { useAcceptJs } from "react-acceptjs"
-import { initiatePaymentSession } from "@lib/data/cart"
+import { initiatePaymentSession, retrieveCart } from "@lib/data/cart"
 
 const authData = {
   apiLoginID: process.env.NEXT_PUBLIC_AUTHORIZE_NET_LOGIN_ID || "",
@@ -44,6 +44,7 @@ const EpisodePaymentPopup = ({
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
     activeSession?.provider_id ?? "pp_authorize-net_authorize-net"
   )
+  const [newCart, setNewCart] = useState<StoreCart | null>(null)
 
   const [cardData, setCardData] = useState<AuthorizeNetCardInfo>({
     cardNumber: "",
@@ -52,11 +53,7 @@ const EpisodePaymentPopup = ({
     fullName: "",
   })
 
-  const {
-    dispatchData,
-    loading,
-    error: err,
-  } = useAcceptJs({ environment: "PRODUCTION", authData })
+  const { dispatchData, loading, error: err } = useAcceptJs({ authData })
   const [month, year] = cardData.expiration.split("/")
 
   const { customer, isLoading: isLoadingCustomer } = useCustomer()
@@ -73,9 +70,9 @@ const EpisodePaymentPopup = ({
     email: customer?.email || "",
   })
 
-  const shippingMethod = useMemo(() => {
-    return availableShippingMethods?.filter((sm) => sm.amount === 0)[0]
-  }, [availableShippingMethods])
+  const shippingMethod = availableShippingMethods?.filter(
+    (sm) => sm.amount === 0
+  )[0]
 
   useEffect(() => {
     if (customer && isOpen) {
@@ -90,9 +87,60 @@ const EpisodePaymentPopup = ({
     }
   }, [customer, isOpen])
 
+  useEffect(() => {
+    const setupCart = async () => {
+      if (!cart?.id || !isOpen) return
+      try {
+        setIsLoading(true)
+
+        // 1. Set address only if it's not already set
+        if (!cart.shipping_address) {
+          const defaultAddress = {
+            first_name: customer?.first_name || "",
+            last_name: customer?.last_name || "",
+            address_1: "Default Address",
+            city: "Default City",
+            country_code: customer?.billing_address?.country_code || "us",
+            postal_code: "00000",
+            province: "",
+            phone: "",
+          }
+
+          await updateStreamCart({
+            shipping_address: defaultAddress,
+            billing_address: defaultAddress,
+            email: customer?.email || "",
+          })
+        }
+
+        // 2. Set shipping method if not already set
+        if (shippingMethod?.id) {
+          await setStreamShippingMethod({
+            cartId: cart.id,
+            shippingMethodId: shippingMethod.id,
+          })
+          const updatedCart = await retrieveCart(cart.id)
+          setNewCart(updatedCart)
+        }
+      } catch (err: any) {
+        setErrorMessage(err.message)
+        setNewCart(cart)
+      } finally {
+        setIsLoading(false)
+        setNewCart(cart)
+      }
+    }
+
+    setupCart()
+  }, [cart?.id, isOpen, customer, shippingMethod])
+
   const handlePaymentComplete = async () => {
     setIsLoading(true)
     setErrorMessage(null)
+
+    if (newCart?.shipping_methods?.length === 0) {
+      await assignShippingMethod()
+    }
 
     try {
       const shouldInputCard =
@@ -156,57 +204,16 @@ const EpisodePaymentPopup = ({
   }
 
   const assignShippingMethod = async () => {
-    if (!cart?.shipping_methods?.length && shippingMethod?.id) {
+    if (!newCart?.shipping_methods?.length && shippingMethod?.id) {
       await setStreamShippingMethod({
         cartId: cart.id,
         shippingMethodId: shippingMethod.id,
       })
+
+      const updatedCart = await retrieveCart(cart.id)
+      setNewCart(updatedCart)
     }
   }
-
-  useEffect(() => {
-    const setupCart = async () => {
-      if (!cart?.id || !isOpen) return
-
-      try {
-        setIsLoading(true)
-
-        // 1. Set address only if it's not already set
-        if (!cart.shipping_address) {
-          const defaultAddress = {
-            first_name: customer?.first_name || "",
-            last_name: customer?.last_name || "",
-            address_1: "Default Address",
-            city: "Default City",
-            country_code: customer?.billing_address?.country_code || "us",
-            postal_code: "00000",
-            province: "",
-            phone: "",
-          }
-
-          await updateStreamCart({
-            shipping_address: defaultAddress,
-            billing_address: defaultAddress,
-            email: customer?.email || "",
-          })
-        }
-
-        // 2. Set shipping method if not already set
-        if (!cart?.shipping_methods?.length && shippingMethod?.id) {
-          await setStreamShippingMethod({
-            cartId: cart.id,
-            shippingMethodId: shippingMethod.id,
-          })
-        }
-      } catch (err: any) {
-        setErrorMessage(err.message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    setupCart()
-  }, [cart?.id, isOpen, customer, shippingMethod])
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
@@ -307,23 +314,16 @@ const EpisodePaymentPopup = ({
               </div>
             </div>
 
-            <div>
-              <AuthorizeNetPayment
-                cardData={cardData}
-                setCardData={setCardData}
-                errorMessage={error}
-                paymentMethod={selectedPaymentMethod}
-                isAuthorizeNetFunc={isAuthorizeNetFunc}
-                handleSubmit={handlePaymentComplete}
-                isLoading={isLoading}
-                buttonText="Complete Purchase"
-                shippingNotSet={cart.shipping_methods?.length === 0} // conditionally pass this
-                onShippingFix={() => {
-                  // Reassign shipping method here
-                  assignShippingMethod() // your function to fix it
-                }}
-              />
-            </div>
+            <AuthorizeNetPayment
+              cardData={cardData}
+              setCardData={setCardData}
+              errorMessage={error}
+              paymentMethod={selectedPaymentMethod}
+              isAuthorizeNetFunc={isAuthorizeNetFunc}
+              handleSubmit={handlePaymentComplete}
+              isLoading={isLoading}
+              buttonText="Complete Purchase"
+            />
           </div>
         </Dialog.Panel>
       </div>

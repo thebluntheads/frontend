@@ -162,7 +162,7 @@ export default function EpisodeTemplate({
         const updatedCart = await retrieveStreamCart()
         setCart(updatedCart)
 
-        setIsPaymentPopupOpen(true)
+        setIsPaymentPopupOpen(Number(updatedCart?.items?.length) > 0)
       }
     } catch (error) {
       console.error("Error adding to cart:", error)
@@ -350,14 +350,14 @@ export default function EpisodeTemplate({
                         onClick={handleAddToCart}
                         disabled={isAddingToCart}
                       >
-                        {isAddingToCart ? "Adding..." : "Buy Episode"}
+                        {isAddingToCart ? "Processing..." : "Buy Episode"}
                       </Button>
                       <Button
                         variant="secondary"
                         className="bg-dark-green/20 hover:bg-light-green/30 text-white border-0"
                         onClick={() => (window.location.href = "/season-1")}
                       >
-                        {isAddingToCart ? "Adding..." : "Buy Full Season 1"}
+                        {isAddingToCart ? "Processing..." : "Buy Full Season 1"}
                       </Button>
                     </>
                   )}
@@ -377,9 +377,9 @@ export default function EpisodeTemplate({
       />
 
       {/* Payment Popup */}
-      {cart && (
+      {Number(cart?.items?.length) > 0 && (
         <EpisodePaymentPopup
-          cart={cart}
+          cart={cart!}
           availablePaymentMethods={availablePaymentMethods}
           availableShippingMethods={availableShippingMethods}
           isOpen={isPaymentPopupOpen}
