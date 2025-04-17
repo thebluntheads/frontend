@@ -73,7 +73,7 @@ const FeaturedEpisodes = ({ season, episodes }: FeaturedEpisodesProps) => {
                   className="w-full"
                 >
                   <Button className="w-full bg-dark-green hover:bg-light-green text-white border-none">
-                    {episode?.product_variant.product?.metadata?.unlocked
+                    {episode?.product_variant?.metadata?.unlocked
                       ? "Watch Now"
                       : "Unlocks Soon"}
                   </Button>

@@ -184,7 +184,7 @@ export default function EpisodeTemplate({
           title={episode.name}
           description={""}
           ctaText={
-            episode?.product_variant.product?.metadata?.unlocked
+            episode?.product_variant?.metadata?.unlocked
               ? "Watch Now"
               : "Unlocks Soon"
           }

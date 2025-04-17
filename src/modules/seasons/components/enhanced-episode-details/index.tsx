@@ -124,7 +124,7 @@ const EnhancedEpisodeDetails = ({
                     >
                       <Button className="w-full bg-dark-green hover:bg-light-green text-white border-none">
                         {hasPurchased
-                          ? episode?.product_variant.product?.metadata?.unlocked
+                          ? episode?.product_variant?.metadata?.unlocked
                             ? "Watch Now"
                             : "Unlocks Soon"
                           : "View Details"}
