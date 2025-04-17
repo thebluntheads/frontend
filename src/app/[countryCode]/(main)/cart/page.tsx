@@ -13,9 +13,7 @@ export default async function Cart() {
   const cart = await retrieveCart()
   const customer = await retrieveCustomer()
 
-  if (!cart) {
-    return notFound()
-  }
-
+  // Instead of showing a 404, we'll pass the cart (even if null) to the template
+  // The template will handle displaying an empty cart message
   return <CartTemplate cart={cart} customer={customer} />
 }
