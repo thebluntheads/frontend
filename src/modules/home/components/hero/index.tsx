@@ -70,8 +70,35 @@ const Hero = ({
   // Toggle fullscreen mode
   const toggleFullscreen = () => {
     if (!videoContainerRef.current) return
+    
+    // Detect iOS Safari
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    const isIOSSafari = isIOS && isSafari
+    
+    // Special handling for iOS Safari
+    if (isIOSSafari && videoRef.current) {
+      // iOS Safari requires using the video element's webkitEnterFullscreen
+      try {
+        // Use type assertion to access iOS Safari-specific methods
+        const videoElement = videoRef.current as HTMLVideoElement & {
+          webkitEnterFullscreen?: () => void;
+          webkitRequestFullscreen?: () => void;
+        }
+        
+        if (videoElement.webkitEnterFullscreen) {
+          videoElement.webkitEnterFullscreen()
+        } else if (videoElement.webkitRequestFullscreen) {
+          videoElement.webkitRequestFullscreen()
+        }
+        setIsFullscreen(true)
+        return
+      } catch (err) {
+        console.error(`Error handling iOS fullscreen:`, err)
+      }
+    }
 
-    // Check for fullscreen element with vendor prefixes
+    // Standard approach for other browsers
     const doc = document as any
     const elem = videoContainerRef.current as any
 
@@ -92,8 +119,7 @@ const Hero = ({
           elem.requestFullscreen ||
           elem.webkitRequestFullscreen ||
           elem.mozRequestFullScreen ||
-          elem.msRequestFullscreen ||
-          elem.webkitEnterFullscreen // For iOS Safari
+          elem.msRequestFullscreen
 
         if (requestFullscreen) {
           requestFullscreen.call(elem)
@@ -105,8 +131,7 @@ const Hero = ({
           doc.exitFullscreen ||
           doc.webkitExitFullscreen ||
           doc.mozCancelFullScreen ||
-          doc.msExitFullscreen ||
-          doc.webkitExitFullscreen
+          doc.msExitFullscreen
 
         if (exitFullscreen) {
           exitFullscreen.call(document)
