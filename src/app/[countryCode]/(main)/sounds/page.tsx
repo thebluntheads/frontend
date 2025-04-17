@@ -46,7 +46,7 @@ const authData = {
 export default function SoundsPage() {
   const { customer, isLoading: isLoadingCustomer } = useCustomer()
   const [isRedirecting, setIsRedirecting] = useState(false)
-  
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoadingCustomer && !customer && !isRedirecting) {
@@ -81,7 +81,9 @@ export default function SoundsPage() {
   const [availableShippingMethods, setAvailableShippingMethods] = useState<
     StoreCartShippingOption[]
   >([])
-  const [enlargedAlbumCover, setEnlargedAlbumCover] = useState<string | null>(null)
+  const [enlargedAlbumCover, setEnlargedAlbumCover] = useState<string | null>(
+    null
+  )
 
   const activeSession = cart?.payment_collection?.payment_sessions?.find(
     (paymentSession: any) => paymentSession.status === "pending"
@@ -734,7 +736,11 @@ export default function SoundsPage() {
           </div>
 
           {albums.map((album) => (
-            <TabsContent key={album.id} value={album.id} className="space-y-6 mx-auto">
+            <TabsContent
+              key={album.id}
+              value={album.id}
+              className="space-y-6 mx-auto"
+            >
               {(albumTracks[album.id] || []).length === 0 ? (
                 <p className="text-white text-center">
                   No tracks available for this album.
@@ -746,7 +752,9 @@ export default function SoundsPage() {
                     <div
                       className="w-full md:w-60 lg:w-72 h-40 sm:h-48 md:h-60 lg:h-72 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
                       style={{ maxWidth: "100%" }}
-                      onClick={() => setEnlargedAlbumCover("/assets/album-cover.png")}
+                      onClick={() =>
+                        setEnlargedAlbumCover("/assets/album-cover.png")
+                      }
                     >
                       <Image
                         src="/assets/album-cover.png"
@@ -788,7 +796,7 @@ export default function SoundsPage() {
                               disabled={isAddingToCart}
                               className="text-xs bg-dark-green hover:bg-dark-green text-white px-3 py-1 h-8"
                             >
-                              {isAddingToCart ? "Adding..." : "Buy"}
+                              {isAddingToCart ? "Processing..." : "Buy"}
                             </Button>
                           </>
                         ) : (
@@ -896,7 +904,7 @@ export default function SoundsPage() {
                                   disabled={isAddingToCart}
                                   className="text-xs bg-dark-green hover:bg-dark-green text-white px-2 sm:px-3 py-1 h-7 sm:h-8"
                                 >
-                                  {isAddingToCart ? "Adding..." : "Buy"}
+                                  {isAddingToCart ? "Processing..." : "Buy"}
                                 </Button>
                               ) : (
                                 <div className="flex items-center gap-2">
@@ -928,7 +936,7 @@ export default function SoundsPage() {
 
       {/* Album Cover Modal */}
       {enlargedAlbumCover && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
           onClick={() => setEnlargedAlbumCover(null)}
         >
@@ -937,8 +945,19 @@ export default function SoundsPage() {
               onClick={() => setEnlargedAlbumCover(null)}
               className="absolute top-4 right-4 bg-gray-900/70 text-white rounded-full p-2 hover:bg-gray-800"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
             <Image
