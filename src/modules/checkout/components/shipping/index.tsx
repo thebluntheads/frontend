@@ -81,8 +81,10 @@ const Shipping: React.FC<ShippingProps> = ({
   )
 
   const normalShipping = availableShippingMethods?.filter(
-    //@ts-ignore
-    (sm) => sm.service_zone?.fulfillment_set?.type !== "pickup"
+    (sm) =>
+      //@ts-ignore
+      sm.service_zone?.fulfillment_set?.type !== "pickup" &&
+      sm.shipping_profile_id !== "sp_01JRVCE07071J57SJ5663VGA02"
   )
 
   const _shippingMethods = isDigital ? digitalShipping : normalShipping
@@ -163,14 +165,18 @@ const Shipping: React.FC<ShippingProps> = ({
   }, [isOpen])
 
   // Effect to auto-proceed to payment step for digital items
-  const hasAutoProcessedRef = useRef(false);
-  
+  const hasAutoProcessedRef = useRef(false)
+
   useEffect(() => {
     // Only run this effect once when shipping methods are available
-    if (isDigital && Number(_shippingMethods?.length) > 0 && !hasAutoProcessedRef.current) {
-      hasAutoProcessedRef.current = true;
+    if (
+      isDigital &&
+      Number(_shippingMethods?.length) > 0 &&
+      !hasAutoProcessedRef.current
+    ) {
+      hasAutoProcessedRef.current = true
       handleSetShippingMethod(_shippingMethods?.[0]?.id!, "shipping")
-      
+
       // Auto-proceed to payment step after a short delay
       const timer = setTimeout(() => {
         router.push(pathname + "?step=payment", { scroll: false })
