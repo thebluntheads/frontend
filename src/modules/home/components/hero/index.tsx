@@ -70,47 +70,51 @@ const Hero = ({
   // Toggle fullscreen mode
   const toggleFullscreen = () => {
     if (!videoContainerRef.current) return
-    
+
     // Check for fullscreen element with vendor prefixes
-    const doc = document as any;
-    const elem = videoContainerRef.current as any;
-    
-    const isFullscreenNow = !!(doc.fullscreenElement ||
+    const doc = document as any
+    const elem = videoContainerRef.current as any
+
+    const isFullscreenNow = !!(
+      doc.fullscreenElement ||
       doc.webkitFullscreenElement ||
       doc.mozFullScreenElement ||
       doc.msFullscreenElement ||
       doc.webkitFullScreen ||
       doc.mozFullScreen ||
-      doc.msFullScreen);
-    
+      doc.msFullScreen
+    )
+
     try {
       if (!isFullscreenNow) {
         // Request fullscreen with vendor prefixes
-        const requestFullscreen = elem.requestFullscreen ||
+        const requestFullscreen =
+          elem.requestFullscreen ||
           elem.webkitRequestFullscreen ||
           elem.mozRequestFullScreen ||
           elem.msRequestFullscreen ||
-          elem.webkitEnterFullscreen; // For iOS Safari
-          
+          elem.webkitEnterFullscreen // For iOS Safari
+
         if (requestFullscreen) {
-          requestFullscreen.call(elem);
+          requestFullscreen.call(elem)
         }
-        setIsFullscreen(true);
+        setIsFullscreen(true)
       } else {
         // Exit fullscreen with vendor prefixes
-        const exitFullscreen = doc.exitFullscreen ||
+        const exitFullscreen =
+          doc.exitFullscreen ||
           doc.webkitExitFullscreen ||
           doc.mozCancelFullScreen ||
           doc.msExitFullscreen ||
-          doc.webkitExitFullscreen;
-          
+          doc.webkitExitFullscreen
+
         if (exitFullscreen) {
-          exitFullscreen.call(document);
+          exitFullscreen.call(document)
         }
-        setIsFullscreen(false);
+        setIsFullscreen(false)
       }
     } catch (err) {
-      console.error(`Error handling fullscreen:`, err);
+      console.error(`Error handling fullscreen:`, err)
     }
   }
 
@@ -182,32 +186,40 @@ const Hero = ({
 
   // Handle fullscreen change events with vendor prefixes
   useEffect(() => {
-    const doc = document as any;
-    
+    const doc = document as any
+
     const handleFullscreenChange = () => {
-      const isFullscreenActive = !!(doc.fullscreenElement ||
+      const isFullscreenActive = !!(
+        doc.fullscreenElement ||
         doc.webkitFullscreenElement ||
         doc.mozFullScreenElement ||
         doc.msFullscreenElement ||
         doc.webkitIsFullScreen ||
         doc.mozFullScreen ||
-        doc.msFullscreenElement);
-      
-      setIsFullscreen(isFullscreenActive);
+        doc.msFullscreenElement
+      )
+
+      setIsFullscreen(isFullscreenActive)
     }
 
     // Add all possible fullscreen change events
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
-    document.addEventListener("mozfullscreenchange", handleFullscreenChange);
-    document.addEventListener("MSFullscreenChange", handleFullscreenChange);
-    
+    document.addEventListener("fullscreenchange", handleFullscreenChange)
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange)
+    document.addEventListener("mozfullscreenchange", handleFullscreenChange)
+    document.addEventListener("MSFullscreenChange", handleFullscreenChange)
+
     return () => {
       // Remove all listeners on cleanup
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
-      document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
-      document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange)
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        handleFullscreenChange
+      )
+      document.removeEventListener(
+        "mozfullscreenchange",
+        handleFullscreenChange
+      )
+      document.removeEventListener("MSFullscreenChange", handleFullscreenChange)
     }
   }, [])
 
@@ -222,7 +234,7 @@ const Hero = ({
     <div className="w-full relative bg-black">
       {/* Main featured content with gradient overlay */}
       <div
-        className="relative h-[85vh] w-full overflow-hidden"
+        className="relative h-[70vh] sm:h-[85vh] w-full overflow-hidden"
         style={{ isolation: "isolate" }}
       >
         {isPlaying ? (
@@ -230,7 +242,7 @@ const Hero = ({
           <div
             ref={videoContainerRef}
             className="absolute inset-0 w-full h-full flex items-center justify-center"
-            style={{ zIndex: 50, backgroundColor: '#000' }}
+            style={{ zIndex: 50, backgroundColor: "#000" }}
             onMouseEnter={() => setShowControls(true)}
             onMouseLeave={() => setShowControls(false)}
           >
@@ -244,7 +256,7 @@ const Hero = ({
               playsInline
               autoPlay
               controls={false}
-              style={{ backgroundColor: '#000' }}
+              style={{ backgroundColor: "#000" }}
             />
 
             {/* Video controls overlay */}
@@ -528,10 +540,10 @@ const Hero = ({
               src={thumbnailUrl}
               alt="Featured Content"
               fill
-              className="object-cover brightness-75"
+              className="object-contain md:object-cover brightness-75"
               sizes="100vw"
               priority
-              style={{ objectPosition: '50% 50%' }}
+              style={{ objectPosition: "50% 10%" }}
             />
           </div>
         )}
@@ -576,8 +588,8 @@ const Hero = ({
         {/* Content overlay - only visible when video is not playing */}
         {!isPlaying && (
           <div
-            className="absolute bottom-0 left-0 p-12 w-full"
-            style={{ zIndex: 30 }}
+            className="absolute bottom-0 left-0 p-6 sm:p-8 md:p-12 w-full mt-auto"
+            style={{ zIndex: 30, bottom: 0 }}
           >
             <div className="max-w-3xl">
               <h1 className="text-white text-3xl md:text-5xl font-bold mb-4">
