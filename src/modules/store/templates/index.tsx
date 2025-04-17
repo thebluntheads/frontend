@@ -24,9 +24,9 @@ const StoreTemplate = ({
       data-testid="category-container"
     >
       <div className="small:sticky small:top-20">
-        <div className="bg-black/30 backdrop-blur-md rounded-xl shadow-lg border border-white/10 p-6 mb-6">
+        {/* <div className="bg-black/30 backdrop-blur-md rounded-xl shadow-lg border border-white/10 p-6 mb-6">
           <RefinementList sortBy={sort} />
-        </div>
+        </div> */}
       </div>
       <div className="w-full small:pl-8">
         <div className="mb-8">
