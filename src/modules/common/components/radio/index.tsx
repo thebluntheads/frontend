@@ -15,13 +15,13 @@ const Radio = ({
         className="group relative flex h-5 w-5 items-center justify-center outline-none"
         data-testid={dataTestId || "radio-button"}
       >
-        <div className="shadow-borders-base group-hover:shadow-borders-strong-with-shadow bg-black group-data-[state=checked]:bg-ui-bg-interactive group-data-[state=checked]:shadow-borders-interactive group-focus:!shadow-borders-interactive-with-focus group-disabled:!bg-ui-bg-disabled group-disabled:!shadow-borders-base flex h-[14px] w-[14px] items-center justify-center rounded-full transition-all">
+        <div className="border border-dark-green group-hover:border-light-green bg-black group-data-[state=checked]:bg-black group-data-[state=checked]:border-dark-green group-focus:!border-light-green group-disabled:!bg-ui-bg-disabled group-disabled:!border-gray-500 flex h-[16px] w-[16px] items-center justify-center rounded-full transition-all">
           {checked && (
             <span
               data-state={checked ? "checked" : "unchecked"}
               className="group flex items-center justify-center"
             >
-              <div className="bg-black shadow-details-contrast-on-bg-interactive group-disabled:bg-ui-fg-disabled rounded-full group-disabled:shadow-none h-1.5 w-1.5"></div>
+              <div className="bg-dark-green group-disabled:bg-light-green rounded-full group-disabled:shadow-none h-2 w-2"></div>
             </span>
           )}
         </div>
