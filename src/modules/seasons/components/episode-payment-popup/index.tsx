@@ -75,94 +75,17 @@ const EpisodePaymentPopup = ({
     email: customer?.email,
   })
 
-  // Update form data when customer information is loaded or cart changes
   useEffect(() => {
-    // First, update with cart data if available
-    if (cart) {
-      setFormData((prevData) => ({
-        ...prevData,
-        "shipping_address.first_name":
-          cart.shipping_address?.first_name ||
-          prevData["shipping_address.first_name"],
-        "shipping_address.last_name":
-          cart.shipping_address?.last_name ||
-          prevData["shipping_address.last_name"],
-        "shipping_address.address_1":
-          cart.shipping_address?.address_1 ||
-          prevData["shipping_address.address_1"],
-        // "shipping_address.company":
-        //   cart.shipping_address?.company ||
-        //   prevData["shipping_address.company"],
-        "shipping_address.postal_code":
-          cart.shipping_address?.postal_code ||
-          prevData["shipping_address.postal_code"],
-        "shipping_address.city":
-          cart.shipping_address?.city || prevData["shipping_address.city"],
-        "shipping_address.country_code":
-          cart.shipping_address?.country_code ||
-          prevData["shipping_address.country_code"],
-        "shipping_address.province":
-          cart.shipping_address?.province ||
-          prevData["shipping_address.province"],
-        "shipping_address.phone":
-          cart.shipping_address?.phone || prevData["shipping_address.phone"],
-        email: cart.email || prevData.email,
-      }))
-    }
-
-    // Then, prioritize customer data if available (overrides cart data)
     if (customer) {
-      setFormData((prevData) => ({
-        ...prevData,
-        // Basic customer info
-        "shipping_address.first_name":
-          customer.first_name || prevData["shipping_address.first_name"],
-        "shipping_address.last_name":
-          customer.last_name || prevData["shipping_address.last_name"],
-        email: customer.email,
-
-        // If customer has shipping addresses, use the first one
-        ...(customer.shipping_addresses &&
-        customer.shipping_addresses.length > 0
-          ? {
-              "shipping_address.address_1":
-                customer.shipping_addresses[0].address_1,
-              "shipping_address.city": customer.shipping_addresses[0].city,
-              "shipping_address.postal_code":
-                customer.shipping_addresses[0].postal_code,
-              "shipping_address.province":
-                customer.shipping_addresses[0].province || "",
-              "shipping_address.country_code":
-                customer.shipping_addresses[0].country_code,
-              "shipping_address.phone":
-                customer.shipping_addresses[0].phone || "",
-            }
-          : // Otherwise, if customer has a billing address, use it
-          customer.billing_address
-          ? {
-              "shipping_address.address_1":
-                customer.billing_address.address_1 ||
-                prevData["shipping_address.address_1"],
-              "shipping_address.city":
-                customer.billing_address.city ||
-                prevData["shipping_address.city"],
-              "shipping_address.postal_code":
-                customer.billing_address.postal_code ||
-                prevData["shipping_address.postal_code"],
-              "shipping_address.province":
-                customer.billing_address.province ||
-                prevData["shipping_address.province"],
-              "shipping_address.country_code":
-                customer.billing_address.country_code ||
-                prevData["shipping_address.country_code"],
-              "shipping_address.phone":
-                customer.billing_address.phone ||
-                prevData["shipping_address.phone"],
-            }
-          : {}),
-      }))
+      setFormData({
+        email: customer.email || "",
+        "shipping_address.first_name": customer?.first_name || "",
+        "shipping_address.last_name": customer?.last_name || "",
+        "shipping_address.country_code":
+          customer?.billing_address?.country_code || "us",
+      })
     }
-  }, [customer, cart?.id])
+  }, [customer])
 
   const shippingMethod = useMemo(() => {
     return availableShippingMethods?.filter((sm) => sm.amount === 0)[0]
