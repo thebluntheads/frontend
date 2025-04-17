@@ -346,7 +346,7 @@ export default function EpisodeTemplate({
                       )} */}
                       <Button
                         variant="secondary"
-                        className="bg-dark-green/20 hover:bg-light-green/30 text-white border-0"
+                        className="bg-dark-green hover:bg-light-green text-white border-0"
                         onClick={handleAddToCart}
                         disabled={isAddingToCart}
                       >
@@ -354,7 +354,7 @@ export default function EpisodeTemplate({
                       </Button>
                       <Button
                         variant="secondary"
-                        className="bg-dark-green/20 hover:bg-light-green/30 text-white border-0"
+                        className="bg-dark-green hover:bg-light-green text-white border-0"
                         onClick={() => (window.location.href = "/season-1")}
                       >
                         {isAddingToCart ? "Processing..." : "Buy Full Season 1"}

@@ -25,7 +25,7 @@ const FeaturedEpisodes = ({ season, episodes }: FeaturedEpisodesProps) => {
             <LocalizedClientLink href={`/seasons/${season.handle}`}>
               <Button
                 variant="secondary"
-                className="bg-gray-800 hover:bg-gray-700 text-white border-none"
+                className="bg-dark-green hover:bg-light-green text-white border-0 text-sm"
               >
                 View All Episodes
               </Button>

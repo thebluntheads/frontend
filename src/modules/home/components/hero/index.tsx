@@ -607,7 +607,7 @@ const Hero = ({
               {/* CTA Button */}
               {seasonHandle && (
                 <LocalizedClientLink href={`/seasons/${seasonHandle}`}>
-                  <Button className="bg-white text-black hover:bg-gray-200 border-none px-6 py-2 text-base font-medium">
+                  <Button className="bg-dark-green text-white hover:hover:bg-light-green border-none px-6 py-2 text-base font-medium">
                     {ctaText}
                   </Button>
                 </LocalizedClientLink>

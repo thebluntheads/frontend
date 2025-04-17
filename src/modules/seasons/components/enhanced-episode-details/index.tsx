@@ -68,12 +68,13 @@ const EnhancedEpisodeDetails = ({
               <h3 className="text-white text-lg font-medium mb-4">
                 Season Information
               </h3>
-              <p className="text-gray-300 mb-4">
-                {season.description ||
-                  "Join us for an extraordinary season of premium content."}
-              </p>
+              {/* <p className="text-gray-300 mb-4">
+                {season?.description.length > 5
+                  ? season.description
+                  : "An extraordinary season of premium content."}
+              </p> */}
               <LocalizedClientLink href={`/seasons/${season.handle}`}>
-                <Button className="w-full bg-gray-800 hover:bg-gray-700 text-white border-none">
+                <Button className="w-full bg-dark-green hover:bg-light-green text-white border-0 text-sm">
                   View All Episodes
                 </Button>
               </LocalizedClientLink>
@@ -148,17 +149,17 @@ const EnhancedEpisodeDetails = ({
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <LocalizedClientLink href="/seasons">
-              <Button className="bg-gray-800 hover:bg-gray-700 text-white border-none px-6">
+              <Button className="bg-dark-green hover:bg-light-green text-white border-none px-6">
                 Browse Seasons
               </Button>
             </LocalizedClientLink>
             <LocalizedClientLink href="/sounds">
-              <Button className="bg-gray-800 hover:bg-gray-700 text-white border-none px-6">
+              <Button className="bg-dark-green hover:bg-light-green text-white border-none px-6">
                 Explore Music
               </Button>
             </LocalizedClientLink>
             <LocalizedClientLink href="/products">
-              <Button className="bg-gray-800 hover:bg-gray-700 text-white border-none px-6">
+              <Button className="bg-dark-green hover:bg-light-green text-white border-none px-6">
                 Shop Products
               </Button>
             </LocalizedClientLink>
