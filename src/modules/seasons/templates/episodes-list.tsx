@@ -94,7 +94,9 @@ export default function EpisodesList({
                         variant="secondary"
                         className="bg-dark-green/20 hover:bg-light-green/30 text-white border-0 text-sm"
                       >
-                        Watch Now
+                        {episode?.product_variant.product?.metadata?.unlocked
+                          ? "Watch Now"
+                          : "Unlocks Soon"}
                       </Button>
                     </div>
                   </div>

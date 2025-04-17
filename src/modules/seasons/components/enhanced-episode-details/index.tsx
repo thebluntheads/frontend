@@ -123,7 +123,11 @@ const EnhancedEpisodeDetails = ({
                       className="w-full"
                     >
                       <Button className="w-full bg-dark-green hover:bg-light-green text-white border-none">
-                        {hasPurchased ? "Watch Now" : "View Details"}
+                        {hasPurchased
+                          ? episode?.product_variant.product?.metadata?.unlocked
+                            ? "Watch Now"
+                            : "Unlocks Soon"
+                          : "View Details"}
                       </Button>
                     </LocalizedClientLink>
                   </div>

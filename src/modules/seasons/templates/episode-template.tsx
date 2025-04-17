@@ -183,7 +183,11 @@ export default function EpisodeTemplate({
         <Hero
           title={episode.name}
           description={""}
-          ctaText="Watch Now"
+          ctaText={
+            episode?.product_variant.product?.metadata?.unlocked
+              ? "Watch Now"
+              : "Unlocks Soon"
+          }
           ctaLink="#"
           thumbnailUrl={bannerUrl}
           videoUrl={videoUrl}
