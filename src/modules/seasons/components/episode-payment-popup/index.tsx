@@ -53,7 +53,11 @@ const EpisodePaymentPopup = ({
     fullName: "",
   })
 
-  const { dispatchData, loading, error: err } = useAcceptJs({ authData })
+  const {
+    dispatchData,
+    loading,
+    error: err,
+  } = useAcceptJs({ environment: "PRODUCTION", authData })
   const [month, year] = cardData.expiration.split("/")
 
   const { customer, isLoading: isLoadingCustomer } = useCustomer()
