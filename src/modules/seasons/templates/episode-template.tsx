@@ -171,7 +171,9 @@ export default function EpisodeTemplate({
     }
   }
 
-  const bannerUrl = "/assets/preview.png"
+  const bannerUrl = episode?.name.includes("1")
+    ? "/assets/episode1-cover.jpeg"
+    : "/assets/preview.png"
 
   if (!episode || !season) {
     notFound()

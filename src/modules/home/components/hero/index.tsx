@@ -70,22 +70,23 @@ const Hero = ({
   // Toggle fullscreen mode
   const toggleFullscreen = () => {
     if (!videoContainerRef.current) return
-    
+
     // Detect iOS Safari
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
     const isIOSSafari = isIOS && isSafari
-    
+
     // Special handling for iOS Safari
     if (isIOSSafari && videoRef.current) {
       // iOS Safari requires using the video element's webkitEnterFullscreen
       try {
         // Use type assertion to access iOS Safari-specific methods
         const videoElement = videoRef.current as HTMLVideoElement & {
-          webkitEnterFullscreen?: () => void;
-          webkitRequestFullscreen?: () => void;
+          webkitEnterFullscreen?: () => void
+          webkitRequestFullscreen?: () => void
         }
-        
+
         if (videoElement.webkitEnterFullscreen) {
           videoElement.webkitEnterFullscreen()
         } else if (videoElement.webkitRequestFullscreen) {
@@ -568,7 +569,7 @@ const Hero = ({
               className="object-contain md:object-cover brightness-75"
               sizes="100vw"
               priority
-              style={{ objectPosition: "50% 10%" }}
+              style={{ objectPosition: "50% 45%" }}
             />
           </div>
         )}
