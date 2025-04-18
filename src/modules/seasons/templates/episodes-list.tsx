@@ -36,8 +36,9 @@ export default function EpisodesList({
               currency_code: region.currency_code,
             })
           : "N/A"
-        const thumbnailUrl =
-          "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/8866_1735924247_32ec7af3f2b0e7462472.png"
+        const thumbnailUrl = episode.name.includes("1")
+          ? "/assets/episode1-cover.jpeg"
+          : "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/8866_1735924247_32ec7af3f2b0e7462472.png"
 
         return (
           <div

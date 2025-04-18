@@ -41,7 +41,11 @@ const FeaturedEpisodes = ({ season, episodes }: FeaturedEpisodesProps) => {
             >
               <div className="relative aspect-video">
                 <Image
-                  src="/assets/preview.png"
+                  src={
+                    episode?.name?.includes("1")
+                      ? "/assets/episode1-cover.jpeg"
+                      : "/assets/preview.png"
+                  }
                   alt={episode.name || "Episode thumbnail"}
                   fill
                   className="object-cover"
