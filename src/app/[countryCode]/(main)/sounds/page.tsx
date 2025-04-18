@@ -753,11 +753,11 @@ export default function SoundsPage() {
                       className="w-full md:w-60 lg:w-72 h-40 sm:h-48 md:h-60 lg:h-72 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
                       style={{ maxWidth: "100%" }}
                       onClick={() =>
-                        setEnlargedAlbumCover("/assets/album-cover.png")
+                        setEnlargedAlbumCover("/assets/album-cover.jpeg")
                       }
                     >
                       <Image
-                        src="/assets/album-cover.png"
+                        src="/assets/album-cover.jpeg"
                         alt={album.name}
                         width={300}
                         height={300}
