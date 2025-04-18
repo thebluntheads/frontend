@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 
 import InteractiveLink from "@modules/common/components/interactive-link"
+import RedirectClient from "components/redirect-client"
 
 export const metadata: Metadata = {
   title: "404",
@@ -14,7 +15,7 @@ export default function NotFound() {
       <p className="text-small-regular text-ui-fg-base">
         The page you tried to access does not exist.
       </p>
-      <InteractiveLink href="/">Go to frontpage</InteractiveLink>
+      <RedirectClient />
     </div>
   )
 }
