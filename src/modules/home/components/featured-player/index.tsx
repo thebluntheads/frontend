@@ -183,7 +183,7 @@ export const FeaturedPlayer = () => {
       )}
 
       {/* Debug indicator */}
-      <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded-lg z-50 text-xs">
+      {/* <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded-lg z-50 text-xs">
         {playingTrackId ? (
           <>
             <div>Playing: {playingTrackId}</div>
@@ -192,7 +192,7 @@ export const FeaturedPlayer = () => {
         ) : (
           "Not playing"
         )}
-      </div>
+      </div> */}
 
       {/* Add animation keyframes */}
       <style jsx global>{`

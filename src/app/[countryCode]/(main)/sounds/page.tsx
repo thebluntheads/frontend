@@ -655,7 +655,7 @@ export default function SoundsPage() {
       )}
 
       {/* Debug indicator */}
-      <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded-lg z-50 text-xs">
+      {/* <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded-lg z-50 text-xs">
         {playingTrackId ? (
           <>
             <div>Playing: {playingTrackId}</div>
@@ -664,7 +664,7 @@ export default function SoundsPage() {
         ) : (
           "Not playing"
         )}
-      </div>
+      </div> */}
       {/* Elegant sound browser header with waveform */}
       <div className="w-full bg-black py-10">
         <div className="w-full px-3 sm:px-4 md:px-6">
