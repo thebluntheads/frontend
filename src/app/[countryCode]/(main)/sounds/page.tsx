@@ -804,7 +804,7 @@ export default function SoundsPage() {
                             <span className="text-green-500 text-xs font-medium">
                               Purchased
                             </span>
-                            <Button
+                            {/* <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleDownloadAlbum(album.id)}
@@ -814,7 +814,7 @@ export default function SoundsPage() {
                               {isDownloading[`album_${album.id}`]
                                 ? "..."
                                 : "Download All"}
-                            </Button>
+                            </Button> */}
                           </div>
                         )}
                       </div>
@@ -908,7 +908,10 @@ export default function SoundsPage() {
                                 </Button>
                               ) : (
                                 <div className="flex items-center gap-2">
-                                  <Button
+                                  <span className="text-green-500 text-xs font-medium">
+                                    Purchased
+                                  </span>
+                                  {/* <Button
                                     variant="outline"
                                     size="sm"
                                     onClick={() => handleDownloadSound(track)}
@@ -918,7 +921,7 @@ export default function SoundsPage() {
                                     {isDownloading[track.id]
                                       ? "preparing..."
                                       : "Download"}
-                                  </Button>
+                                  </Button> */}
                                 </div>
                               )}
                             </div>
