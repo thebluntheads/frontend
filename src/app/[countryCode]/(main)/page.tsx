@@ -13,6 +13,7 @@ import {
 } from "@lib/data/digital-products"
 import FeaturedEpisodes from "@modules/home/components/featured-episodes"
 import FeaturedSounds from "@modules/home/components/featured-sounds"
+import { FeaturedPlayer } from "@modules/home/components/featured-player"
 
 export const metadata: Metadata = {
   title: "TheBluntHeads",
@@ -63,7 +64,7 @@ export default async function Home(props: {
       )}
 
       {/* Featured sounds section */}
-      {sounds && sounds.length > 0 && <FeaturedSounds sounds={sounds} />}
+      {sounds && sounds.length > 0 && <FeaturedPlayer />}
     </div>
   )
 }
