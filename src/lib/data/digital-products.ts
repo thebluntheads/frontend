@@ -204,7 +204,7 @@ export const listEpisodes = async (
   const next = {
     ...(await getCacheOptions("episodes")),
   }
-  
+
   // Apply options to query params
   queryParams.limit = options.limit || queryParams.limit || "100"
   queryParams.offset = options.offset || queryParams.offset || "0"
@@ -213,7 +213,7 @@ export const listEpisodes = async (
   const url = seasonHandle
     ? `/store/digital-products?type=episode&season_handle=${seasonHandle}`
     : `/store/digital-products?type=episode`
-    
+
   return sdk.client
     .fetch<{ digital_products: DigitalProduct[]; count: number }>(url, {
       query: {

@@ -182,18 +182,6 @@ export const FeaturedPlayer = () => {
         />
       )}
 
-      {/* Debug indicator */}
-      {/* <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded-lg z-50 text-xs">
-        {playingTrackId ? (
-          <>
-            <div>Playing: {playingTrackId}</div>
-            <div>Progress: {Math.round(audioProgress * 100)}%</div>
-          </>
-        ) : (
-          "Not playing"
-        )}
-      </div> */}
-
       {/* Add animation keyframes */}
       <style jsx global>{`
         @keyframes pulse {
@@ -273,7 +261,7 @@ export const FeaturedPlayer = () => {
                         onClick={() => (window.location.href = "/sounds")}
                         className="text-xs bg-dark-green hover:bg-dark-green text-white px-3 py-1 h-8"
                       >
-                        Buy Season One SoundTrack
+                        Buy Season 1 SoundTrack
                       </Button>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-4"></div>

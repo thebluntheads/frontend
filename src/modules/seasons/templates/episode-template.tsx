@@ -331,7 +331,7 @@ export default function EpisodeTemplate({
                   ) : hasPurchased ? (
                     <Button
                       variant="secondary"
-                      className="bg-black/20 hover:bg-black/30 text-white border-0"
+                      className="bg-dark-green hover:bg-light-green text-white border-0"
                       onClick={handlePlayVideo}
                     >
                       Watch Full Episode
