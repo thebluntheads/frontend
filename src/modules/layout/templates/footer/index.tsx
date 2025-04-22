@@ -127,6 +127,14 @@ export default async function Footer() {
                 <li>
                   <LocalizedClientLink
                     className="hover:text-white transition-colors"
+                    href="/contact"
+                  >
+                    Contact Us
+                  </LocalizedClientLink>
+                </li>
+                <li>
+                  <LocalizedClientLink
+                    className="hover:text-white transition-colors"
                     href="/faq"
                   >
                     FAQs
@@ -154,14 +162,6 @@ export default async function Footer() {
                     href="/giveaway-rules"
                   >
                     Giveaway Rules
-                  </LocalizedClientLink>
-                </li>
-                <li>
-                  <LocalizedClientLink
-                    className="hover:text-white transition-colors"
-                    href="/contact"
-                  >
-                    Contact Us
                   </LocalizedClientLink>
                 </li>
               </ul>
