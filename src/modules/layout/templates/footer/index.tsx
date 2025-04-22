@@ -156,6 +156,14 @@ export default async function Footer() {
                     Giveaway Rules
                   </LocalizedClientLink>
                 </li>
+                <li>
+                  <LocalizedClientLink
+                    className="hover:text-white transition-colors"
+                    href="/contact"
+                  >
+                    Contact Us
+                  </LocalizedClientLink>
+                </li>
               </ul>
             </div>
           </div>
