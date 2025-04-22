@@ -129,10 +129,10 @@ export async function login(_currentState: unknown, formData: FormData) {
 export async function signout(countryCode: string) {
   await sdk.auth.logout()
   removeAuthToken()
-  
+
   const customerCacheTag = await getCacheTag("customers")
   revalidateTag(customerCacheTag)
-  
+
   redirect(`/${countryCode}/account`)
 }
 
@@ -251,4 +251,65 @@ export const updateCustomerAddress = async (
     .catch((err) => {
       return { success: false, error: err.toString() }
     })
+}
+
+export const generatePasswordToken = async (
+  _currentState: Record<string, unknown>,
+  formData: FormData
+): Promise<any> => {
+  const email = formData.get("email") as string
+
+  return sdk.auth
+    .resetPassword("customer", "emailpass", {
+      identifier: email,
+    })
+    .then((res) => {
+      revalidateTag("customer")
+      revalidateTag("auth")
+      return { success: true, error: null }
+    })
+    .catch((err) => {
+      return { success: false, error: err.toString() }
+    })
+}
+
+export const resetPassword = async (
+  _currentState: Record<string, unknown>,
+  formData: FormData
+): Promise<any> => {
+  const new_password = formData.get("new_password") as string
+  const confirm_password = formData.get("confirm_password") as string
+  const { email, token } = _currentState
+  if (token && email) {
+    if (new_password !== confirm_password) {
+      return {
+        success: false,
+        error: "Passwords do not match",
+      }
+    }
+
+    return await fetch(
+      `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/auth/customer/emailpass/update`,
+      {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email,
+          password: new_password,
+        }),
+      }
+    )
+      .then((res) => {
+        revalidateTag("customer")
+        revalidateTag("auth")
+        return { success: true, error: null }
+      })
+      .catch((err) => {
+        return { success: false, error: err.toString() }
+      })
+  }
 }

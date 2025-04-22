@@ -42,13 +42,20 @@ const Login = ({ setCurrentView }: Props) => {
         <ErrorMessage error={message} data-testid="login-error-message" />
         <SubmitButton
           data-testid="sign-in-button"
-          className="w-full mt-6 bg-dark-green text-white"
+          className="w-full mt-6 bg-dark-green hover:bg-light-green text-white transition-colors py-3 rounded-lg"
         >
           Sign in
         </SubmitButton>
       </form>
       <div className="text-center text-white text-small-regular mt-6">
         <p>Sign in with your email and password to access exclusive content.</p>
+        <button 
+          onClick={() => setCurrentView(LOGIN_VIEW.FORGOT_PASSWORD)}
+          className="text-light-green hover:underline mt-4 inline-block"
+          data-testid="forgot-password-button"
+        >
+          Forgot your password?
+        </button>
       </div>
     </div>
   )
