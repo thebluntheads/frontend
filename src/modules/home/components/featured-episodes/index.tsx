@@ -54,9 +54,6 @@ const FeaturedEpisodes = ({ season, episodes }: FeaturedEpisodesProps) => {
                   <div className="text-white">
                     <div className="flex items-center space-x-2 mb-2">
                       <span className="bg-gray-800 px-2 py-1 rounded text-xs">
-                        Episode {episode.position || ""}
-                      </span>
-                      <span className="bg-gray-800 px-2 py-1 rounded text-xs">
                         {getDigitalProductPrice({
                           variant: episode.product_variant,
                         }).cheapestPrice?.calculated_price || "$0.00"}

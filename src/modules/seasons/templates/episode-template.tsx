@@ -323,7 +323,7 @@ export default function EpisodeTemplate({
                   {isLoading ? (
                     <Button
                       variant="secondary"
-                      className="bg-black/10 text-white border-0"
+                      className="bg-dark-green text-white border-0"
                       disabled
                     >
                       Loading...

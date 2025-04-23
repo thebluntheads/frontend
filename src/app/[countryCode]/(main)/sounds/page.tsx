@@ -771,7 +771,7 @@ export default function SoundsPage() {
                           <>
                             <span className="text-gray-400">
                               {album.product_variant && (
-                                <span className="text-dark-green font-medium text-xs">
+                                <span className="text-white font-large text-medium">
                                   {getDigitalProductPrice({
                                     variant: album.product_variant,
                                   }).cheapestPrice?.calculated_price || "$1.99"}
@@ -997,7 +997,7 @@ export default function SoundsPage() {
             <div className="mb-6 flex gap-4">
               <div className="w-24 h-24 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
                 <Image
-                  src="/assets/music-cover.png"
+                  src="/assets/album-cover.jpeg"
                   alt={currentSound.name || "Sound"}
                   width={96}
                   height={96}
