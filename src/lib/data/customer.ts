@@ -14,6 +14,9 @@ import {
   setAuthToken,
 } from "./cookies"
 
+// Default region for redirects
+const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us"
+
 export const retrieveCustomer =
   async (): Promise<HttpTypes.StoreCustomer | null> => {
     const authHeaders = await getAuthHeaders()
@@ -97,7 +100,8 @@ export async function signup(_currentState: unknown, formData: FormData) {
 
     await transferCart()
 
-    return createdCustomer
+    // Return success with redirect path
+    return { success: true, redirectTo: `/${DEFAULT_REGION}/seasons/season-1` }
   } catch (error: any) {
     return error.toString()
   }
@@ -121,6 +125,8 @@ export async function login(_currentState: unknown, formData: FormData) {
 
   try {
     await transferCart()
+    // Return success with redirect path
+    return { success: true, redirectTo: `/${DEFAULT_REGION}/seasons/season-1` }
   } catch (error: any) {
     return error.toString()
   }

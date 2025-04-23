@@ -168,6 +168,12 @@ export default function SeasonTemplate({
           countryCode: "us",
         })
 
+        await addToStreamCart({
+          variantId: "variant_01JRVTERWFJQ9HXWZP17H13HXT",
+          quantity: 1,
+          countryCode,
+        })
+
         const updatedCart = await retrieveStreamCart()
         setCart(updatedCart)
 

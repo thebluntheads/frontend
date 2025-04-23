@@ -246,20 +246,26 @@ const EpisodePaymentPopup = ({
               <h3 className="text-lg font-medium mb-4 text-white">
                 Purchase Summary
               </h3>
+
               <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-400">Item</span>
-                  <span className="font-medium">
-                    {cart?.items?.[0]?.title || "Episode"}
-                  </span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-400">Price</span>
-                  <span className="font-medium">
-                    {cart?.region?.currency_code?.toUpperCase()}{" "}
-                    {cart?.subtotal || 0}
-                  </span>
-                </div>
+                {cart?.items?.map((item) => (
+                  <React.Fragment key={item.id}>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-400">Item</span>
+                      <span className="font-medium">
+                        {item?.title || "Episode"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between mb-2 border-b border-gray-700">
+                      <span className="text-gray-400">Price</span>
+                      <span className="font-medium">
+                        {cart?.region?.currency_code?.toUpperCase()}{" "}
+                        {item?.unit_price || 0}
+                      </span>
+                    </div>
+                  </React.Fragment>
+                ))}
+
                 {cart?.discount_total > 0 && (
                   <div className="flex justify-between mb-2 text-green-600">
                     <span>Discount</span>

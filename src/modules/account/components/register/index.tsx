@@ -1,6 +1,7 @@
 "use client"
 
-import { useActionState } from "react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import Input from "@modules/common/components/input"
 import { LOGIN_VIEW } from "@modules/account/templates/login-template"
 import ErrorMessage from "@modules/checkout/components/error-message"
@@ -13,8 +14,41 @@ type Props = {
 }
 
 const Register = ({ setCurrentView }: Props) => {
-  const [message, formAction] = useActionState(signup, null)
+  const router = useRouter()
+  const [isRedirecting, setIsRedirecting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  
+  // Custom action to handle form submission with redirect
+  const handleSubmit = async (formData: FormData) => {
+    const result = await signup(null, formData);
+    
+    // Check if registration was successful
+    if (result && typeof result === "object" && "success" in result && result.success) {
+      console.log("Registration successful, redirecting to:", result.redirectTo);
+      setIsRedirecting(true)
+      
+      // Use window.location for a more forceful redirect
+      if (typeof window !== "undefined" && result.redirectTo) {
+        window.location.href = result.redirectTo as string;
+      }
+    } else if (typeof result === "string") {
+      // Handle error message
+      setErrorMessage(result)
+    }
+    
+    return result;
+  }
 
+  // If redirecting, show a loading state
+  if (isRedirecting) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-12" data-testid="register-page">
+        <div className="text-light-green text-xl">Registration successful! Redirecting...</div>
+        <div className="mt-4 animate-pulse">Please wait...</div>
+      </div>
+    )
+  }
+  
   return (
     <div
       className="w-full flex flex-col items-center"
@@ -27,7 +61,7 @@ const Register = ({ setCurrentView }: Props) => {
         Create your profile, and get full access to our series, exclusive drops
         and member-only shopping experience.
       </p>
-      <form className="w-full flex flex-col" action={formAction}>
+      <form className="w-full flex flex-col" action={handleSubmit}>
         <div className="flex flex-col w-full gap-y-2">
           <Input
             label="First name"
@@ -67,7 +101,7 @@ const Register = ({ setCurrentView }: Props) => {
             data-testid="password-input"
           />
         </div>
-        <ErrorMessage error={message} data-testid="register-error" />
+        <ErrorMessage error={errorMessage} data-testid="register-error" />
         <span className="text-center text-white text-small-regular mt-6">
           By creating an account, you agree to TheBluntHead&apos;s{" "}
           <LocalizedClientLink
