@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server"
+import https from "https"
+import fetch from "node-fetch"
 
-const MERCHANT_ID = "merchant.com.thebluntheads" // Replace with your actual Merchant ID
-const DOMAIN = "thebluntheads.com" // Your domain name
+const MERCHANT_ID = "merchant.com.thebluntheads"
+const DOMAIN = "thebluntheads.com"
+const CERT_PASSWORD = process.env.CERT_PASSWORD
+const CERT_P12_BASE64 = process.env.CERT_P12_BASE64!
 
 export async function POST(request: Request) {
   try {
@@ -25,6 +29,13 @@ export async function POST(request: Request) {
       initiativeContext: DOMAIN,
     }
 
+    const certBuffer = Buffer.from(CERT_P12_BASE64, "base64")
+
+    const agent = new https.Agent({
+      pfx: certBuffer,
+      passphrase: CERT_PASSWORD,
+    })
+
     // Send the validation data to Apple's validation URL
     const response = await fetch(validationURL, {
       method: "POST",
@@ -32,6 +43,7 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(validationRequest),
+      agent,
     })
 
     if (!response.ok) {
