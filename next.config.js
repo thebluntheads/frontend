@@ -48,14 +48,6 @@ const nextConfig = {
       },
     ],
   },
-  headers() {
-    return [
-      {
-        source: "/.well-known/apple-developer-merchantid-domain-association",
-        headers: [{ key: "content-type", value: "application/json" }],
-      },
-    ]
-  },
 }
 
 module.exports = nextConfig
