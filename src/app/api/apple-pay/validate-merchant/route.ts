@@ -29,11 +29,11 @@ export async function POST(request: Request) {
       initiativeContext: DOMAIN,
     }
 
-    const certBuffer = Buffer.from(CERT_P12_BASE64, "base64")
+    const certBuffer = Buffer.from(CERT_P12_BASE64, "base64").toString("ascii")
 
     const agent = new https.Agent({
       pfx: certBuffer,
-      passphrase: CERT_PASSWORD,
+      passphrase: "",
     })
 
     // Send the validation data to Apple's validation URL
