@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     // Prepare the merchant validation request
     const validationRequest = {
       merchantIdentifier: MERCHANT_ID,
-      displayName: "TheBluntHeads",
+      displayName: "JOHN BOY ENTERTAINMENT, INC",
       initiative: "web",
       initiativeContext: DOMAIN,
     }

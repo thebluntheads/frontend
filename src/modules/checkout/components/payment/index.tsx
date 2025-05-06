@@ -166,18 +166,15 @@ const Payment = ({
             console.log("Validating merchant with URL:", event.validationURL)
 
             // Call your backend to validate the merchant with Apple's validation URL
-            const response = await fetch(
-              "/api/payment/apple-pay/validate-merchant",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  validationURL: event.validationURL,
-                }),
-              }
-            )
+            const response = await fetch("/api/apple-pay/validate-merchant", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                validationURL: event.validationURL,
+              }),
+            })
 
             if (!response.ok) {
               const errorText = await response.text()
