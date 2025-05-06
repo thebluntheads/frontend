@@ -19,8 +19,9 @@ import PaymentIcon from "@modules/common/icons/paymentIcon"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import { AuthorizeNetContainer } from "../payment-container/authorize-net-container"
 import { placeDigitalProductOrder } from "@lib/data/digital-cart"
+import DigitalWalletScripts from "./digital-wallet-scripts"
 
-const paymentMethods = [
+const cardPaymentMethods = [
   "/images/payment/master.png",
   "/images/payment/discover.png",
   "/images/payment/amex.png",
@@ -39,6 +40,8 @@ type BasicCardInfo = {
   zip?: string
   fullName: string
 }
+
+type WalletPaymentType = "apple-pay" | "google-pay" | null
 
 const Payment = ({
   cart,
@@ -73,6 +76,12 @@ const Payment = ({
     cardCode: "",
     fullName: "",
   })
+
+  const [walletPaymentType, setWalletPaymentType] =
+    useState<WalletPaymentType>(null)
+
+  const [isApplePayAvailable, setIsApplePayAvailable] = useState(false)
+  const [isGooglePayAvailable, setIsGooglePayAvailable] = useState(false)
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -125,6 +134,213 @@ const Payment = ({
     }
   }
 
+  // Handle Apple Pay payment process
+  const handleApplePay = async () => {
+    try {
+      // Check if Apple Pay is available
+      if (
+        !window.ApplePaySession ||
+        !window.ApplePaySession.canMakePayments()
+      ) {
+        throw new Error("Apple Pay is not available on this device or browser")
+      }
+
+      // Configure the payment request
+      const paymentRequest = {
+        countryCode: "US",
+        currencyCode: cart.region?.currency_code?.toUpperCase() || "USD",
+        supportedNetworks: ["visa", "masterCard", "amex", "discover"],
+        merchantCapabilities: ["supports3DS"],
+        total: {
+          label: "The Blunt Heads",
+          amount: cart.total.toFixed(2), // Convert from cents to dollars and ensure 2 decimal places
+        },
+      }
+
+      // Create an Apple Pay session
+      const session = new window.ApplePaySession(3, paymentRequest)
+      // Handle payment authorization
+      return new Promise<{ token: string; tokenDescriptor: string }>(
+        (resolve, reject) => {
+          session.onvalidatemerchant = async (event: any) => {
+            try {
+              console.log("Validating merchant with URL:", event.validationURL)
+
+              // Call your backend to validate the merchant with Apple's validation URL
+              const response = await fetch(
+                "/api/payment/apple-pay/validate-merchant",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    validationURL: event.validationURL,
+                  }),
+                }
+              )
+
+              if (!response.ok) {
+                const errorText = await response.text()
+                throw new Error(`Merchant validation failed: ${errorText}`)
+              }
+
+              const merchantSession = await response.json()
+              console.log("Merchant validation successful:", merchantSession)
+
+              // Complete merchant validation with the session from Apple
+              session.completeMerchantValidation(merchantSession)
+            } catch (error) {
+              console.error("Merchant validation failed:", error)
+              session.abort()
+              reject(error as Error)
+            }
+          }
+
+          session.onpaymentauthorized = async (event: any) => {
+            try {
+              console.log("Payment authorized:", event.payment)
+
+              // Get the payment data from the event
+              const token = event.payment.token.paymentData
+
+              // Complete the payment
+              session.completePayment(window.ApplePaySession.STATUS_SUCCESS)
+
+              // Return the token for processing with Authorize.Net
+              resolve({
+                token: JSON.stringify(token),
+                tokenDescriptor: "COMMON.APPLE.INAPP.PAYMENT",
+              })
+            } catch (error) {
+              console.error("Payment authorization failed:", error)
+              session.completePayment(window.ApplePaySession.STATUS_FAILURE)
+              reject(error as Error)
+            }
+          }
+
+          session.oncancel = () => {
+            console.log("Apple Pay payment was canceled by the user")
+            reject(new Error("Apple Pay payment was canceled"))
+          }
+
+          // Start the session
+          session.begin()
+        }
+      )
+    } catch (error) {
+      console.error("Apple Pay error:", error)
+      throw error
+    }
+  }
+
+  // Handle Google Pay payment process
+  const handleGooglePay = async () => {
+    try {
+      // Check if Google Pay is available
+      if (
+        !window.google ||
+        !window.google.payments ||
+        !window.google.payments.api
+      ) {
+        throw new Error("Google Pay is not available on this device or browser")
+      }
+
+      // Initialize Google Pay client
+      const paymentsClient = new window.google.payments.api.PaymentsClient({
+        environment:
+          process.env.NODE_ENV === "production" ? "PRODUCTION" : "TEST",
+      })
+
+      // Check if Google Pay is ready to pay
+      const isReadyToPayRequest = {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        allowedPaymentMethods: [
+          {
+            type: "CARD",
+            parameters: {
+              allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+              allowedCardNetworks: ["VISA", "MASTERCARD", "AMEX", "DISCOVER"],
+            },
+          },
+        ],
+      }
+
+      const isReadyToPay = await paymentsClient.isReadyToPay(
+        isReadyToPayRequest
+      )
+      if (!isReadyToPay) {
+        throw new Error("Google Pay is not ready to pay")
+      }
+
+      // Create payment data request for Authorize.Net
+      const paymentDataRequest = {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        allowedPaymentMethods: [
+          {
+            type: "CARD",
+            parameters: {
+              allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+              allowedCardNetworks: ["VISA", "MASTERCARD", "AMEX", "DISCOVER"],
+              billingAddressRequired: true,
+              billingAddressParameters: {
+                format: "FULL",
+              },
+            },
+            tokenizationSpecification: {
+              type: "PAYMENT_GATEWAY",
+              parameters: {
+                gateway: "authorizenet",
+                gatewayMerchantId:
+                  process.env.NEXT_PUBLIC_AUTHORIZE_NET_LOGIN_ID,
+              },
+            },
+          },
+        ],
+        merchantInfo: {
+          merchantId: process.env.NEXT_PUBLIC_AUTHORIZE_NET_LOGIN_ID,
+          merchantName: "The Blunt Heads",
+        },
+        transactionInfo: {
+          totalPriceStatus: "FINAL",
+          totalPrice: cart.total.toFixed(2), // Convert from cents to dollars
+          currencyCode: cart.region?.currency_code?.toUpperCase() || "USD",
+        },
+      }
+
+      // Show Google Pay payment sheet
+      const paymentData = await paymentsClient.loadPaymentData(
+        paymentDataRequest
+      )
+
+      const tokenData = paymentData.paymentMethodData.tokenizationData.token
+
+      // Extract the payment token
+      const billingAddress = paymentData.paymentMethodData.info.billingAddress
+
+      // Return the token for processing with Authorize.Net
+      return {
+        token: tokenData,
+        billing_address: {
+          first_name: billingAddress.name.split(" ")[0] || "",
+          last_name: billingAddress.name.split(" ").slice(1).join(" ") || "",
+          company: "",
+          address_1: billingAddress.address1,
+          address_2: billingAddress.address2 || "",
+          city: billingAddress.locality,
+          province: billingAddress.administrativeArea,
+          postal_code: billingAddress.postalCode,
+          country_code: billingAddress.countryCode,
+        },
+      }
+    } catch (error) {
+      console.error("Google Pay error:", error)
+      throw error
+    }
+  }
+
   const handleSubmit = async () => {
     setIsLoading(true)
     setErrorMessage(null)
@@ -133,6 +349,67 @@ const Payment = ({
       console.log(cardData)
       const shouldInputCard =
         isAuthorizeNetFunc(selectedPaymentMethod) && !activeSession
+
+      // Handle digital wallet payments (Apple Pay or Google Pay)
+      if (walletPaymentType) {
+        let walletPaymentData
+
+        if (walletPaymentType === "apple-pay") {
+          walletPaymentData = await handleApplePay()
+
+          const payc = await initiatePaymentSession(cart, {
+            provider_id: selectedPaymentMethod,
+            data: {
+              billing_address: cart.billing_address,
+              customer: cart.customer,
+              applePayData: walletPaymentData,
+            },
+          })
+
+          console.log(JSON.stringify(payc))
+          const pendingSession =
+            payc?.payment_collection?.payment_sessions?.find(
+              (session: any) => session.status === "pending"
+            )
+
+          if (pendingSession) {
+            setSubmitting(true)
+            await onPaymentCompleted()
+            return
+          }
+        } else if (walletPaymentType === "google-pay") {
+          walletPaymentData = await handleGooglePay()
+          console.log({ walletPaymentData })
+          const payc = await initiatePaymentSession(cart, {
+            provider_id: selectedPaymentMethod,
+            data: {
+              billing_address: walletPaymentData.billing_address,
+              customer: cart.customer,
+              googlePayData: walletPaymentData?.token!,
+            },
+          })
+
+          console.log(JSON.stringify(payc))
+          const pendingSession =
+            payc?.payment_collection?.payment_sessions?.find(
+              (session: any) => session.status === "pending"
+            )
+
+          if (pendingSession) {
+            setSubmitting(true)
+            await onPaymentCompleted()
+            return
+          }
+        }
+
+        // Handle unexpected session state
+        setErrorMessage(
+          "Digital wallet payment session initiation failed. Please try again."
+        )
+        return
+      }
+
+      // Handle credit card payment
       if (cardData.cardNumber) {
         // Step 1: Send card data to Authorize.Net
         const transactionResponse = await dispatchData({
@@ -227,8 +504,34 @@ const Payment = ({
     }
   }, [isOpen, cart])
 
+  // Handle digital wallet availability
+  const handleApplePayAvailability = useCallback(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.ApplePaySession &&
+      window.ApplePaySession.canMakePayments()
+    ) {
+      setIsApplePayAvailable(true)
+    }
+  }, [])
+
+  const handleGooglePayAvailability = useCallback(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.google &&
+      window.google.payments &&
+      window.google.payments.api
+    ) {
+      setIsGooglePayAvailable(true)
+    }
+  }, [window, setIsGooglePayAvailable])
+
   return (
     <>
+      <DigitalWalletScripts
+        onApplePayReady={handleApplePayAvailability}
+        onGooglePayReady={handleGooglePayAvailability}
+      />
       <div className="bg-gray-900 text-white">
         <div
           className={`flex flex-row items-center justify-between bg-gray-800 py-4 px-5 border border-gray-700 ${
@@ -273,26 +576,113 @@ const Payment = ({
             <div>
               {availablePaymentMethods?.length && (
                 <>
-                  <div className="flex items-center gap-2 mb-6 flex-wrap">
-                    {paymentMethods.map((method, index) => (
-                      <Image
-                        key={index}
-                        width={60}
-                        height={40}
-                        alt={`method-${index}`}
-                        src={method}
-                      />
-                    ))}
+                  {/* Digital Wallet Payment Options */}
+                  <div className="flex items-center gap-6 mb-8">
+                    {isApplePayAvailable && (
+                      <button
+                        onClick={() =>
+                          setWalletPaymentType(
+                            walletPaymentType === "apple-pay"
+                              ? null
+                              : "apple-pay"
+                          )
+                        }
+                        className={`border rounded-md transition-all ${
+                          walletPaymentType === "apple-pay"
+                            ? "border-green-500 bg-gray-800"
+                            : "border-gray-700 hover:border-gray-500"
+                        }`}
+                      >
+                        <div className="h-[50px] flex items-center justify-center px-4">
+                          <Image
+                            width={200}
+                            height={50}
+                            alt="Apple Pay"
+                            src="/images/payment/apple-pay.svg"
+                            style={{ maxHeight: "50px", objectFit: "contain" }}
+                          />
+                        </div>
+                      </button>
+                    )}
+                    {isGooglePayAvailable && (
+                      <button
+                        onClick={() =>
+                          setWalletPaymentType(
+                            walletPaymentType === "google-pay"
+                              ? null
+                              : "google-pay"
+                          )
+                        }
+                        className={`border rounded-md transition-all ${
+                          walletPaymentType === "google-pay"
+                            ? "border-green-500 bg-gray-800"
+                            : "border-gray-700 hover:border-gray-500"
+                        }`}
+                      >
+                        <div className="h-[50px] flex items-center justify-center px-4">
+                          <Image
+                            width={200}
+                            height={50}
+                            alt="Google Pay"
+                            src="/images/payment/google-pay.svg"
+                            style={{ maxHeight: "50px", objectFit: "contain" }}
+                          />
+                        </div>
+                      </button>
+                    )}
+                    {!isApplePayAvailable && !isGooglePayAvailable && (
+                      <div className="text-gray-400 text-sm italic">
+                        Digital wallet payment methods are not available on this
+                        device or browser.
+                      </div>
+                    )}
                   </div>
 
-                  {isAuthorizeNetFunc(selectedPaymentMethod) ? (
-                    <AuthorizeNetContainer
-                      paymentProviderId={selectedPaymentMethod}
-                      setCardData={setCardData}
-                      cardData={cardData}
-                      errorMessage={errorMessage}
-                    />
+                  {isAuthorizeNetFunc(selectedPaymentMethod) &&
+                  !walletPaymentType ? (
+                    <>
+                      <div className="flex items-center gap-2 mb-4 flex-wrap">
+                        {cardPaymentMethods.map((method, index) => (
+                          <Image
+                            key={index}
+                            width={50}
+                            height={35}
+                            alt={`method-${index}`}
+                            src={method}
+                          />
+                        ))}
+                      </div>
+                      <AuthorizeNetContainer
+                        paymentProviderId={selectedPaymentMethod}
+                        setCardData={setCardData}
+                        cardData={cardData}
+                        errorMessage={errorMessage}
+                      />
+                    </>
                   ) : null}
+
+                  {walletPaymentType && (
+                    <div className="mb-6 p-4 border border-gray-700 rounded-md bg-gray-800">
+                      <Text className="text-white text-lg mb-2">
+                        {walletPaymentType === "apple-pay"
+                          ? "Apple Pay"
+                          : "Google Pay"}{" "}
+                        selected
+                      </Text>
+                      <Text className="text-gray-300">
+                        Click "Place Order" to complete your purchase using{" "}
+                        {walletPaymentType === "apple-pay"
+                          ? "Apple Pay"
+                          : "Google Pay"}
+                        .
+                      </Text>
+                      {errorMessage && (
+                        <div className="mt-4 p-3 bg-red-900/50 border border-red-700 rounded-md">
+                          <Text className="text-red-300">{errorMessage}</Text>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -335,7 +725,8 @@ const Payment = ({
           onClick={handleSubmit}
           isLoading={isLoading}
           disabled={
-            (isAuthorizeNet && !cardData.cardNumber) || !selectedPaymentMethod
+            (isAuthorizeNet && !cardData.cardNumber && !walletPaymentType) ||
+            !selectedPaymentMethod
           }
           data-testid="submit-payment-button"
         >
