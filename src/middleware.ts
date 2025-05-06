@@ -107,20 +107,21 @@ export async function middleware(request: NextRequest) {
   // Check for age verification cookie
   const ageVerifiedCookie = request.cookies.get("ageVerified")
   const isAgeVerified = ageVerifiedCookie?.value === "true"
-  
+
   // Get current path segments
   const pathSegments = request.nextUrl.pathname.split("/")
   const countryCodeFromUrl = pathSegments[1]?.toLowerCase()
-  
+
   // Check if the current path is the restricted page
-  const isRestrictedPage = pathSegments.length > 2 && pathSegments[2] === "restricted"
-  
+  const isRestrictedPage =
+    pathSegments.length > 2 && pathSegments[2] === "restricted"
+
   // If age verification is false and not already on restricted page, redirect to restricted
   if (ageVerifiedCookie?.value === "false" && !isRestrictedPage) {
     const restrictedUrl = `${request.nextUrl.origin}/${countryCodeFromUrl}/restricted`
     return NextResponse.redirect(restrictedUrl, 307)
   }
-  
+
   // Continue with normal region handling
   let redirectUrl = request.nextUrl.href
   let response = NextResponse.redirect(redirectUrl, 307)
@@ -137,14 +138,14 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.includes(".")) {
     return NextResponse.next()
   }
-  
+
   // if one of the country codes is in the url and the cache id is set, continue with 404 check
   if (urlHasCountryCode && cacheIdCookie) {
     // Handle 404 pages by checking if the path exists
     try {
       // Create a response to check if the page exists
       const pageCheckResponse = NextResponse.next()
-      
+
       // If we get here, the page exists, so continue normally
       return pageCheckResponse
     } catch (error) {
@@ -179,6 +180,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|images|assets|png|svg|jpg|jpeg|gif|webp).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|images|assets|png|svg|jpg|jpeg|gif|webp|.well-known).*)",
   ],
 }
