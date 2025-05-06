@@ -1,16 +1,14 @@
 import { StorePrice, StoreProductVariant } from "@medusajs/types"
 
 // Type definitions for digital wallet APIs
+// Type definitions for digital wallet APIs
 declare global {
   interface Window {
     ApplePaySession?: any
     google?: {
       payments?: {
         api?: {
-          PaymentsClient: new (options: any) => {
-            isReadyToPay: (request: any) => Promise<any>
-            loadPaymentData: (request: any) => Promise<any>
-          }
+          PaymentsClient: any
         }
       }
     }

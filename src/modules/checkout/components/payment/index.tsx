@@ -245,8 +245,7 @@ const Payment = ({
 
       // Initialize Google Pay client
       const paymentsClient = new window.google.payments.api.PaymentsClient({
-        environment:
-          process.env.NODE_ENV === "production" ? "PRODUCTION" : "TEST",
+        environment: "PRODUCTION",
       })
 
       // Check if Google Pay is ready to pay
@@ -297,8 +296,8 @@ const Payment = ({
           },
         ],
         merchantInfo: {
-          merchantId: process.env.NEXT_PUBLIC_AUTHORIZE_NET_LOGIN_ID,
-          merchantName: "The Blunt Heads",
+          merchantId: process.env.NEXT_PUBLIC_GOOGLE_MERCHANT_ID,
+          merchantName: process.env.NEXT_PUBLIC_GOOGLE_MERCHANT_NAME,
         },
         transactionInfo: {
           totalPriceStatus: "FINAL",
@@ -502,33 +501,95 @@ const Payment = ({
   }, [isOpen, cart])
 
   // Handle digital wallet availability
-  const handleApplePayAvailability = useCallback(() => {
-    if (
-      typeof window !== "undefined" &&
-      window.ApplePaySession &&
-      window.ApplePaySession.canMakePayments()
-    ) {
+  useEffect(() => {
+    // Check if Apple Pay is available
+    if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
       setIsApplePayAvailable(true)
+    }
+
+    // Function to check Google Pay availability
+    const checkGooglePayAvailability = () => {
+      if (
+        window.google &&
+        window.google.payments &&
+        window.google.payments.api &&
+        window.google.payments.api.PaymentsClient
+      ) {
+        try {
+          // Create a Google Pay client
+          const paymentsClient = new window.google.payments.api.PaymentsClient({
+            environment: "PRODUCTION",
+          })
+
+          // Check if Google Pay is available
+          paymentsClient
+            .isReadyToPay({
+              apiVersion: 2,
+              apiVersionMinor: 0,
+              allowedPaymentMethods: [
+                {
+                  type: "CARD",
+                  parameters: {
+                    allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+                    allowedCardNetworks: [
+                      "AMEX",
+                      "DISCOVER",
+                      "MASTERCARD",
+                      "VISA",
+                    ],
+                  },
+                },
+              ],
+            })
+            .then((response: any) => {
+              if (response.result) {
+                console.log("Google Pay is available")
+                setIsGooglePayAvailable(true)
+              } else {
+                console.log("Google Pay is not available")
+                setIsGooglePayAvailable(false)
+              }
+            })
+            .catch((error: any) => {
+              console.error("Google Pay availability check failed:", error)
+              setIsGooglePayAvailable(false)
+            })
+        } catch (error) {
+          console.error("Error initializing Google Pay client:", error)
+          setIsGooglePayAvailable(false)
+        }
+      }
+    }
+
+    // Check for Google Pay API loading
+    if (window.google && window.google.payments && window.google.payments.api) {
+      checkGooglePayAvailability()
+    } else {
+      // Check every 500ms for up to 5 seconds
+      let attempts = 0
+      const maxAttempts = 10
+      const checkInterval = setInterval(() => {
+        attempts++
+        if (
+          window.google &&
+          window.google.payments &&
+          window.google.payments.api
+        ) {
+          clearInterval(checkInterval)
+          checkGooglePayAvailability()
+        } else if (attempts >= maxAttempts) {
+          clearInterval(checkInterval)
+          console.log("Google Pay API did not load in time")
+        }
+      }, 500)
+
+      return () => clearInterval(checkInterval)
     }
   }, [])
 
-  const handleGooglePayAvailability = useCallback(() => {
-    if (
-      typeof window !== "undefined" &&
-      window.google &&
-      window.google.payments &&
-      window.google.payments.api
-    ) {
-      setIsGooglePayAvailable(true)
-    }
-  }, [window, setIsGooglePayAvailable])
-
   return (
     <>
-      <DigitalWalletScripts
-        onApplePayReady={handleApplePayAvailability}
-        onGooglePayReady={handleGooglePayAvailability}
-      />
+      <DigitalWalletScripts />
       <div className="bg-gray-900 text-white">
         <div
           className={`flex flex-row items-center justify-between bg-gray-800 py-4 px-5 border border-gray-700 ${
