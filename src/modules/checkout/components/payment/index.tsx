@@ -148,12 +148,17 @@ const Payment = ({
       // Configure the payment request
       const paymentRequest = {
         countryCode: "US",
-        currencyCode: cart.region?.currency_code?.toUpperCase() || "USD",
+        currencyCode: "USD",
         supportedNetworks: ["visa", "masterCard", "amex", "discover"],
-        merchantCapabilities: ["supports3DS"],
+        merchantCapabilities: [
+          "supports3DS",
+          "supportsCredit",
+          "supportsDebit",
+        ],
+        requiredBillingContactFields: ["postalAddress", "email", "phone"],
         total: {
           label: "The Blunt Heads",
-          amount: cart.total.toFixed(2), // Convert from cents to dollars and ensure 2 decimal places
+          amount: cart.total.toFixed(2),
         },
       }
 
