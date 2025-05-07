@@ -204,13 +204,14 @@ const Payment = ({
 
             // Get the payment data from the event
             const token = event.payment.token.paymentData
+            const base64 = window.btoa(token)
 
             // Complete the payment
             session.completePayment(window.ApplePaySession.STATUS_SUCCESS)
 
             // Return the token for processing with Authorize.Net
             resolve({
-              token: JSON.stringify(token),
+              token: base64,
             })
           } catch (error) {
             console.error("Payment authorization failed:", error)
