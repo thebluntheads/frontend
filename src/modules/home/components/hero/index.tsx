@@ -22,7 +22,7 @@ const Hero = ({
   ctaLink,
   ctaText = "Watch Season",
   thumbnailUrl = "/assets/preview.png",
-  videoUrl = "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/s-5583_1737735753_06dbfce4af3d16db6839.mp4",
+  videoUrl = "https://thebluntheads.s3.us-east-2.amazonaws.com/trailer.mp4",
   episodeCount = 0,
   seasonHandle,
 }: HeroProps = {}) => {
