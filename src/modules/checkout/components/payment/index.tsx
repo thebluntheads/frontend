@@ -165,69 +165,84 @@ const Payment = ({
       // Create an Apple Pay session
       const session = new window.ApplePaySession(3, paymentRequest)
       // Handle payment authorization
-      return new Promise<{ token: string }>((resolve, reject) => {
-        session.onvalidatemerchant = async (event: any) => {
-          try {
-            console.log("Validating merchant with URL:", event.validationURL)
+      return new Promise<{ token: string; billing_address: any }>(
+        (resolve, reject) => {
+          session.onvalidatemerchant = async (event: any) => {
+            try {
+              console.log("Validating merchant with URL:", event.validationURL)
 
-            // Call your backend to validate the merchant with Apple's validation URL
-            const response = await fetch("/api/apple-pay/validate-merchant", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                validationURL: event.validationURL,
-              }),
-            })
+              // Call your backend to validate the merchant with Apple's validation URL
+              const response = await fetch("/api/apple-pay/validate-merchant", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  validationURL: event.validationURL,
+                }),
+              })
 
-            if (!response.ok) {
-              const errorText = await response.text()
-              throw new Error(`Merchant validation failed: ${errorText}`)
+              if (!response.ok) {
+                const errorText = await response.text()
+                throw new Error(`Merchant validation failed: ${errorText}`)
+              }
+
+              const merchantSession = await response.json()
+              console.log("Merchant validation successful:", merchantSession)
+
+              // Complete merchant validation with the session from Apple
+              session.completeMerchantValidation(merchantSession)
+            } catch (error) {
+              console.error("Merchant validation failed:", error)
+              session.abort()
+              reject(error as Error)
             }
-
-            const merchantSession = await response.json()
-            console.log("Merchant validation successful:", merchantSession)
-
-            // Complete merchant validation with the session from Apple
-            session.completeMerchantValidation(merchantSession)
-          } catch (error) {
-            console.error("Merchant validation failed:", error)
-            session.abort()
-            reject(error as Error)
           }
-        }
 
-        session.onpaymentauthorized = async (event: any) => {
-          try {
-            console.log("Payment authorized:", event.payment)
+          session.onpaymentauthorized = async (event: any) => {
+            try {
+              console.log("Payment authorized:", event.payment)
 
-            // Get the payment data from the event
-            const token = event.payment.token.paymentData
-            const base64 = window.btoa(token)
+              // Get the payment data from the event
+              const token = event.payment.token.paymentData
+              const base64 = window.btoa(JSON.stringify(token))
+              const billingContact = event.payment.billingContact
 
-            // Complete the payment
-            session.completePayment(window.ApplePaySession.STATUS_SUCCESS)
+              // Complete the payment
+              session.completePayment(window.ApplePaySession.STATUS_SUCCESS)
 
-            // Return the token for processing with Authorize.Net
-            resolve({
-              token: base64,
-            })
-          } catch (error) {
-            console.error("Payment authorization failed:", error)
-            session.completePayment(window.ApplePaySession.STATUS_FAILURE)
-            reject(error as Error)
+              // Return the token for processing with Authorize.Net
+              resolve({
+                token: base64,
+                billing_address: {
+                  first_name: billingContact?.givenName,
+                  last_name: billingContact?.familyName,
+                  company: "",
+                  address_1: billingContact?.addressLines?.[1] || "",
+                  address_2: billingContact?.addressLines?.[2] || "",
+                  city: billingContact?.locality,
+                  postal_code: billingContact?.postalCode,
+                  country_code: billingContact?.countryCode.toLowerCase(),
+                  province: billingContact.administrativeArea,
+                  phone: "",
+                },
+              })
+            } catch (error) {
+              console.error("Payment authorization failed:", error)
+              session.completePayment(window.ApplePaySession.STATUS_FAILURE)
+              reject(error as Error)
+            }
           }
-        }
 
-        session.oncancel = () => {
-          console.log("Apple Pay payment was canceled by the user")
-          reject(new Error("Apple Pay payment was canceled"))
-        }
+          session.oncancel = () => {
+            console.log("Apple Pay payment was canceled by the user")
+            reject(new Error("Apple Pay payment was canceled"))
+          }
 
-        // Start the session
-        session.begin()
-      })
+          // Start the session
+          session.begin()
+        }
+      )
     } catch (error) {
       console.error("Apple Pay error:", error)
       throw error
@@ -359,7 +374,7 @@ const Payment = ({
           const payc = await initiatePaymentSession(cart, {
             provider_id: selectedPaymentMethod,
             data: {
-              billing_address: cart.billing_address,
+              billing_address: walletPaymentData.billing_address,
               customer: cart.customer,
               applePayData: walletPaymentData.token,
             },
