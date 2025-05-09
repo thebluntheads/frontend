@@ -19,7 +19,7 @@ import PaymentIcon from "@modules/common/icons/paymentIcon"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import { AuthorizeNetContainer } from "../payment-container/authorize-net-container"
 import { placeDigitalProductOrder } from "@lib/data/digital-cart"
-import DigitalWalletScripts from "./digital-wallet-scripts"
+import GooglePayButton from "@google-pay/button-react"
 
 const cardPaymentMethods = [
   "/images/payment/master.png",
@@ -64,6 +64,8 @@ const Payment = ({
   const [isLoading, setIsLoading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [paymentData, setPaymentData] =
+    useState<google.payments.api.PaymentData>()
 
   const [error, setError] = useState<string | null>(null)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
@@ -81,7 +83,6 @@ const Payment = ({
     useState<WalletPaymentType>(null)
 
   const [isApplePayAvailable, setIsApplePayAvailable] = useState(false)
-  const [isGooglePayAvailable, setIsGooglePayAvailable] = useState(false)
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -252,101 +253,25 @@ const Payment = ({
   // Handle Google Pay payment process
   const handleGooglePay = async () => {
     try {
-      // Check if Google Pay is available
-      if (
-        !window.google ||
-        !window.google.payments ||
-        !window.google.payments.api
-      ) {
-        throw new Error("Google Pay is not available on this device or browser")
-      }
-
-      // Initialize Google Pay client
-      const paymentsClient = new window.google.payments.api.PaymentsClient({
-        environment: "PRODUCTION",
-      })
-
-      // Check if Google Pay is ready to pay
-      const isReadyToPayRequest = {
-        apiVersion: 2,
-        apiVersionMinor: 0,
-        allowedPaymentMethods: [
-          {
-            type: "CARD",
-            parameters: {
-              allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-              allowedCardNetworks: ["VISA", "MASTERCARD", "AMEX", "DISCOVER"],
-            },
-          },
-        ],
-      }
-
-      const isReadyToPay = await paymentsClient.isReadyToPay(
-        isReadyToPayRequest
-      )
-      if (!isReadyToPay) {
-        throw new Error("Google Pay is not ready to pay")
-      }
-
-      // Create payment data request for Authorize.Net
-      const paymentDataRequest = {
-        apiVersion: 2,
-        apiVersionMinor: 0,
-        allowedPaymentMethods: [
-          {
-            type: "CARD",
-            parameters: {
-              allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-              allowedCardNetworks: ["VISA", "MASTERCARD", "AMEX", "DISCOVER"],
-              billingAddressRequired: true,
-              billingAddressParameters: {
-                format: "FULL",
-              },
-            },
-            tokenizationSpecification: {
-              type: "PAYMENT_GATEWAY",
-              parameters: {
-                gateway: "authorizenet",
-                gatewayMerchantId:
-                  process.env.NEXT_PUBLIC_AUTHORIZE_NET_GATEWAY_MERCHANT_ID,
-              },
-            },
-          },
-        ],
-        merchantInfo: {
-          merchantId: process.env.NEXT_PUBLIC_GOOGLE_MERCHANT_ID,
-          merchantName: process.env.NEXT_PUBLIC_GOOGLE_MERCHANT_NAME,
-        },
-        transactionInfo: {
-          totalPriceStatus: "FINAL",
-          totalPrice: cart.total.toFixed(2), // Convert from cents to dollars
-          currencyCode: cart.region?.currency_code?.toUpperCase() || "USD",
-        },
-      }
-
-      // Show Google Pay payment sheet
-      const paymentData = await paymentsClient.loadPaymentData(
-        paymentDataRequest
-      )
-
-      const tokenData = paymentData.paymentMethodData.tokenizationData.token
+      const tokenData = paymentData?.paymentMethodData.tokenizationData.token!
       const base64 = window.btoa(tokenData)
       // Extract the payment token
-      const billingAddress = paymentData.paymentMethodData.info.billingAddress
+      const billingAddress =
+        paymentData?.paymentMethodData?.info?.billingAddress
 
       // Return the token for processing with Authorize.Net
       return {
         token: base64,
         billing_address: {
-          first_name: billingAddress.name.split(" ")[0] || "",
-          last_name: billingAddress.name.split(" ").slice(1).join(" ") || "",
+          first_name: billingAddress?.name?.split(" ")[0] || "",
+          last_name: billingAddress?.name?.split(" ").slice(1).join(" ") || "",
           company: "",
-          address_1: billingAddress.address1,
-          address_2: billingAddress.address2 || "",
-          city: billingAddress.locality,
-          province: billingAddress.administrativeArea,
-          postal_code: billingAddress.postalCode,
-          country_code: billingAddress.countryCode,
+          address_1: billingAddress?.address1,
+          address_2: billingAddress?.address2 || "",
+          city: billingAddress?.locality,
+          province: billingAddress?.administrativeArea,
+          postal_code: billingAddress?.postalCode,
+          country_code: billingAddress?.countryCode,
         },
       }
     } catch (error) {
@@ -524,90 +449,10 @@ const Payment = ({
     if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
       setIsApplePayAvailable(true)
     }
-
-    // Function to check Google Pay availability
-    const checkGooglePayAvailability = () => {
-      if (
-        window.google &&
-        window.google.payments &&
-        window.google.payments.api &&
-        window.google.payments.api.PaymentsClient
-      ) {
-        try {
-          // Create a Google Pay client
-          const paymentsClient = new window.google.payments.api.PaymentsClient({
-            environment: "PRODUCTION",
-          })
-
-          // Check if Google Pay is available
-          paymentsClient
-            .isReadyToPay({
-              apiVersion: 2,
-              apiVersionMinor: 0,
-              allowedPaymentMethods: [
-                {
-                  type: "CARD",
-                  parameters: {
-                    allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-                    allowedCardNetworks: [
-                      "AMEX",
-                      "DISCOVER",
-                      "MASTERCARD",
-                      "VISA",
-                    ],
-                  },
-                },
-              ],
-            })
-            .then((response: any) => {
-              if (response.result) {
-                console.log("Google Pay is available")
-                setIsGooglePayAvailable(true)
-              } else {
-                console.log("Google Pay is not available")
-                setIsGooglePayAvailable(false)
-              }
-            })
-            .catch((error: any) => {
-              console.error("Google Pay availability check failed:", error)
-              setIsGooglePayAvailable(false)
-            })
-        } catch (error) {
-          console.error("Error initializing Google Pay client:", error)
-          setIsGooglePayAvailable(false)
-        }
-      }
-    }
-
-    // Check for Google Pay API loading
-    if (window.google && window.google.payments && window.google.payments.api) {
-      checkGooglePayAvailability()
-    } else {
-      // Check every 500ms for up to 5 seconds
-      let attempts = 0
-      const maxAttempts = 10
-      const checkInterval = setInterval(() => {
-        attempts++
-        if (
-          window.google &&
-          window.google.payments &&
-          window.google.payments.api
-        ) {
-          clearInterval(checkInterval)
-          checkGooglePayAvailability()
-        } else if (attempts >= maxAttempts) {
-          clearInterval(checkInterval)
-          console.log("Google Pay API did not load in time")
-        }
-      }, 500)
-
-      return () => clearInterval(checkInterval)
-    }
   }, [])
 
   return (
     <>
-      <DigitalWalletScripts />
       <div className="bg-gray-900 text-white">
         <div
           className={`flex flex-row items-center justify-between bg-gray-800 py-4 px-5 border border-gray-700 ${
@@ -680,38 +525,65 @@ const Payment = ({
                         </div>
                       </button>
                     )}
-                    {isGooglePayAvailable && (
-                      <button
-                        onClick={() =>
-                          setWalletPaymentType(
-                            walletPaymentType === "google-pay"
-                              ? null
-                              : "google-pay"
-                          )
-                        }
-                        className={`border rounded-md transition-all ${
+                    <GooglePayButton
+                      environment="PRODUCTION"
+                      paymentRequest={{
+                        apiVersion: 2,
+                        apiVersionMinor: 0,
+                        allowedPaymentMethods: [
+                          {
+                            type: "CARD",
+                            parameters: {
+                              allowedAuthMethods: [
+                                "PAN_ONLY",
+                                "CRYPTOGRAM_3DS",
+                              ],
+                              allowedCardNetworks: [
+                                "MASTERCARD",
+                                "VISA",
+                                "AMEX",
+                                "DISCOVER",
+                              ],
+                            },
+                            tokenizationSpecification: {
+                              type: "PAYMENT_GATEWAY",
+                              parameters: {
+                                gateway: "authorizenet",
+                                gatewayMerchantId: "2740879",
+                              },
+                            },
+                          },
+                        ],
+                        merchantInfo: {
+                          merchantId: "BCR2DN7T5CVNTZDB",
+                          merchantName: "JOHN BOY ENTERTAINMENT, INC",
+                        },
+                        transactionInfo: {
+                          totalPriceStatus: "FINAL",
+                          totalPriceLabel: "Total",
+                          totalPrice: cart.total.toFixed(2),
+                          currencyCode: "USD",
+                          countryCode: "US",
+                        },
+                      }}
+                      onLoadPaymentData={async (paymentRequest) => {
+                        setPaymentData(paymentRequest)
+                        console.log("load payment data", paymentRequest)
+                        await handleSubmit()
+                      }}
+                      onClick={() =>
+                        setWalletPaymentType(
                           walletPaymentType === "google-pay"
-                            ? "border-green-500 bg-gray-800"
-                            : "border-gray-700 hover:border-gray-500"
-                        }`}
-                      >
-                        <div className="h-[50px] flex items-center justify-center px-4">
-                          <Image
-                            width={200}
-                            height={50}
-                            alt="Google Pay"
-                            src="/images/payment/google-pay.svg"
-                            style={{ maxHeight: "50px", objectFit: "contain" }}
-                          />
-                        </div>
-                      </button>
-                    )}
-                    {!isApplePayAvailable && !isGooglePayAvailable && (
-                      <div className="text-gray-400 text-sm italic">
-                        Digital wallet payment methods are not available on this
-                        device or browser.
-                      </div>
-                    )}
+                            ? null
+                            : "google-pay"
+                        )
+                      }
+                      buttonColor="black"
+                      buttonType="buy"
+                      buttonRadius={6}
+                      buttonSizeMode="fill"
+                      style={{ width: 250, height: 50 }}
+                    />
                   </div>
 
                   {isAuthorizeNetFunc(selectedPaymentMethod) &&
