@@ -1,114 +1,48 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useRef, useState, useEffect } from "react"
+import ReactPlayer from "react-player"
 import { Text } from "@medusajs/ui"
 
 const FeaturedVideoWrapper = () => {
-  // State
   const [isPlaying, setIsPlaying] = useState(false)
   const [controlsVisible, setControlsVisible] = useState(false)
 
-  // Refs
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const controlsTimerRef = useRef<number | null>(null)
-  const videoContainerRef = useRef<HTMLDivElement>(null)
+  const playerRef = useRef<ReactPlayer>(null)
+  const controlsTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Constants
   const videoUrl =
     "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/s-5583_1737735753_06dbfce4af3d16db6839.mp4"
-  const CONTROLS_TIMEOUT = 2000 // 2 seconds
+  const thumbnailUrl =
+    "https://onconnects-media.s3.us-east-1.amazonaws.com/video-thumbnail.jpg"
+  const CONTROLS_TIMEOUT = 2000
 
-  // Hide controls after delay
   const hideControlsWithDelay = () => {
-    // Clear any existing timer
-    if (controlsTimerRef.current) {
-      window.clearTimeout(controlsTimerRef.current)
-    }
-
-    // Set controls to visible immediately
+    if (controlsTimerRef.current) clearTimeout(controlsTimerRef.current)
     setControlsVisible(true)
-
-    // Hide controls after delay
-    controlsTimerRef.current = window.setTimeout(() => {
+    controlsTimerRef.current = setTimeout(() => {
       setControlsVisible(false)
     }, CONTROLS_TIMEOUT)
   }
 
-  // Handle video play
-  const handlePlay = () => {
-    if (videoRef.current) {
-      try {
-        const playPromise = videoRef.current.play()
-
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              setIsPlaying(true)
-              hideControlsWithDelay()
-            })
-            .catch((error) => {
-              console.error("Play error:", error)
-              setIsPlaying(false)
-            })
-        }
-      } catch (error) {
-        console.error("Error playing video:", error)
-      }
-    }
+  const handlePlayClick = () => {
+    setIsPlaying(true)
+    hideControlsWithDelay()
   }
 
-  // Handle video pause
   const handlePause = () => {
-    if (videoRef.current) {
-      videoRef.current.pause()
-      setIsPlaying(false)
-      setControlsVisible(true) // Keep controls visible when paused
-
-      // Clear any hide timer
-      if (controlsTimerRef.current) {
-        window.clearTimeout(controlsTimerRef.current)
-      }
-    }
-  }
-
-  // Handle video end
-  const handleVideoEnd = () => {
     setIsPlaying(false)
-    setControlsVisible(false)
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0
-    }
+    setControlsVisible(true)
+    if (controlsTimerRef.current) clearTimeout(controlsTimerRef.current)
   }
 
-  // Handle video container click
-  const handleVideoContainerClick = () => {
-    if (isPlaying) {
-      hideControlsWithDelay()
-    }
+  const handlePlayerClick = () => {
+    if (isPlaying) hideControlsWithDelay()
   }
 
-  // Setup and cleanup effects
   useEffect(() => {
-    // Cleanup function
     return () => {
-      if (controlsTimerRef.current) {
-        window.clearTimeout(controlsTimerRef.current)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    const videoEl = videoRef.current
-    if (!videoEl) return
-
-    const handlePlaying = () => {
-      hideControlsWithDelay()
-    }
-
-    videoEl.addEventListener("playing", handlePlaying)
-
-    return () => {
-      videoEl.removeEventListener("playing", handlePlaying)
+      if (controlsTimerRef.current) clearTimeout(controlsTimerRef.current)
     }
   }, [])
 
@@ -121,33 +55,29 @@ const FeaturedVideoWrapper = () => {
         </Text>
       </div>
 
-      <div className="relative aspect-video rounded-xl overflow-hidden max-w-4xl mx-auto shadow-2xl bg-gray-900">
+      <div className="relative aspect-video rounded-xl overflow-hidden max-w-4xl mx-auto shadow-2xl bg-black">
         {isPlaying ? (
-          // Video playing state
           <div
-            ref={videoContainerRef}
             className="absolute inset-0 w-full h-full"
-            onClick={handleVideoContainerClick}
-            onTouchStart={handleVideoContainerClick} // Add this line
+            onClick={handlePlayerClick}
+            onTouchStart={handlePlayerClick}
           >
-            {/* Video element */}
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              className="w-full h-full object-contain"
-              onEnded={handleVideoEnd}
-              playsInline
-              autoPlay
-              muted={false}
+            <ReactPlayer
+              ref={playerRef}
+              url={videoUrl}
+              playing={isPlaying}
               controls={false}
+              width="100%"
+              height="100%"
+              onEnded={handlePause}
+              playsinline
             />
 
-            {/* Custom controls overlay - absolutely positioned */}
             {controlsVisible && (
               <div
                 className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer"
                 onClick={(e) => {
-                  e.stopPropagation() // Prevent triggering container click
+                  e.stopPropagation()
                   handlePause()
                 }}
                 onTouchStart={(e) => {
@@ -176,25 +106,19 @@ const FeaturedVideoWrapper = () => {
             )}
           </div>
         ) : (
-          // Thumbnail with play button state
           <div className="absolute inset-0 w-full h-full">
-            {/* Thumbnail image */}
             <div
               className="absolute inset-0 bg-cover bg-center"
               style={{
-                backgroundImage:
-                  "url('https://onconnects-media.s3.us-east-1.amazonaws.com/video-thumbnail.jpg')",
+                backgroundImage: `url('${thumbnailUrl}')`,
                 backgroundSize: "cover",
               }}
-            ></div>
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-
-            {/* Play button */}
             <div
               className="absolute inset-0 flex items-center justify-center cursor-pointer"
-              onClick={handlePlay}
+              onClick={handlePlayClick}
               style={{ WebkitTapHighlightColor: "transparent" }}
             >
               <div className="w-28 h-28 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 shadow-lg hover:bg-black/60 transition-colors">
@@ -209,7 +133,7 @@ const FeaturedVideoWrapper = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  <polygon points="5 3 19 12 5 21 5 3" />
                 </svg>
               </div>
             </div>
