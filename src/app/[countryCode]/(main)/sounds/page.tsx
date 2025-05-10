@@ -466,6 +466,7 @@ export default function SoundsPage() {
         console.log({ purchasedContentUrl })
         // Determine which URL to use based on purchase status
         const hasPurchased = purchasedSounds[trackId] || false
+
         const audioUrl = hasPurchased
           ? purchasedContentUrl[track?.id!]
           : track?.preview_url
@@ -642,6 +643,10 @@ export default function SoundsPage() {
     )
   }
 
+  console.log({
+    purchasedAlbums: Object.values(purchasedAlbums)?.filter((ps) => !ps).length,
+    ok: Object.values(purchasedAlbums)?.filter((ps) => !ps).length,
+  })
   return (
     <div className="bg-black min-h-screen">
       {/* Audio player (hidden) */}
@@ -824,8 +829,17 @@ export default function SoundsPage() {
                         <span className="w-14 sm:w-16 text-right hidden sm:inline">
                           Duration
                         </span>
-                        <span className="w-16 sm:w-20 text-right">Price</span>
-                        <span className="w-16 sm:w-20 text-right">Action</span>
+                        {Object.values(purchasedAlbums)?.filter((ps) => !ps)
+                          .length !== 0 && (
+                          <>
+                            <span className="w-16 sm:w-20 text-right">
+                              Price
+                            </span>
+                            <span className="w-16 sm:w-20 text-right">
+                              Action
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -870,11 +884,8 @@ export default function SoundsPage() {
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 sm:gap-4 relative z-10">
-                            <span className="text-gray-400 w-14 sm:w-16 text-right hidden sm:inline">
-                              {(track?.product_variant?.metadata
-                                ?.duration as string) || "3:00"}
-                            </span>
+                          {Object.values(purchasedAlbums).filter((ps) => !ps)
+                            .length !== 0 && (
                             <div className="w-16 sm:w-20 text-right">
                               {track.product_variant && (
                                 <span className="text-dark-green font-medium text-xs">
@@ -884,8 +895,14 @@ export default function SoundsPage() {
                                 </span>
                               )}
                             </div>
-                            <div className="w-16 sm:w-20 text-right">
-                              {!purchasedSounds[track.id] ? (
+                          )}
+                          <div className="flex items-center gap-2 sm:gap-4 relative z-10">
+                            <span className="text-gray-400 w-14 sm:w-16 text-right hidden sm:inline">
+                              {(track?.product_variant?.metadata
+                                ?.duration as string) || "3:00"}
+                            </span>
+                            {!purchasedSounds[track.id] && (
+                              <div className="w-16 sm:w-20 text-right">
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -895,25 +912,8 @@ export default function SoundsPage() {
                                 >
                                   {isAddingToCart ? "Processing..." : "Buy"}
                                 </Button>
-                              ) : (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-green-500 text-xs font-medium">
-                                    Purchased
-                                  </span>
-                                  {/* <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleDownloadSound(track)}
-                                    disabled={isDownloading[track.id]}
-                                    className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 sm:px-3 py-1 h-7 sm:h-8"
-                                  >
-                                    {isDownloading[track.id]
-                                      ? "preparing..."
-                                      : "Download"}
-                                  </Button> */}
-                                </div>
-                              )}
-                            </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
