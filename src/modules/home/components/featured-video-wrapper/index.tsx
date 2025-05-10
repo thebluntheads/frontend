@@ -1,34 +1,72 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Text } from "@medusajs/ui"
 
 const FeaturedVideoWrapper = () => {
-  const [isPlaying, setIsPlaying] = React.useState(false)
-  const videoRef = React.useRef<HTMLVideoElement>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [showControls, setShowControls] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const controlsTimerRef = useRef<NodeJS.Timeout | null>(null)
   const videoUrl =
     "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/s-5583_1737735753_06dbfce4af3d16db6839.mp4"
 
+  // Function to show controls and set timer to hide them
+  const showControlsTemporarily = () => {
+    setShowControls(true)
+    
+    // Clear any existing timer
+    if (controlsTimerRef.current) {
+      clearTimeout(controlsTimerRef.current)
+    }
+    
+    // Set new timer to hide controls after 2 seconds
+    controlsTimerRef.current = setTimeout(() => {
+      setShowControls(false)
+    }, 2000)
+  }
+
+  // Handle play button click
   const handlePlayClick = () => {
     if (videoRef.current) {
       videoRef.current.play()
       setIsPlaying(true)
+      showControlsTemporarily()
     }
   }
 
+  // Handle pause button click
   const handlePauseClick = () => {
     if (videoRef.current) {
       videoRef.current.pause()
       setIsPlaying(false)
+      setShowControls(true) // Keep controls visible when paused
     }
   }
 
+  // Handle video end
   const handleVideoEnd = () => {
     setIsPlaying(false)
     if (videoRef.current) {
       videoRef.current.currentTime = 0
     }
   }
+  
+  // Show controls when video is interacted with
+  const handleVideoInteraction = () => {
+    if (isPlaying) {
+      showControlsTemporarily()
+    }
+  }
+  
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (controlsTimerRef.current) {
+        clearTimeout(controlsTimerRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div className="py-8 px-8 md:px-12">
@@ -48,14 +86,17 @@ const FeaturedVideoWrapper = () => {
               src={videoUrl}
               className="w-full h-full object-contain"
               onEnded={handleVideoEnd}
+              onClick={handleVideoInteraction}
+              onTouchStart={handleVideoInteraction}
               playsInline
               autoPlay
             />
 
             {/* Pause button overlay */}
             <div
-              className="absolute inset-0 flex items-center justify-center bg-black/20 
-                        opacity-0 hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+              className={`absolute inset-0 flex items-center justify-center bg-black/20 
+                        transition-opacity duration-300 cursor-pointer
+                        ${showControls ? 'opacity-100' : 'opacity-0'}`}
               onClick={handlePauseClick}
             >
               <div
