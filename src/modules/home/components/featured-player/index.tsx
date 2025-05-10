@@ -11,11 +11,14 @@ import {
 } from "../../../../components/ui/tabs"
 import { PlayButton } from "../../../../components/ui/audio-wave"
 import AudioPlayer from "../../../../components/ui/audio-player"
-import { listSounds, listAlbums } from "@lib/data/digital-products"
+import { listSounds, listAlbums, getCustomerDigitalProducts } from "@lib/data/digital-products"
 import { getDigitalProductPrice } from "@lib/util/get-product-price"
 import { Button } from "components/ui/button"
+import { useCustomer } from "@lib/hooks/use-customer"
 
 export const FeaturedPlayer = () => {
+  const { customer, isLoading: isLoadingCustomer } = useCustomer()
+  
   const [sounds, setSounds] = useState<DigitalProduct[]>([])
   const [albums, setAlbums] = useState<DigitalProduct[]>([])
   const [activeAlbumId, setActiveAlbumId] = useState<string | null>(null)
@@ -26,6 +29,9 @@ export const FeaturedPlayer = () => {
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null)
   const [currentAudioSrc, setCurrentAudioSrc] = useState<string>("")
   const [audioProgress, setAudioProgress] = useState(0)
+  const [purchasedSounds, setPurchasedSounds] = useState<Record<string, boolean>>({})
+  const [purchasedAlbums, setPurchasedAlbums] = useState<Record<string, boolean>>({})
+  const [purchasedContentUrl, setPurchasedContentUrl] = useState<Record<string, string>>({})
 
   const [enlargedAlbumCover, setEnlargedAlbumCover] = useState<string | null>(
     null
@@ -88,6 +94,77 @@ export const FeaturedPlayer = () => {
 
     fetchSoundsByAlbum()
   }, [activeAlbumId])
+  
+  // Check if user has purchased albums
+  useEffect(() => {
+    const checkPurchasedAlbums = async () => {
+      if (!customer) return // Only check for logged-in users
+      
+      try {
+        // Create a map to store purchase status for each album
+        const purchaseAlbumStatus: Record<string, boolean> = {}
+
+        // Check purchase status for each album
+        for (const album of albums) {
+          try {
+            const digitalProduct = await getCustomerDigitalProducts(album.id)
+            purchaseAlbumStatus[album.id] = !!digitalProduct?.id
+          } catch (error) {
+            console.log(`Error checking purchase for album ${album.id}:`, error)
+            purchaseAlbumStatus[album.id] = false
+          }
+        }
+
+        setPurchasedAlbums(purchaseAlbumStatus)
+        console.log("Purchased albums:", purchaseAlbumStatus)
+      } catch (error) {
+        console.log("Error checking album purchases:", error)
+      }
+    }
+
+    if (albums.length > 0 && customer) {
+      checkPurchasedAlbums()
+    }
+  }, [albums, customer])
+
+  // Check if user has purchased sounds
+  useEffect(() => {
+    const checkPurchasedSounds = async () => {
+      if (!customer) return // Only check for logged-in users
+      
+      try {
+        // Create a map to store purchase status for each sound
+        const purchaseStatus: Record<string, boolean> = {}
+        const contentUrls: Record<string, string> = {}
+
+        // Check purchase status for each sound
+        for (const sound of sounds) {
+          try {
+            const digitalProduct = await getCustomerDigitalProducts(
+              sound.id,
+              sound?.parent_id!
+            )
+            purchaseStatus[sound.id] = !!digitalProduct?.id
+            contentUrls[sound.id] = digitalProduct.content_url || ""
+          } catch (error) {
+            console.log(`Error checking purchase for sound ${sound.id}:`, error)
+            purchaseStatus[sound.id] = false
+            contentUrls[sound.id] = ""
+          }
+        }
+
+        setPurchasedSounds(purchaseStatus)
+        setPurchasedContentUrl(contentUrls)
+        console.log("Purchased sounds:", purchaseStatus)
+      } catch (error) {
+        console.log("Error checking sound purchases:", error)
+      }
+    }
+
+    if (sounds.length > 0 && customer) {
+      checkPurchasedSounds()
+    }
+  }, [sounds, customer])
 
   // Use a ref to track if we're currently switching tracks to prevent rapid state changes
   const isChangingTrack = useRef(false)
@@ -125,8 +202,19 @@ export const FeaturedPlayer = () => {
 
         // Start playing new track
         console.log("Starting playback for track:", trackId)
+        
         // Determine which URL to use based on purchase status
-        const audioUrl = track?.preview_url
+        const hasPurchased = purchasedSounds[trackId] || false
+        
+        const audioUrl = hasPurchased
+          ? purchasedContentUrl[trackId]
+          : track?.preview_url
+          
+        console.log(
+          `Using ${hasPurchased ? "full content" : "preview"} URL:`,
+          audioUrl,
+          track
+        )
 
         // Set the source first, then set the playing track ID
         setCurrentAudioSrc(audioUrl || "")
@@ -255,14 +343,20 @@ export const FeaturedPlayer = () => {
                       <span className="text-gray-400">
                         {albumTracks[album.id].length} tracks
                       </span>{" "}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => (window.location.href = "/sounds")}
-                        className="text-xs bg-dark-green hover:bg-dark-green text-white px-3 py-1 h-8"
-                      >
-                        Buy Season 1 SoundTrack
-                      </Button>
+                      {customer && purchasedAlbums[album.id] ? (
+                        <span className="text-green-500 text-xs font-medium">
+                          Purchased
+                        </span>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => (window.location.href = "/sounds")}
+                          className="text-xs bg-dark-green hover:bg-dark-green text-white px-3 py-1 h-8"
+                        >
+                          Buy Season 1 SoundTrack
+                        </Button>
+                      )}
                     </div>
                     <div className="flex items-center gap-2 sm:gap-4"></div>
                   </div>
@@ -281,7 +375,9 @@ export const FeaturedPlayer = () => {
                         <span className="w-14 sm:w-16 text-right hidden sm:inline">
                           Duration
                         </span>
-                        <span className="w-16 sm:w-20 text-right">Price</span>
+                        {customer && albumTracks[album.id] && albumTracks[album.id].some(track => !purchasedSounds[track.id]) && (
+                          <span className="w-16 sm:w-20 text-right">Price</span>
+                        )}
                       </div>
                     </div>
 
@@ -331,15 +427,17 @@ export const FeaturedPlayer = () => {
                               {(track?.product_variant?.metadata
                                 ?.duration as string) || "3:00"}
                             </span>
-                            <div className="w-16 sm:w-20 text-right">
-                              {track.product_variant && (
-                                <span className="text-dark-green font-medium text-xs">
-                                  {getDigitalProductPrice({
-                                    variant: track.product_variant,
-                                  }).cheapestPrice?.calculated_price || "$1.99"}
-                                </span>
-                              )}
-                            </div>
+                            {customer && !purchasedSounds[track.id] && (
+                              <div className="w-16 sm:w-20 text-right">
+                                {track.product_variant && (
+                                  <span className="text-dark-green font-medium text-xs">
+                                    {getDigitalProductPrice({
+                                      variant: track.product_variant,
+                                    }).cheapestPrice?.calculated_price || "$1.99"}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
