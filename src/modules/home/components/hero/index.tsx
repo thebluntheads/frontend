@@ -285,59 +285,6 @@ const Hero = ({
               style={{ backgroundColor: "#000" }}
             />
 
-            {/* Video controls overlay */}
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ zIndex: 60 }}
-            >
-              {isPaused ? (
-                // Play button when video is paused
-                <button
-                  className="w-28 h-28 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center
-                          opacity-100 hover:bg-black/30 transition-all duration-300 border border-white/30 shadow-lg"
-                  onClick={handleResumeClick}
-                  aria-label="Resume video"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="48"
-                    height="48"
-                    viewBox="0 0 24 24"
-                    fill="white"
-                    stroke="white"
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                  </svg>
-                </button>
-              ) : (
-                // Pause button when video is playing
-                <button
-                  className="w-28 h-28 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center
-                          opacity-0 hover:opacity-100 transition-opacity duration-300 border border-white/30 shadow-lg"
-                  onClick={handlePauseClick}
-                  aria-label="Pause video"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="48"
-                    height="48"
-                    viewBox="0 0 24 24"
-                    fill="white"
-                    stroke="white"
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="6" y="4" width="4" height="16"></rect>
-                    <rect x="14" y="4" width="4" height="16"></rect>
-                  </svg>
-                </button>
-              )}
-            </div>
-
             {/* Advanced video controls - bottom bar */}
             <div
               className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity duration-300 ${
