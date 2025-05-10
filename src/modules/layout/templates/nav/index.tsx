@@ -58,6 +58,13 @@ export default async function Nav() {
               </LocalizedClientLink>
               <LocalizedClientLink
                 className="text-white hover:text-white/80 transition-colors text-sm font-medium"
+                href="/events"
+                data-testid="nav-events-link"
+              >
+                Events
+              </LocalizedClientLink>
+              <LocalizedClientLink
+                className="text-white hover:text-white/80 transition-colors text-sm font-medium"
                 href="/account"
                 data-testid="nav-account-link"
               >
