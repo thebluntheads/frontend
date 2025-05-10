@@ -25,6 +25,14 @@ const FeaturedVideoWrapper = () => {
       setShowControls(false)
     }, 2000)
   }
+  
+  // Force hide controls - useful for Safari
+  const forceHideControls = () => {
+    if (controlsTimerRef.current) {
+      clearTimeout(controlsTimerRef.current)
+    }
+    setShowControls(false)
+  }
 
   // Handle play button click
   const handlePlayClick = () => {
@@ -88,6 +96,11 @@ const FeaturedVideoWrapper = () => {
               onEnded={handleVideoEnd}
               onClick={handleVideoInteraction}
               onTouchStart={handleVideoInteraction}
+              onPlay={() => {
+                showControlsTemporarily()
+                // Force hide controls after video starts playing (helps with Safari)
+                setTimeout(forceHideControls, 2500)
+              }}
               playsInline
               autoPlay
             />
@@ -96,7 +109,8 @@ const FeaturedVideoWrapper = () => {
             <div
               className={`absolute inset-0 flex items-center justify-center bg-black/20 
                         transition-opacity duration-300 cursor-pointer
-                        ${showControls ? 'opacity-100' : 'opacity-0'}`}
+                        ${showControls ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+              style={{ pointerEvents: showControls ? 'auto' : 'none' }}
               onClick={handlePauseClick}
             >
               <div
