@@ -8,6 +8,7 @@ const FeaturedVideoWrapper = () => {
   const [showControls, setShowControls] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const controlsTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const controlsRef = useRef<HTMLDivElement>(null)
   const videoUrl =
     "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/s-5583_1737735753_06dbfce4af3d16db6839.mp4"
 
@@ -32,6 +33,13 @@ const FeaturedVideoWrapper = () => {
       clearTimeout(controlsTimerRef.current)
     }
     setShowControls(false)
+    
+    // Direct DOM manipulation for Safari on iOS
+    if (controlsRef.current) {
+      controlsRef.current.style.opacity = '0'
+      controlsRef.current.style.visibility = 'hidden'
+      controlsRef.current.style.pointerEvents = 'none'
+    }
   }
 
   // Handle play button click
@@ -64,17 +72,34 @@ const FeaturedVideoWrapper = () => {
   const handleVideoInteraction = () => {
     if (isPlaying) {
       showControlsTemporarily()
+      
+      // For Safari on iOS, ensure controls are hidden after delay
+      setTimeout(forceHideControls, 2500)
     }
   }
   
-  // Clean up timer on unmount
+  // Setup event listeners and cleanup
   useEffect(() => {
+    // iOS Safari specific - hide controls when video is playing
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isPlaying) {
+        forceHideControls()
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    // Auto-hide controls after 2 seconds when component mounts
+    const initialHideTimer = setTimeout(forceHideControls, 2000)
+    
     return () => {
       if (controlsTimerRef.current) {
         clearTimeout(controlsTimerRef.current)
       }
+      clearTimeout(initialHideTimer)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [])
+  }, [isPlaying])
 
   return (
     <div className="py-8 px-8 md:px-12">
@@ -107,10 +132,14 @@ const FeaturedVideoWrapper = () => {
 
             {/* Pause button overlay */}
             <div
+              ref={controlsRef}
               className={`absolute inset-0 flex items-center justify-center bg-black/20 
                         transition-opacity duration-300 cursor-pointer
                         ${showControls ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
-              style={{ pointerEvents: showControls ? 'auto' : 'none' }}
+              style={{ 
+                pointerEvents: showControls ? 'auto' : 'none',
+                WebkitTapHighlightColor: 'transparent' // Prevent tap highlight on iOS
+              }}
               onClick={handlePauseClick}
             >
               <div
