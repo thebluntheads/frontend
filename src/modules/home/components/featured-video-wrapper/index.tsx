@@ -7,45 +7,46 @@ const FeaturedVideoWrapper = () => {
   // State
   const [isPlaying, setIsPlaying] = useState(false)
   const [controlsVisible, setControlsVisible] = useState(false)
-  
+
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null)
   const controlsTimerRef = useRef<number | null>(null)
   const videoContainerRef = useRef<HTMLDivElement>(null)
-  
+
   // Constants
-  const videoUrl = "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/s-5583_1737735753_06dbfce4af3d16db6839.mp4"
+  const videoUrl =
+    "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/s-5583_1737735753_06dbfce4af3d16db6839.mp4"
   const CONTROLS_TIMEOUT = 2000 // 2 seconds
-  
+
   // Hide controls after delay
   const hideControlsWithDelay = () => {
     // Clear any existing timer
     if (controlsTimerRef.current) {
       window.clearTimeout(controlsTimerRef.current)
     }
-    
+
     // Set controls to visible immediately
     setControlsVisible(true)
-    
+
     // Hide controls after delay
     controlsTimerRef.current = window.setTimeout(() => {
       setControlsVisible(false)
     }, CONTROLS_TIMEOUT)
   }
-  
+
   // Handle video play
   const handlePlay = () => {
     if (videoRef.current) {
       try {
         const playPromise = videoRef.current.play()
-        
+
         if (playPromise !== undefined) {
           playPromise
             .then(() => {
               setIsPlaying(true)
               hideControlsWithDelay()
             })
-            .catch(error => {
+            .catch((error) => {
               console.error("Play error:", error)
               setIsPlaying(false)
             })
@@ -55,21 +56,21 @@ const FeaturedVideoWrapper = () => {
       }
     }
   }
-  
+
   // Handle video pause
   const handlePause = () => {
     if (videoRef.current) {
       videoRef.current.pause()
       setIsPlaying(false)
       setControlsVisible(true) // Keep controls visible when paused
-      
+
       // Clear any hide timer
       if (controlsTimerRef.current) {
         window.clearTimeout(controlsTimerRef.current)
       }
     }
   }
-  
+
   // Handle video end
   const handleVideoEnd = () => {
     setIsPlaying(false)
@@ -78,7 +79,7 @@ const FeaturedVideoWrapper = () => {
       videoRef.current.currentTime = 0
     }
   }
-  
+
   // Handle video container click
   const handleVideoContainerClick = () => {
     if (isPlaying) {
@@ -96,6 +97,21 @@ const FeaturedVideoWrapper = () => {
     }
   }, [])
 
+  useEffect(() => {
+    const videoEl = videoRef.current
+    if (!videoEl) return
+
+    const handlePlaying = () => {
+      hideControlsWithDelay()
+    }
+
+    videoEl.addEventListener("playing", handlePlaying)
+
+    return () => {
+      videoEl.removeEventListener("playing", handlePlaying)
+    }
+  }, [])
+
   return (
     <div className="py-8 px-8 md:px-12">
       <div className="mb-6">
@@ -108,10 +124,11 @@ const FeaturedVideoWrapper = () => {
       <div className="relative aspect-video rounded-xl overflow-hidden max-w-4xl mx-auto shadow-2xl bg-gray-900">
         {isPlaying ? (
           // Video playing state
-          <div 
+          <div
             ref={videoContainerRef}
-            className="absolute inset-0 w-full h-full" 
+            className="absolute inset-0 w-full h-full"
             onClick={handleVideoContainerClick}
+            onTouchStart={handleVideoContainerClick} // Add this line
           >
             {/* Video element */}
             <video
@@ -127,13 +144,17 @@ const FeaturedVideoWrapper = () => {
 
             {/* Custom controls overlay - absolutely positioned */}
             {controlsVisible && (
-              <div 
+              <div
                 className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation() // Prevent triggering container click
                   handlePause()
                 }}
-                style={{ WebkitTapHighlightColor: 'transparent' }}
+                onTouchStart={(e) => {
+                  e.stopPropagation()
+                  handlePause()
+                }}
+                style={{ WebkitTapHighlightColor: "transparent" }}
               >
                 <div className="w-28 h-28 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 shadow-lg">
                   <svg
@@ -174,7 +195,7 @@ const FeaturedVideoWrapper = () => {
             <div
               className="absolute inset-0 flex items-center justify-center cursor-pointer"
               onClick={handlePlay}
-              style={{ WebkitTapHighlightColor: 'transparent' }}
+              style={{ WebkitTapHighlightColor: "transparent" }}
             >
               <div className="w-28 h-28 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 shadow-lg hover:bg-black/60 transition-colors">
                 <svg
