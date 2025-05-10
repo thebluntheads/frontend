@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { redirect, useRouter } from "next/navigation"
 import Input from "@modules/common/components/input"
 import { LOGIN_VIEW } from "@modules/account/templates/login-template"
 import ErrorMessage from "@modules/checkout/components/error-message"
@@ -17,38 +17,50 @@ const Register = ({ setCurrentView }: Props) => {
   const router = useRouter()
   const [isRedirecting, setIsRedirecting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  
+
   // Custom action to handle form submission with redirect
   const handleSubmit = async (formData: FormData) => {
-    const result = await signup(null, formData);
-    
+    const result = await signup(null, formData)
+
     // Check if registration was successful
-    if (result && typeof result === "object" && "success" in result && result.success) {
-      console.log("Registration successful, redirecting to:", result.redirectTo);
+    if (
+      result &&
+      typeof result === "object" &&
+      "success" in result &&
+      result.success
+    ) {
+      console.log("Registration successful, redirecting to:", result.redirectTo)
       setIsRedirecting(true)
-      
+
       // Use window.location for a more forceful redirect
       if (typeof window !== "undefined" && result.redirectTo) {
-        window.location.href = result.redirectTo as string;
+        window.location.href = result.redirectTo as string
+      } else {
+        redirect(result.redirectTo)
       }
     } else if (typeof result === "string") {
       // Handle error message
       setErrorMessage(result)
     }
-    
-    return result;
+
+    return result
   }
 
   // If redirecting, show a loading state
   if (isRedirecting) {
     return (
-      <div className="w-full flex flex-col items-center justify-center py-12" data-testid="register-page">
-        <div className="text-light-green text-xl">Registration successful! Redirecting...</div>
+      <div
+        className="w-full flex flex-col items-center justify-center py-12"
+        data-testid="register-page"
+      >
+        <div className="text-light-green text-xl">
+          Registration successful! Redirecting...
+        </div>
         <div className="mt-4 animate-pulse">Please wait...</div>
       </div>
     )
   }
-  
+
   return (
     <div
       className="w-full flex flex-col items-center"
