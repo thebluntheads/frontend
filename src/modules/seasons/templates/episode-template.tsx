@@ -188,7 +188,7 @@ export default function EpisodeTemplate({
           ctaText={
             episode?.product_variant?.metadata?.unlocked
               ? "Watch Now"
-              : "Unlocks Soon"
+              : "Unlocks Soon 🔒"
           }
           ctaLink="#"
           thumbnailUrl={bannerUrl}
@@ -354,6 +354,7 @@ export default function EpisodeTemplate({
                       >
                         {isAddingToCart ? "Processing..." : "Buy Episode"}
                       </Button>
+                      {"or"}
                       <Button
                         variant="secondary"
                         className="bg-dark-green hover:bg-light-green text-white border-0"
