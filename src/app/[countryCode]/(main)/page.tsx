@@ -1,18 +1,14 @@
 import { Metadata } from "next"
 
-import FeaturedProducts from "@modules/home/components/featured-products"
 import Hero from "@modules/home/components/hero"
 import HomeClient from "@modules/home/components/home-client"
-import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
 import {
-  listDigitalProductCollections,
   listSeasons,
   listSeasonsEpisodes,
   listSounds,
 } from "@lib/data/digital-products"
 import FeaturedEpisodes from "@modules/home/components/featured-episodes"
-import FeaturedSounds from "@modules/home/components/featured-sounds"
 import { FeaturedPlayer } from "@modules/home/components/featured-player"
 
 export const metadata: Metadata = {
@@ -20,22 +16,28 @@ export const metadata: Metadata = {
   description: "Experience premium series on our plateform TheBluntHeads.",
   openGraph: {
     title: "TheBluntHeads",
-    description: "Experience premium cannabis-culture animated content, music, and exclusive digital products.",
-    images: [{
-      url: "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/8866_1735924247_32ec7af3f2b0e7462472.png",
-      width: 1200,
-      height: 630,
-      alt: "TheBluntHeads"
-    }],
+    description:
+      "Experience premium cannabis-culture animated content, music, and exclusive digital products.",
+    images: [
+      {
+        url: "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/8866_1735924247_32ec7af3f2b0e7462472.png",
+        width: 1200,
+        height: 630,
+        alt: "TheBluntHeads",
+      },
+    ],
     type: "website",
-    siteName: "TheBluntHeads"
+    siteName: "TheBluntHeads",
   },
   twitter: {
     card: "summary_large_image",
     title: "TheBluntHeads",
-    description: "Experience premium cannabis-culture animated content, music, and exclusive digital products.",
-    images: ["https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/8866_1735924247_32ec7af3f2b0e7462472.png"]
-  }
+    description:
+      "Experience premium cannabis-culture animated content, music, and exclusive digital products.",
+    images: [
+      "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/8866_1735924247_32ec7af3f2b0e7462472.png",
+    ],
+  },
 }
 
 export default async function Home(props: {
