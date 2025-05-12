@@ -1099,6 +1099,11 @@ export default function SoundsPage() {
                 handleSubmit={handlePaymentComplete}
                 isLoading={submitting}
                 buttonText="Complete Purchase"
+                totalPrice={currentSound?.product_variant
+                  ? getDigitalProductPrice({
+                      variant: currentSound.product_variant,
+                    }).cheapestPrice?.calculated_price
+                  : "1.99"}
               />
             </div>
           </div>
