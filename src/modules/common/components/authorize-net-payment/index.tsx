@@ -17,6 +17,7 @@ type WalletPaymentType = "apple-pay" | "google-pay" | null
 
 type AuthorizeNetPaymentProps = {
   cardData: AuthorizeNetCardInfo
+  setPaymentData: (data: any) => void
   setCardData: (data: any) => void
   errorMessage: string | null
   paymentMethod: any
@@ -145,7 +146,7 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
       )}
 
       <div>
-        {isAuthorizeNetFunc(paymentMethod) && (
+        {isAuthorizeNetFunc(paymentMethod) && walletPaymentType === null && (
           <div className="mt-6 mb-4 transition-all duration-150 ease-in-out">
             <div className="p-6 bg-gray-900 border border-gray-700 rounded-xl shadow-lg">
               <div className="space-y-6">
@@ -301,39 +302,149 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
         )}
       </div>
 
-      <button
-        className="mt-6 w-full h-14 text-base px-8 rounded-full bg-[#057E03] hover:bg-[#61C65F] shadow-md text-white flex items-center justify-center transition-colors duration-200"
-        onClick={handleSubmit}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <div className="flex items-center gap-2">
-            <svg
-              className="animate-spin h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            Processing...
-          </div>
-        ) : (
-          buttonText
-        )}
-      </button>
+      {/* Render different buttons based on payment method selection */}
+      {walletPaymentType === "google-pay" ? (
+        // Google Pay Button
+        <div className="mt-6">
+          <GooglePayButton
+            environment="PRODUCTION"
+            paymentRequest={{
+              apiVersion: 2,
+              apiVersionMinor: 0,
+              allowedPaymentMethods: [
+                {
+                  type: "CARD",
+                  parameters: {
+                    allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+                    allowedCardNetworks: [
+                      "MASTERCARD",
+                      "VISA",
+                      "AMEX",
+                      "DISCOVER",
+                    ],
+                  },
+                  tokenizationSpecification: {
+                    type: "PAYMENT_GATEWAY",
+                    parameters: {
+                      gateway: "authorizenet",
+                      gatewayMerchantId: "2740879",
+                    },
+                  },
+                },
+              ],
+              merchantInfo: {
+                merchantId: "BCR2DN7T5CVNTZDB",
+                merchantName: "JOHN BOY ENTERTAINMENT, INC",
+              },
+              transactionInfo: {
+                totalPriceStatus: "FINAL",
+                totalPriceLabel: "Total",
+                totalPrice: totalPrice.replace("$", ""),
+                currencyCode: "USD",
+                countryCode: "US",
+              },
+            }}
+            onLoadPaymentData={(paymentRequest) => {
+              setPaymentData(paymentRequest)
+              handleSubmit()
+            }}
+            buttonColor="white"
+            buttonType="buy"
+            buttonRadius={6}
+            buttonSizeMode="fill"
+            style={{ width: "100%", height: 56 }}
+          />
+        </div>
+      ) : walletPaymentType === "apple-pay" ? (
+        // Apple Pay Button
+        <button
+          className="mt-6 w-full h-14 bg-black text-white rounded-lg flex items-center justify-center border border-white"
+          onClick={(e) => {
+            e.preventDefault()
+            handleSubmit()
+          }}
+          disabled={isLoading}
+          style={{ width: "100%" }}
+        >
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Processing...
+            </div>
+          ) : (
+            <div className="flex items-center justify-center w-full">
+              <p className="font-bold text-2xl mr-2">Buy With</p>
+              <Image
+                src="/images/payment/apple-pay.svg"
+                alt="Apple Pay"
+                width={120}
+                height={50}
+                className="object-contain"
+              />
+            </div>
+          )}
+        </button>
+      ) : (
+        // Credit Card Button
+        <button
+          className="mt-6 w-full h-14 text-base px-8 rounded-full bg-[#057E03] hover:bg-[#61C65F] shadow-md text-white flex items-center justify-center transition-colors duration-200"
+          onClick={(e) => {
+            e.preventDefault()
+            handleSubmit()
+          }}
+          disabled={
+            isLoading ||
+            (isAuthorizeNetFunc(paymentMethod) && !cardData.cardNumber)
+          }
+        >
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Processing...
+            </div>
+          ) : (
+            buttonText
+          )}
+        </button>
+      )}
     </div>
   )
 }
