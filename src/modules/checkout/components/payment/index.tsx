@@ -279,7 +279,6 @@ const Payment = ({
     setErrorMessage(null)
 
     try {
-      console.log(cardData)
       const shouldInputCard =
         isAuthorizeNetFunc(selectedPaymentMethod) && !activeSession
 
@@ -298,7 +297,6 @@ const Payment = ({
             },
           })
 
-          console.log(JSON.stringify(payc))
           const pendingSession =
             payc?.payment_collection?.payment_sessions?.find(
               (session: any) => session.status === "pending"
@@ -311,7 +309,7 @@ const Payment = ({
           }
         } else if (walletPaymentType === "google-pay") {
           walletPaymentData = await handleGooglePay()
-          console.log({ walletPaymentData })
+
           const payc = await initiatePaymentSession(cart, {
             provider_id: selectedPaymentMethod,
             data: {
@@ -321,7 +319,6 @@ const Payment = ({
             },
           })
 
-          console.log(JSON.stringify(payc))
           const pendingSession =
             payc?.payment_collection?.payment_sessions?.find(
               (session: any) => session.status === "pending"
@@ -352,7 +349,7 @@ const Payment = ({
             fullName: cardData.fullName, // Include full name in the dispatch
           },
         })
-        console.log({ transactionResponse })
+
         // Handle transaction errors
         if (transactionResponse?.messages?.resultCode === "Error") {
           const errorText =
@@ -373,7 +370,7 @@ const Payment = ({
               fullName: cardData.fullName, // Include full name in payment session data
             },
           })
-          console.log(JSON.stringify(payc))
+
           // Handle successful payment initiation
           const pendingSession =
             payc?.payment_collection?.payment_sessions?.find(
