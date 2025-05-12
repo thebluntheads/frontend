@@ -53,9 +53,6 @@ const Payment = ({
   const activeSession = cart.payment_collection?.payment_sessions?.find(
     (paymentSession: any) => paymentSession.status === "pending"
   )
-
-  console.log({ cart })
-
   const isDigital = cart?.items?.some(
     //@ts-ignore
     (i) => i?.product_type_id === "ptyp_01JRX8NFV7EZVBXKBJ9ZHSEJ0W"
@@ -100,7 +97,7 @@ const Payment = ({
     loading,
     error: err,
   } = useAcceptJs({ environment: "PRODUCTION", authData })
-  console.log({ err })
+
   const [month, year] = cardData.expiration.split("/")
 
   const paymentReady = activeSession && cart?.shipping_methods.length !== 0
@@ -250,16 +247,13 @@ const Payment = ({
     }
   }
 
-  // Handle Google Pay payment process
   const handleGooglePay = async () => {
     try {
       const tokenData = paymentData?.paymentMethodData.tokenizationData.token!
       const base64 = window.btoa(tokenData)
-      // Extract the payment token
       const billingAddress =
         paymentData?.paymentMethodData?.info?.billingAddress
 
-      // Return the token for processing with Authorize.Net
       return {
         token: base64,
         billing_address: {
@@ -289,7 +283,6 @@ const Payment = ({
       const shouldInputCard =
         isAuthorizeNetFunc(selectedPaymentMethod) && !activeSession
 
-      // Handle digital wallet payments (Apple Pay or Google Pay)
       if (walletPaymentType) {
         let walletPaymentData
 
@@ -348,7 +341,6 @@ const Payment = ({
         return
       }
 
-      // Handle credit card payment
       if (cardData.cardNumber) {
         // Step 1: Send card data to Authorize.Net
         const transactionResponse = await dispatchData({
@@ -430,7 +422,6 @@ const Payment = ({
   useEffect(() => {
     setError(null)
 
-    // Load shipping address data when component mounts or when cart changes
     if (cart?.billing_address) {
       setCardData((prevData) => ({
         ...prevData,
@@ -443,9 +434,7 @@ const Payment = ({
     }
   }, [isOpen, cart])
 
-  // Handle digital wallet availability
   useEffect(() => {
-    // Check if Apple Pay is available
     if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
       setIsApplePayAvailable(true)
     }
