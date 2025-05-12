@@ -46,7 +46,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
 
   return (
     <Table.Row
-      className="w-full border-b border-white/10 bg-black/5 transition-colors duration-200"
+      className="w-full border-b border-white/10 bg-black/5 transition-colors duration-200 hover:bg-gray-800"
       data-testid="product-row"
     >
       <Table.Cell className="!pl-0 p-4 w-24">

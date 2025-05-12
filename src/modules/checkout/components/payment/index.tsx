@@ -486,7 +486,7 @@ const Payment = ({
                   {/* Payment Method Radio Buttons */}
                   <div className="mb-6 space-y-4">
                     {/* Google Pay Option */}
-                    <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+                    <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-white-800 transition-colors bg-white">
                       <input
                         type="radio"
                         name="paymentMethod"
