@@ -333,6 +333,7 @@ const EpisodePaymentPopup = ({
               handleSubmit={handlePaymentComplete}
               isLoading={isLoading}
               buttonText="Complete Purchase"
+              totalPrice={cart.total.toFixed(2)}
             />
           </div>
         </Dialog.Panel>
