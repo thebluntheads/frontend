@@ -565,7 +565,7 @@ const Payment = ({
                     </>
                   ) : null}
 
-                      {errorMessage && (
+                  {errorMessage && (
                     <div className="mb-6 p-4 border border-red-700 rounded-md bg-red-900/50">
                       <p className="text-red-300">{errorMessage}</p>
                     </div>
@@ -605,20 +605,122 @@ const Payment = ({
           </div>
         )}
       </div>
-      <div className=" mt-10 flex items-center justify-end gap-4">
-        <Button
-          size="large"
-          className="h-14 text-base px-8 rounded-full bg-dark-green hover:bg-dark-green shadow-md text-white"
-          onClick={handleSubmit}
-          isLoading={isLoading}
-          disabled={
-            (isAuthorizeNet && !cardData.cardNumber && !walletPaymentType) ||
-            !selectedPaymentMethod
-          }
-          data-testid="submit-payment-button"
-        >
-          Place Order
-        </Button>
+      <div className="mt-10 flex items-center justify-end gap-4">
+        {walletPaymentType === "google-pay" ? (
+          // Google Pay Button
+          <div className="w-full">
+            <GooglePayButton
+              environment="PRODUCTION"
+              paymentRequest={{
+                apiVersion: 2,
+                apiVersionMinor: 0,
+                allowedPaymentMethods: [
+                  {
+                    type: "CARD",
+                    parameters: {
+                      allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+                      allowedCardNetworks: [
+                        "MASTERCARD",
+                        "VISA",
+                        "AMEX",
+                        "DISCOVER",
+                      ],
+                    },
+                    tokenizationSpecification: {
+                      type: "PAYMENT_GATEWAY",
+                      parameters: {
+                        gateway: "authorizenet",
+                        gatewayMerchantId: "2740879",
+                      },
+                    },
+                  },
+                ],
+                merchantInfo: {
+                  merchantId: "BCR2DN7T5CVNTZDB",
+                  merchantName: "JOHN BOY ENTERTAINMENT, INC",
+                },
+                transactionInfo: {
+                  totalPriceStatus: "FINAL",
+                  totalPriceLabel: "Total",
+                  totalPrice: cart.total.toFixed(2),
+                  currencyCode: "USD",
+                  countryCode: "US",
+                },
+              }}
+              onLoadPaymentData={async (paymentRequest) => {
+                setPaymentData(paymentRequest)
+                console.log("load payment data", paymentRequest)
+                await handleSubmit()
+              }}
+              buttonColor="white"
+              buttonType="buy"
+              buttonRadius={6}
+              buttonSizeMode="fill"
+              style={{ width: "100%", height: 56 }}
+            />
+          </div>
+        ) : walletPaymentType === "apple-pay" ? (
+          // Apple Pay Button
+          <button
+            className="mt-6 w-full h-14 bg-black text-white rounded-lg flex items-center justify-center border border-white"
+            onClick={(e) => {
+              e.preventDefault()
+              handleSubmit()
+            }}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Processing...
+              </div>
+            ) : (
+              <div className="flex items-center justify-center w-full">
+                <p className="font-bold text-2xl">Buy With</p>
+                <Image
+                  src="/images/payment/apple-pay.svg"
+                  alt="Apple Pay"
+                  width={120}
+                  height={50}
+                  className="object-contain"
+                />
+              </div>
+            )}
+          </button>
+        ) : (
+          // Credit Card Button
+          <Button
+            size="large"
+            className="h-14 text-base px-8 rounded-full bg-dark-green hover:bg-dark-green shadow-md text-white"
+            onClick={handleSubmit}
+            isLoading={isLoading}
+            disabled={
+              (isAuthorizeNet && !cardData.cardNumber) || !selectedPaymentMethod
+            }
+            data-testid="submit-payment-button"
+          >
+            Place Order
+          </Button>
+        )}
       </div>
     </>
   )
