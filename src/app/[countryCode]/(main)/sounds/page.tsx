@@ -358,9 +358,6 @@ export default function SoundsPage() {
     setErrorMessage(null)
 
     try {
-      console.log(cardData)
-      const shouldInputCard =
-        isAuthorizeNetFunc(selectedPaymentMethod) && !activeSession
       if (cardData.cardNumber) {
         // Step 1: Send card data to Authorize.Net
         const transactionResponse = await dispatchData({
@@ -372,7 +369,6 @@ export default function SoundsPage() {
             fullName: cardData.fullName, // Include full name in the dispatch
           },
         })
-        console.log({ transactionResponse })
         // Handle transaction errors
         if (transactionResponse?.messages?.resultCode === "Error") {
           const errorText =
@@ -393,7 +389,7 @@ export default function SoundsPage() {
               fullName: cardData.fullName, // Include full name in payment session data
             },
           })
-          console.log(JSON.stringify(payc))
+
           // Handle successful payment initiation
           const pendingSession =
             payc?.payment_collection?.payment_sessions?.find(
