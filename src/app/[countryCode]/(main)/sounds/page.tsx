@@ -43,6 +43,8 @@ const authData = {
   clientKey: process.env.NEXT_PUBLIC_AUTHORIZE_NET_CLIENT_KEY || "",
 }
 
+type WalletPaymentType = "apple-pay" | "google-pay" | null
+
 export default function SoundsPage() {
   const { customer, isLoading: isLoadingCustomer } = useCustomer()
   const [isRedirecting, setIsRedirecting] = useState(false)
@@ -84,6 +86,8 @@ export default function SoundsPage() {
   const [enlargedAlbumCover, setEnlargedAlbumCover] = useState<string | null>(
     null
   )
+  const [paymentData, setPaymentData] =
+    useState<google.payments.api.PaymentData>()
 
   const activeSession = cart?.payment_collection?.payment_sessions?.find(
     (paymentSession: any) => paymentSession.status === "pending"
@@ -100,6 +104,8 @@ export default function SoundsPage() {
     cardCode: "",
     fullName: "",
   })
+  const [walletPaymentType, setWalletPaymentType] =
+    useState<WalletPaymentType>(null)
 
   // Custom handler for card data to ensure spaces are properly handled
   const handleCardDataChange = (data: Partial<AuthorizeNetCardInfo>) => {
@@ -115,10 +121,6 @@ export default function SoundsPage() {
     error: err,
   } = useAcceptJs({ environment: "PRODUCTION", authData })
   const [month, year] = cardData.expiration.split("/")
-
-  const [isDownloading, setIsDownloading] = useState<Record<string, boolean>>(
-    {}
-  )
 
   // Form data for customer information
   const [formData, setFormData] = useState<Record<string, string>>({
@@ -352,12 +354,209 @@ export default function SoundsPage() {
     }
   }
 
+  const handleApplePay = async () => {
+    try {
+      // Check if Apple Pay is available
+      if (
+        !window.ApplePaySession ||
+        !window.ApplePaySession.canMakePayments()
+      ) {
+        throw new Error("Apple Pay is not available on this device or browser")
+      }
+
+      // Configure the payment request
+      const paymentRequest = {
+        countryCode: "US",
+        currencyCode: "USD",
+        supportedNetworks: ["visa", "masterCard", "amex", "discover"],
+        merchantCapabilities: [
+          "supports3DS",
+          "supportsCredit",
+          "supportsDebit",
+        ],
+        requiredBillingContactFields: ["postalAddress", "email", "phone"],
+        total: {
+          label: "The Blunt Heads",
+          amount: cart.total.toFixed(2),
+        },
+      }
+
+      // Create an Apple Pay session
+      const session = new window.ApplePaySession(3, paymentRequest)
+      // Handle payment authorization
+      return new Promise<{ token: string; billing_address: any }>(
+        (resolve, reject) => {
+          session.onvalidatemerchant = async (event: any) => {
+            try {
+              console.log("Validating merchant with URL:", event.validationURL)
+
+              // Call your backend to validate the merchant with Apple's validation URL
+              const response = await fetch("/api/apple-pay/validate-merchant", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  validationURL: event.validationURL,
+                }),
+              })
+
+              if (!response.ok) {
+                const errorText = await response.text()
+                throw new Error(`Merchant validation failed: ${errorText}`)
+              }
+
+              const merchantSession = await response.json()
+              console.log("Merchant validation successful:", merchantSession)
+
+              // Complete merchant validation with the session from Apple
+              session.completeMerchantValidation(merchantSession)
+            } catch (error) {
+              console.error("Merchant validation failed:", error)
+              session.abort()
+              reject(error as Error)
+            }
+          }
+
+          session.onpaymentauthorized = async (event: any) => {
+            try {
+              console.log("Payment authorized:", event.payment)
+
+              // Get the payment data from the event
+              const token = event.payment.token.paymentData
+              const base64 = window.btoa(JSON.stringify(token))
+              const billingContact = event.payment.billingContact
+
+              // Complete the payment
+              session.completePayment(window.ApplePaySession.STATUS_SUCCESS)
+
+              // Return the token for processing with Authorize.Net
+              resolve({
+                token: base64,
+                billing_address: {
+                  first_name: billingContact?.givenName,
+                  last_name: billingContact?.familyName,
+                  company: "",
+                  address_1: billingContact?.addressLines?.[1] || "",
+                  address_2: billingContact?.addressLines?.[2] || "",
+                  city: billingContact?.locality,
+                  postal_code: billingContact?.postalCode,
+                  country_code: billingContact?.countryCode.toLowerCase(),
+                  province: billingContact.administrativeArea,
+                  phone: "",
+                },
+              })
+            } catch (error) {
+              console.error("Payment authorization failed:", error)
+              session.completePayment(window.ApplePaySession.STATUS_FAILURE)
+              reject(error as Error)
+            }
+          }
+
+          session.oncancel = () => {
+            console.log("Apple Pay payment was canceled by the user")
+            reject(new Error("Apple Pay payment was canceled"))
+          }
+
+          // Start the session
+          session.begin()
+        }
+      )
+    } catch (error) {
+      console.error("Apple Pay error:", error)
+      throw error
+    }
+  }
+
+  const handleGooglePay = async () => {
+    try {
+      const tokenData = paymentData?.paymentMethodData.tokenizationData.token!
+      const base64 = window.btoa(tokenData)
+      const billingAddress =
+        paymentData?.paymentMethodData?.info?.billingAddress
+
+      return {
+        token: base64,
+        billing_address: {
+          first_name: billingAddress?.name?.split(" ")[0] || "",
+          last_name: billingAddress?.name?.split(" ").slice(1).join(" ") || "",
+          company: "",
+          address_1: billingAddress?.address1,
+          address_2: billingAddress?.address2 || "",
+          city: billingAddress?.locality,
+          province: billingAddress?.administrativeArea,
+          postal_code: billingAddress?.postalCode,
+          country_code: billingAddress?.countryCode,
+        },
+      }
+    } catch (error) {
+      console.error("Google Pay error:", error)
+      throw error
+    }
+  }
+
   // Handle payment completion
   const handlePaymentComplete = async () => {
     setIsLoading(true)
     setErrorMessage(null)
 
     try {
+      if (walletPaymentType) {
+        let walletPaymentData
+
+        if (walletPaymentType === "apple-pay") {
+          walletPaymentData = await handleApplePay()
+
+          const payc = await initiatePaymentSession(cart, {
+            provider_id: selectedPaymentMethod,
+            data: {
+              billing_address: walletPaymentData.billing_address,
+              customer: cart.customer,
+              applePayData: walletPaymentData.token,
+            },
+          })
+
+          const pendingSession =
+            payc?.payment_collection?.payment_sessions?.find(
+              (session: any) => session.status === "pending"
+            )
+
+          if (pendingSession) {
+            setSubmitting(true)
+            await placeDigitalProductOrder()
+            return
+          }
+        } else if (walletPaymentType === "google-pay") {
+          walletPaymentData = await handleGooglePay()
+
+          const payc = await initiatePaymentSession(cart, {
+            provider_id: selectedPaymentMethod,
+            data: {
+              billing_address: walletPaymentData.billing_address,
+              customer: cart.customer,
+              googlePayData: walletPaymentData?.token!,
+            },
+          })
+
+          const pendingSession =
+            payc?.payment_collection?.payment_sessions?.find(
+              (session: any) => session.status === "pending"
+            )
+
+          if (pendingSession) {
+            setSubmitting(true)
+            await placeDigitalProductOrder()
+            return
+          }
+        }
+
+        // Handle unexpected session state
+        setErrorMessage(
+          "Digital wallet payment session initiation failed. Please try again."
+        )
+        return
+      }
+
       if (cardData.cardNumber) {
         // Step 1: Send card data to Authorize.Net
         const transactionResponse = await dispatchData({
@@ -573,60 +772,6 @@ export default function SoundsPage() {
       saveShippingOption()
     }
   }, [cart?.id, isPaymentPopupOpen])
-
-  // Function to download a single sound
-  const handleDownloadSound = async (sound: DigitalProduct) => {
-    setIsDownloading((prev) => ({ ...prev, [sound.id]: true }))
-    try {
-      // For purchased sounds, we can directly use the content_url if available
-      if (sound.content_url) {
-        const filename = `${sound.name.replace(/\s+/g, "_")}.mp3`
-        await downloadFile(sound.content_url, filename)
-      } else {
-        // Otherwise, get the content URL from the server
-        const url = await getSoundContentUrl(
-          sound.id,
-          sound.parent_id || undefined
-        )
-        if (url) {
-          const filename = `${sound.name.replace(/\s+/g, "_")}.mp3`
-          await downloadFile(url, filename)
-        } else {
-          console.error("No download URL available for this sound")
-        }
-      }
-    } catch (error) {
-      console.error("Error downloading sound:", error)
-    } finally {
-      setIsDownloading((prev) => ({ ...prev, [sound.id]: false }))
-    }
-  }
-
-  // Function to download all sounds in an album
-  const handleDownloadAlbum = async (albumId: string) => {
-    setIsDownloading((prev) => ({ ...prev, [`album_${albumId}`]: true }))
-    try {
-      // Get all purchased sound URLs in the album
-      const soundFiles = await getAlbumSoundUrls(albumId)
-
-      if (soundFiles && soundFiles.length > 0) {
-        // Add file extension to the names
-        const filesWithProperNames = soundFiles.map((file) => ({
-          ...file,
-          name: `${file.name.replace(/\s+/g, "_")}`,
-        }))
-
-        // Download all files sequentially
-        await downloadMultipleFiles(filesWithProperNames)
-      } else {
-        console.error("No downloadable sounds found in this album")
-      }
-    } catch (error) {
-      console.error("Error downloading album:", error)
-    } finally {
-      setIsDownloading((prev) => ({ ...prev, [`album_${albumId}`]: false }))
-    }
-  }
 
   if (isLoading) {
     return (
@@ -1090,6 +1235,7 @@ export default function SoundsPage() {
                 paymentMethod={selectedPaymentMethod}
                 cardData={cardData}
                 setCardData={handleCardDataChange}
+                setPaymentData={setPaymentData}
                 errorMessage={errorMessage}
                 isAuthorizeNetFunc={isAuthorizeNetFunc}
                 handleSubmit={handlePaymentComplete}

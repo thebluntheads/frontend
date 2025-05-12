@@ -21,6 +21,8 @@ const authData = {
   clientKey: process.env.NEXT_PUBLIC_AUTHORIZE_NET_CLIENT_KEY || "",
 }
 
+type WalletPaymentType = "apple-pay" | "google-pay" | null
+
 const EpisodePaymentPopup = ({
   cart,
   availablePaymentMethods,
@@ -44,6 +46,9 @@ const EpisodePaymentPopup = ({
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
     activeSession?.provider_id ?? "pp_authorize-net_authorize-net"
   )
+  const [paymentData, setPaymentData] =
+    useState<google.payments.api.PaymentData>()
+
   const [newCart, setNewCart] = useState<StoreCart | null>(null)
 
   const [cardData, setCardData] = useState<AuthorizeNetCardInfo>({
@@ -73,6 +78,8 @@ const EpisodePaymentPopup = ({
     "shipping_address.phone": "",
     email: customer?.email || "",
   })
+  const [walletPaymentType, setWalletPaymentType] =
+    useState<WalletPaymentType>(null)
 
   const shippingMethod = availableShippingMethods?.filter(
     (sm) => sm.amount === 0
@@ -138,6 +145,148 @@ const EpisodePaymentPopup = ({
     setupCart()
   }, [cart?.id, isOpen, customer, shippingMethod])
 
+  const handleApplePay = async () => {
+    try {
+      // Check if Apple Pay is available
+      if (
+        !window.ApplePaySession ||
+        !window.ApplePaySession.canMakePayments()
+      ) {
+        throw new Error("Apple Pay is not available on this device or browser")
+      }
+
+      // Configure the payment request
+      const paymentRequest = {
+        countryCode: "US",
+        currencyCode: "USD",
+        supportedNetworks: ["visa", "masterCard", "amex", "discover"],
+        merchantCapabilities: [
+          "supports3DS",
+          "supportsCredit",
+          "supportsDebit",
+        ],
+        requiredBillingContactFields: ["postalAddress", "email", "phone"],
+        total: {
+          label: "The Blunt Heads",
+          amount: cart.total.toFixed(2),
+        },
+      }
+
+      // Create an Apple Pay session
+      const session = new window.ApplePaySession(3, paymentRequest)
+      // Handle payment authorization
+      return new Promise<{ token: string; billing_address: any }>(
+        (resolve, reject) => {
+          session.onvalidatemerchant = async (event: any) => {
+            try {
+              console.log("Validating merchant with URL:", event.validationURL)
+
+              // Call your backend to validate the merchant with Apple's validation URL
+              const response = await fetch("/api/apple-pay/validate-merchant", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  validationURL: event.validationURL,
+                }),
+              })
+
+              if (!response.ok) {
+                const errorText = await response.text()
+                throw new Error(`Merchant validation failed: ${errorText}`)
+              }
+
+              const merchantSession = await response.json()
+              console.log("Merchant validation successful:", merchantSession)
+
+              // Complete merchant validation with the session from Apple
+              session.completeMerchantValidation(merchantSession)
+            } catch (error) {
+              console.error("Merchant validation failed:", error)
+              session.abort()
+              reject(error as Error)
+            }
+          }
+
+          session.onpaymentauthorized = async (event: any) => {
+            try {
+              console.log("Payment authorized:", event.payment)
+
+              // Get the payment data from the event
+              const token = event.payment.token.paymentData
+              const base64 = window.btoa(JSON.stringify(token))
+              const billingContact = event.payment.billingContact
+
+              // Complete the payment
+              session.completePayment(window.ApplePaySession.STATUS_SUCCESS)
+
+              // Return the token for processing with Authorize.Net
+              resolve({
+                token: base64,
+                billing_address: {
+                  first_name: billingContact?.givenName,
+                  last_name: billingContact?.familyName,
+                  company: "",
+                  address_1: billingContact?.addressLines?.[1] || "",
+                  address_2: billingContact?.addressLines?.[2] || "",
+                  city: billingContact?.locality,
+                  postal_code: billingContact?.postalCode,
+                  country_code: billingContact?.countryCode.toLowerCase(),
+                  province: billingContact.administrativeArea,
+                  phone: "",
+                },
+              })
+            } catch (error) {
+              console.error("Payment authorization failed:", error)
+              session.completePayment(window.ApplePaySession.STATUS_FAILURE)
+              reject(error as Error)
+            }
+          }
+
+          session.oncancel = () => {
+            console.log("Apple Pay payment was canceled by the user")
+            reject(new Error("Apple Pay payment was canceled"))
+          }
+
+          // Start the session
+          session.begin()
+        }
+      )
+    } catch (error) {
+      console.error("Apple Pay error:", error)
+      throw error
+    }
+  }
+
+  const handleGooglePay = async () => {
+    try {
+      const tokenData = paymentData?.paymentMethodData.tokenizationData.token!
+      const base64 = window.btoa(tokenData)
+      const billingAddress =
+        paymentData?.paymentMethodData?.info?.billingAddress
+
+      return {
+        token: base64,
+        billing_address: {
+          first_name: billingAddress?.name?.split(" ")[0] || "",
+          last_name: billingAddress?.name?.split(" ").slice(1).join(" ") || "",
+          company: "",
+          address_1: billingAddress?.address1,
+          address_2: billingAddress?.address2 || "",
+          city: billingAddress?.locality,
+          province: billingAddress?.administrativeArea,
+          postal_code: billingAddress?.postalCode,
+          country_code: billingAddress?.countryCode,
+        },
+      }
+    } catch (error) {
+      console.error("Google Pay error:", error)
+      throw error
+    }
+  }
+
+  // Handle payment completion
   const handlePaymentComplete = async () => {
     setIsLoading(true)
     setErrorMessage(null)
@@ -147,20 +296,76 @@ const EpisodePaymentPopup = ({
     }
 
     try {
-      const shouldInputCard =
-        isAuthorizeNetFunc(selectedPaymentMethod) && !activeSession
+      if (walletPaymentType) {
+        let walletPaymentData
 
-      if (cardData.cardNumber && shouldInputCard) {
+        if (walletPaymentType === "apple-pay") {
+          walletPaymentData = await handleApplePay()
+
+          const payc = await initiatePaymentSession(cart, {
+            provider_id: selectedPaymentMethod,
+            data: {
+              billing_address: walletPaymentData.billing_address,
+              //@ts-ignore
+              customer: cart?.customer,
+              applePayData: walletPaymentData.token,
+            },
+          })
+
+          const pendingSession =
+            payc?.payment_collection?.payment_sessions?.find(
+              (session: any) => session.status === "pending"
+            )
+
+          if (pendingSession) {
+            setSubmitting(true)
+            await placeDigitalProductOrder()
+            return
+          }
+        } else if (walletPaymentType === "google-pay") {
+          walletPaymentData = await handleGooglePay()
+
+          const payc = await initiatePaymentSession(cart, {
+            provider_id: selectedPaymentMethod,
+            data: {
+              billing_address: walletPaymentData.billing_address,
+              //@ts-ignore
+              customer: cart.customer,
+              googlePayData: walletPaymentData?.token!,
+            },
+          })
+
+          const pendingSession =
+            payc?.payment_collection?.payment_sessions?.find(
+              (session: any) => session.status === "pending"
+            )
+
+          if (pendingSession) {
+            setSubmitting(true)
+            await placeDigitalProductOrder()
+            return
+          }
+        }
+
+        // Handle unexpected session state
+        setErrorMessage(
+          "Digital wallet payment session initiation failed. Please try again."
+        )
+        return
+      }
+
+      if (cardData.cardNumber) {
+        // Step 1: Send card data to Authorize.Net
         const transactionResponse = await dispatchData({
           cardData: {
             cardNumber: cardData.cardNumber.replace(/\s+/g, ""),
             month,
             year,
             cardCode: cardData.cardCode,
-            fullName: cardData.fullName,
+            fullName: cardData.fullName, // Include full name in the dispatch
           },
         })
-
+        // Handle transaction errors
         if (transactionResponse?.messages?.resultCode === "Error") {
           const errorText =
             transactionResponse.messages.message[0]?.text || "Payment failed"
@@ -168,38 +373,49 @@ const EpisodePaymentPopup = ({
           return
         }
 
-        const opaqueData = transactionResponse.opaqueData.dataValue
-        const payc = await initiatePaymentSession(cart!, {
-          provider_id: selectedPaymentMethod,
-          data: {
-            billing_address: cart?.billing_address,
-            opaqueData,
-            fullName: cardData.fullName,
-          },
-        })
+        // Step 2: Initiate payment session with opaque data
+        if (transactionResponse?.messages?.resultCode === "Ok") {
+          const opaqueData = transactionResponse.opaqueData.dataValue
+          const payc = await initiatePaymentSession(cart, {
+            provider_id: selectedPaymentMethod,
+            data: {
+              billing_address: cart.billing_address,
+              //@ts-ignore
+              customer: cart.customer,
+              opaqueData,
+              fullName: cardData.fullName, // Include full name in payment session data
+            },
+          })
 
-        const pendingSession = payc?.payment_collection?.payment_sessions?.find(
-          (session: any) => session.status === "pending"
-        )
+          // Handle successful payment initiation
+          const pendingSession =
+            payc?.payment_collection?.payment_sessions?.find(
+              (session: any) => session.status === "pending"
+            )
 
-        if (pendingSession) {
-          setSubmitting(true)
-          await placeDigitalProductOrder()
-          return
+          if (pendingSession) {
+            setSubmitting(true)
+            await placeDigitalProductOrder()
+            return
+          }
+
+          // Handle unexpected session state
+          setErrorMessage(
+            "Payment session initiation failed. Please try again."
+          )
         }
-
-        setErrorMessage("Payment session initiation failed. Please try again.")
       }
 
       const checkActiveSession =
         activeSession?.provider_id === selectedPaymentMethod
 
       if (!checkActiveSession) {
-        await initiatePaymentSession(cart!, {
+        await initiatePaymentSession(cart, {
           provider_id: selectedPaymentMethod,
         })
       }
     } catch (err: any) {
+      console.log(err)
       const msg = err?.messages?.message?.[0]?.text || err.message
       setErrorMessage(msg)
     } finally {
@@ -327,6 +543,7 @@ const EpisodePaymentPopup = ({
             <AuthorizeNetPayment
               cardData={cardData}
               setCardData={setCardData}
+              setPaymentData={setPaymentData}
               errorMessage={error}
               paymentMethod={selectedPaymentMethod}
               isAuthorizeNetFunc={isAuthorizeNetFunc}
