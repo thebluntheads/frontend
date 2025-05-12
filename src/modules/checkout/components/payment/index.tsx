@@ -483,109 +483,79 @@ const Payment = ({
             <div>
               {availablePaymentMethods?.length && (
                 <>
-                  {/* Digital Wallet Payment Options */}
-                  <div className="flex items-center gap-6 mb-8">
+                  {/* Payment Method Radio Buttons */}
+                  <div className="mb-6 space-y-4">
+                    {/* Google Pay Option */}
+                    <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        className="mr-3 h-5 w-5 accent-green-500"
+                        checked={walletPaymentType === "google-pay"}
+                        onChange={() => setWalletPaymentType("google-pay")}
+                      />
+                      <div className="flex items-center">
+                        <Image
+                          src="/images/payment/google-pay.svg"
+                          alt="Google Pay"
+                          width={80}
+                          height={40}
+                          className="object-contain"
+                        />
+                      </div>
+                    </label>
+
+                    {/* Apple Pay Option - Only show if available */}
                     {isApplePayAvailable && (
-                      <button
-                        onClick={() =>
-                          setWalletPaymentType(
-                            walletPaymentType === "apple-pay"
-                              ? null
-                              : "apple-pay"
-                          )
-                        }
-                        className={`border rounded-md transition-all ${
-                          walletPaymentType === "apple-pay"
-                            ? "border-green-500 bg-gray-800"
-                            : "border-gray-700 hover:border-gray-500"
-                        }`}
-                      >
-                        <div className="h-[50px] flex items-center justify-center px-4">
+                      <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          className="mr-3 h-5 w-5 accent-green-500"
+                          checked={walletPaymentType === "apple-pay"}
+                          onChange={() => setWalletPaymentType("apple-pay")}
+                        />
+                        <div className="flex items-center">
                           <Image
-                            width={200}
-                            height={50}
-                            alt="Apple Pay"
                             src="/images/payment/apple-pay.svg"
-                            style={{ maxHeight: "50px", objectFit: "contain" }}
+                            alt="Apple Pay"
+                            width={80}
+                            height={40}
+                            className="object-contain"
                           />
                         </div>
-                      </button>
+                      </label>
                     )}
-                    <GooglePayButton
-                      environment="PRODUCTION"
-                      paymentRequest={{
-                        apiVersion: 2,
-                        apiVersionMinor: 0,
-                        allowedPaymentMethods: [
-                          {
-                            type: "CARD",
-                            parameters: {
-                              allowedAuthMethods: [
-                                "PAN_ONLY",
-                                "CRYPTOGRAM_3DS",
-                              ],
-                              allowedCardNetworks: [
-                                "MASTERCARD",
-                                "VISA",
-                                "AMEX",
-                                "DISCOVER",
-                              ],
-                            },
-                            tokenizationSpecification: {
-                              type: "PAYMENT_GATEWAY",
-                              parameters: {
-                                gateway: "authorizenet",
-                                gatewayMerchantId: "2740879",
-                              },
-                            },
-                          },
-                        ],
-                        merchantInfo: {
-                          merchantId: "BCR2DN7T5CVNTZDB",
-                          merchantName: "JOHN BOY ENTERTAINMENT, INC",
-                        },
-                        transactionInfo: {
-                          totalPriceStatus: "FINAL",
-                          totalPriceLabel: "Total",
-                          totalPrice: cart.total.toFixed(2),
-                          currencyCode: "USD",
-                          countryCode: "US",
-                        },
-                      }}
-                      onLoadPaymentData={async (paymentRequest) => {
-                        setPaymentData(paymentRequest)
-                        console.log("load payment data", paymentRequest)
-                        await handleSubmit()
-                      }}
-                      onClick={() =>
-                        setWalletPaymentType(
-                          walletPaymentType === "google-pay"
-                            ? null
-                            : "google-pay"
-                        )
-                      }
-                      buttonColor="black"
-                      buttonType="buy"
-                      buttonRadius={6}
-                      buttonSizeMode="fill"
-                      style={{ width: 250, height: 50 }}
-                    />
+                    {/* Credit Card Option */}
+                    <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        className="mr-3 h-5 w-5 accent-green-500"
+                        checked={walletPaymentType === null}
+                        onChange={() => setWalletPaymentType(null)}
+                      />
+                      <div className="flex items-center">
+                        <div className="flex space-x-2 mr-3">
+                          {cardPaymentMethods.map((method, index) => (
+                            <Image
+                              key={index}
+                              width={40}
+                              height={25}
+                              alt={`method-${index}`}
+                              src={method}
+                              className="object-contain"
+                            />
+                          ))}
+                        </div>
+                        <span className="text-white">Credit Card</span>
+                      </div>
+                    </label>
                   </div>
 
                   {isAuthorizeNetFunc(selectedPaymentMethod) &&
-                  !walletPaymentType ? (
+                  walletPaymentType === null ? (
                     <>
-                      <div className="flex items-center gap-2 mb-4 flex-wrap">
-                        {cardPaymentMethods.map((method, index) => (
-                          <Image
-                            key={index}
-                            width={50}
-                            height={35}
-                            alt={`method-${index}`}
-                            src={method}
-                          />
-                        ))}
-                      </div>
                       <AuthorizeNetContainer
                         paymentProviderId={selectedPaymentMethod}
                         setCardData={setCardData}
@@ -595,26 +565,9 @@ const Payment = ({
                     </>
                   ) : null}
 
-                  {walletPaymentType && (
-                    <div className="mb-6 p-4 border border-gray-700 rounded-md bg-gray-800">
-                      <Text className="text-white text-lg mb-2">
-                        {walletPaymentType === "apple-pay"
-                          ? "Apple Pay"
-                          : "Google Pay"}{" "}
-                        selected
-                      </Text>
-                      <Text className="text-gray-300">
-                        Click "Place Order" to complete your purchase using{" "}
-                        {walletPaymentType === "apple-pay"
-                          ? "Apple Pay"
-                          : "Google Pay"}
-                        .
-                      </Text>
                       {errorMessage && (
-                        <div className="mt-4 p-3 bg-red-900/50 border border-red-700 rounded-md">
-                          <Text className="text-red-300">{errorMessage}</Text>
-                        </div>
-                      )}
+                    <div className="mb-6 p-4 border border-red-700 rounded-md bg-red-900/50">
+                      <p className="text-red-300">{errorMessage}</p>
                     </div>
                   )}
                 </>

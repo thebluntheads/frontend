@@ -1,7 +1,9 @@
 import { Text } from "@medusajs/ui"
-import React from "react"
+import React, { useState, useEffect } from "react"
 import Input from "@modules/common/components/input"
 import { paymentInfoMap } from "@lib/constants"
+import Image from "next/image"
+import GooglePayButton from "@google-pay/button-react"
 
 export type AuthorizeNetCardInfo = {
   cardNumber: string
@@ -11,19 +13,29 @@ export type AuthorizeNetCardInfo = {
   zip?: string
 }
 
+type WalletPaymentType = "apple-pay" | "google-pay" | null
+
 type AuthorizeNetPaymentProps = {
   cardData: AuthorizeNetCardInfo
   setCardData: (data: any) => void
   errorMessage: string | null
   paymentMethod: any
   isAuthorizeNetFunc: (providerId?: string) => boolean | undefined
-  handleSubmit: () => void
+  handleSubmit: (paymentData?: any) => void
   isLoading: boolean
   buttonText?: string
   disabled?: boolean
   shippingNotSet?: boolean
   onShippingFix?: () => void
+  totalPrice?: string
 }
+
+const cardPaymentMethods = [
+  "/images/payment/master.png",
+  "/images/payment/discover.png",
+  "/images/payment/amex.png",
+  "/images/payment/visa.png",
+]
 
 const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
   cardData,
@@ -34,13 +46,103 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
   handleSubmit,
   isLoading,
   buttonText = "Complete Purchase",
-  disabled,
-  shippingNotSet,
-  onShippingFix,
+  totalPrice = "1.99",
 }) => {
+  const [walletPaymentType, setWalletPaymentType] =
+    useState<WalletPaymentType>(null)
+  const [paymentData, setPaymentData] = useState<any>(null)
+  const [isApplePayAvailable, setIsApplePayAvailable] = useState(false)
+
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.ApplePaySession &&
+      window.ApplePaySession.canMakePayments()
+    ) {
+      setIsApplePayAvailable(true)
+    }
+  }, [])
   return (
     <div className="w-full">
       <h3 className="text-lg font-medium mb-4 text-white">Payment Method</h3>
+
+      {/* Payment Method Radio Buttons */}
+      <div className="mb-6 space-y-4">
+        {/* Google Pay Option */}
+        <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+          <input
+            type="radio"
+            name="paymentMethod"
+            className="mr-3 h-5 w-5 accent-green-500"
+            checked={walletPaymentType === "google-pay"}
+            onChange={() => setWalletPaymentType("google-pay")}
+          />
+          <div className="flex items-center">
+            <Image
+              src="/images/payment/google-pay.svg"
+              alt="Google Pay"
+              width={80}
+              height={40}
+              className="object-contain"
+            />
+          </div>
+        </label>
+
+        {/* Apple Pay Option - Only show if available */}
+        {isApplePayAvailable && (
+          <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+            <input
+              type="radio"
+              name="paymentMethod"
+              className="mr-3 h-5 w-5 accent-green-500"
+              checked={walletPaymentType === "apple-pay"}
+              onChange={() => setWalletPaymentType("apple-pay")}
+            />
+            <div className="flex items-center">
+              <Image
+                src="/images/payment/apple-pay.svg"
+                alt="Apple Pay"
+                width={80}
+                height={40}
+                className="object-contain"
+              />
+            </div>
+          </label>
+        )}
+
+        {/* Credit Card Option */}
+        <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+          <input
+            type="radio"
+            name="paymentMethod"
+            className="mr-3 h-5 w-5 accent-green-500"
+            checked={walletPaymentType === null}
+            onChange={() => setWalletPaymentType(null)}
+          />
+          <div className="flex items-center">
+            <div className="flex space-x-2 mr-3">
+              {cardPaymentMethods.map((method, index) => (
+                <Image
+                  key={index}
+                  width={40}
+                  height={25}
+                  alt={`method-${index}`}
+                  src={method}
+                  className="object-contain"
+                />
+              ))}
+            </div>
+            <span className="text-white">Credit Card</span>
+          </div>
+        </label>
+      </div>
+
+      {/* Display error message if any */}
+      {errorMessage && (
+        <div className="mb-6 p-4 border border-red-700 rounded-md bg-red-900/50">
+          <p className="text-red-300">{errorMessage}</p>
+        </div>
+      )}
 
       <div>
         {isAuthorizeNetFunc(paymentMethod) && (
