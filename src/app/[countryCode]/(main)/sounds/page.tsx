@@ -430,21 +430,14 @@ export default function SoundsPage() {
               // Complete the payment
               session.completePayment(window.ApplePaySession.STATUS_SUCCESS)
 
+              const billing_address = billingContact
+                ? billingContact
+                : cart?.billing_address
+
               // Return the token for processing with Authorize.Net
               resolve({
                 token: base64,
-                billing_address: {
-                  first_name: billingContact?.givenName,
-                  last_name: billingContact?.familyName,
-                  company: "",
-                  address_1: billingContact?.addressLines?.[1] || "",
-                  address_2: billingContact?.addressLines?.[2] || "",
-                  city: billingContact?.locality,
-                  postal_code: billingContact?.postalCode,
-                  country_code: billingContact?.countryCode.toLowerCase(),
-                  province: billingContact.administrativeArea,
-                  phone: "",
-                },
+                billing_address: billing_address,
               })
             } catch (error) {
               console.error("Payment authorization failed:", error)
@@ -475,19 +468,13 @@ export default function SoundsPage() {
       const billingAddress =
         paymentData?.paymentMethodData?.info?.billingAddress
 
+      const billing_address = billingAddress
+        ? billingAddress
+        : cart?.billing_address
+
       return {
         token: base64,
-        billing_address: {
-          first_name: billingAddress?.name?.split(" ")[0] || "",
-          last_name: billingAddress?.name?.split(" ").slice(1).join(" ") || "",
-          company: "",
-          address_1: billingAddress?.address1,
-          address_2: billingAddress?.address2 || "",
-          city: billingAddress?.locality,
-          province: billingAddress?.administrativeArea,
-          postal_code: billingAddress?.postalCode,
-          country_code: billingAddress?.countryCode,
-        },
+        billing_address: billing_address,
       }
     } catch (error) {
       console.error("Google Pay error:", error)
