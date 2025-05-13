@@ -4,9 +4,10 @@ import Image from "next/image"
 import { Button } from "@medusajs/ui"
 import { DigitalProduct } from "types/global"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { Play, Pause, Volume2, VolumeX } from "lucide-react"
+import { Play, Pause, Volume2, VolumeX, Loader2 } from "lucide-react"
 import { getDigitalProductPrice } from "@lib/util/get-product-price"
 import { useState, useRef, useEffect } from "react"
+import { getCustomerDigitalProducts } from "@lib/data/digital-products"
 
 interface FeaturedSoundsProps {
   sounds: DigitalProduct[]
@@ -16,30 +17,113 @@ const FeaturedSounds = ({ sounds }: FeaturedSoundsProps) => {
   const [currentPlaying, setCurrentPlaying] = useState<string | null>(null)
   const [isMuted, setIsMuted] = useState(false)
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement | null }>({})
-  const [playProgress, setPlayProgress] = useState<{ [key: string]: number }>(
-    {}
-  )
+  const [playProgress, setPlayProgress] = useState<{ [key: string]: number }>({})
+  const [purchasedSounds, setPurchasedSounds] = useState<Record<string, boolean>>({})
+  const [purchasedAlbums, setPurchasedAlbums] = useState<Record<string, boolean>>({})
+  const [purchasedContentUrl, setPurchasedContentUrl] = useState<Record<string, string>>({})
+  const [isVerifying, setIsVerifying] = useState(true)
+
+  // Check if user has purchased sounds
+  useEffect(() => {
+    const checkPurchases = async () => {
+      setIsVerifying(true);
+      try {
+        // Create maps to store purchase status
+        const soundPurchaseStatus: Record<string, boolean> = {};
+        const albumPurchaseStatus: Record<string, boolean> = {};
+        const contentUrls: Record<string, string> = {};
+        
+        // Get unique album IDs from sounds
+        const albumIds = Array.from(new Set(sounds.map(sound => sound.parent_id).filter(Boolean) as string[]));
+        
+        // Check album purchases first
+        for (const albumId of albumIds) {
+          try {
+            const digitalProduct = await getCustomerDigitalProducts(albumId as string);
+            albumPurchaseStatus[albumId as string] = !!digitalProduct?.id;
+          } catch (error) {
+            console.log(`Error checking purchase for album ${albumId}:`, error);
+            albumPurchaseStatus[albumId as string] = false;
+          }
+        }
+        
+        // Check individual sound purchases
+        for (const sound of sounds) {
+          try {
+            const digitalProduct = await getCustomerDigitalProducts(
+              sound.id,
+              sound?.parent_id!
+            );
+            soundPurchaseStatus[sound.id] = !!digitalProduct?.id;
+            contentUrls[sound.id] = digitalProduct.content_url || "";
+          } catch (error) {
+            console.log(`Error checking purchase for sound ${sound.id}:`, error);
+            soundPurchaseStatus[sound.id] = false;
+            contentUrls[sound.id] = "";
+          }
+        }
+
+        setPurchasedSounds(soundPurchaseStatus);
+        setPurchasedAlbums(albumPurchaseStatus);
+        setPurchasedContentUrl(contentUrls);
+        console.log("Purchase verification complete");
+      } catch (error) {
+        console.log("Error checking purchases:", error);
+      } finally {
+        setIsVerifying(false);
+      }
+    };
+
+    if (sounds.length > 0) {
+      checkPurchases();
+    }
+  }, [sounds]);
 
   // Handle play/pause toggle
   const togglePlay = (soundId: string, previewUrl?: string) => {
-    if (!previewUrl) return
+    if (isVerifying) return; // Don't allow playback while verifying purchases
+    
+    const sound = sounds.find(s => s.id === soundId);
+    if (!sound) return;
+    
+    // Check if the album is purchased first
+    const albumId = sound.parent_id;
+    const isAlbumPurchased = albumId && purchasedAlbums[albumId];
+    
+    // Check if individual track is purchased
+    const isTrackPurchased = purchasedSounds[soundId];
+    
+    // Determine which URL to use based on purchase status
+    let audioUrl;
+    
+    if (isAlbumPurchased || isTrackPurchased) {
+      // If album or track is purchased, use content_url
+      audioUrl = purchasedContentUrl[soundId];
+      console.log(`Using full content URL (${isAlbumPurchased ? 'album purchased' : 'track purchased'}):`, audioUrl);
+    } else {
+      // Otherwise use preview_url
+      audioUrl = previewUrl;
+      console.log("Using preview URL:", audioUrl);
+    }
+    
+    if (!audioUrl) return;
 
-    const audio = audioRefs.current[soundId]
-    if (!audio) return
+    const audio = audioRefs.current[soundId];
+    if (!audio) return;
 
     if (currentPlaying === soundId) {
       // Pause current track
-      audio.pause()
-      setCurrentPlaying(null)
+      audio.pause();
+      setCurrentPlaying(null);
     } else {
       // Pause any currently playing audio
       if (currentPlaying && audioRefs.current[currentPlaying]) {
-        audioRefs.current[currentPlaying]?.pause()
+        audioRefs.current[currentPlaying]?.pause();
       }
 
       // Play the new track
-      audio.play()
-      setCurrentPlaying(soundId)
+      audio.play();
+      setCurrentPlaying(soundId);
     }
   }
 
@@ -132,10 +216,12 @@ const FeaturedSounds = ({ sounds }: FeaturedSoundsProps) => {
                     <button
                       onClick={() => togglePlay(sound.id, previewUrl)}
                       className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      disabled={!previewUrl}
+                      disabled={!previewUrl && !purchasedContentUrl[sound.id]}
                     >
                       <div className="bg-dark-green/80 backdrop-blur-sm p-2 rounded-full">
-                        {isPlaying ? (
+                        {isVerifying ? (
+                          <Loader2 className="text-white h-6 w-6 animate-spin" />
+                        ) : isPlaying ? (
                           <Pause className="text-white h-6 w-6" />
                         ) : (
                           <Play className="text-white h-6 w-6" />
@@ -160,19 +246,32 @@ const FeaturedSounds = ({ sounds }: FeaturedSoundsProps) => {
                         </div>
                       </div>
                       <span className="text-white/60 text-xs whitespace-nowrap">
-                        {previewUrl ? "30s preview" : "No preview"}
+                        {isVerifying ? (
+                          "Verifying..."
+                        ) : (sound.parent_id && purchasedAlbums[sound.parent_id]) || purchasedSounds[sound.id] ? (
+                          "Full track"
+                        ) : previewUrl ? (
+                          "30s preview"
+                        ) : (
+                          "No preview"
+                        )}
                       </span>
                     </div>
                   </div>
 
                   {/* Audio element (hidden) */}
-                  {previewUrl && (
+                  {(previewUrl || purchasedContentUrl[sound.id]) && (
                     <audio
                       ref={(el) => {
-                        audioRefs.current[sound.id] = el
-                        return undefined
+                        audioRefs.current[sound.id] = el;
+                        return undefined;
                       }}
-                      src={previewUrl}
+                      src={
+                        // Check if album is purchased
+                        (sound.parent_id && purchasedAlbums[sound.parent_id]) || purchasedSounds[sound.id] 
+                          ? purchasedContentUrl[sound.id] 
+                          : previewUrl
+                      }
                       onTimeUpdate={() => updateProgress(sound.id)}
                       onEnded={() => handleEnded(sound.id)}
                       muted={isMuted}
