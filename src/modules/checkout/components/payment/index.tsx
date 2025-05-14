@@ -483,7 +483,7 @@ const Payment = ({
                       />
                       <div className="flex items-center">
                         <Image
-                          src="/images/payment/google-pay.svg"
+                          src="/images/payment/GPay_Acceptance_Mark_800.png"
                           alt="Google Pay"
                           width={80}
                           height={40}
