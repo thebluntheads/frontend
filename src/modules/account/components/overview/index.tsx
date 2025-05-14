@@ -207,9 +207,9 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                           <span
                             className="text-white text-sm"
                             data-testid="order-id"
-                            data-value={order.display_id}
+                            data-value={order.id}
                           >
-                            #{order.display_id}
+                            #{order.id}
                           </span>
                           <span
                             className="text-white text-sm font-medium"
@@ -226,7 +226,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                           data-testid="open-order-button"
                         >
                           <span className="sr-only">
-                            Go to order #{order.display_id}
+                            Go to order #{order.id}
                           </span>
                           <ChevronDown className="-rotate-90" />
                         </button>

@@ -86,7 +86,7 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
           <div>
             <span className="text-gray-400 block">Order number</span>
             <span className="text-white font-mono" data-testid="order-id">
-              {order.display_id}
+              {order.id}
             </span>
           </div>
         </div>

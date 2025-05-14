@@ -48,8 +48,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
           </div>
           <div>
             <div className="text-white font-semibold text-lg">
-              Order #
-              <span data-testid="order-display-id">{order.display_id}</span>
+              Order #<span data-testid="order-display-id">{order.id}</span>
             </div>
             <div
               className="text-white/60 text-sm"
