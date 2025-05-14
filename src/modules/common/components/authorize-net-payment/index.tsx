@@ -18,6 +18,8 @@ type WalletPaymentType = "apple-pay" | "google-pay" | null
 type AuthorizeNetPaymentProps = {
   cardData: AuthorizeNetCardInfo
   setPaymentData: (data: any) => void
+  setWalletPaymentType: (data: any) => void
+  walletPaymentType: WalletPaymentType
   setCardData: (data: any) => void
   errorMessage: string | null
   paymentMethod: any
@@ -41,6 +43,9 @@ const cardPaymentMethods = [
 const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
   cardData,
   setCardData,
+  setPaymentData,
+  setWalletPaymentType,
+  walletPaymentType,
   errorMessage,
   paymentMethod,
   isAuthorizeNetFunc,
@@ -49,9 +54,6 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
   buttonText = "Complete Purchase",
   totalPrice = "1.99",
 }) => {
-  const [walletPaymentType, setWalletPaymentType] =
-    useState<WalletPaymentType>(null)
-  const [paymentData, setPaymentData] = useState<any>(null)
   const [isApplePayAvailable, setIsApplePayAvailable] = useState(false)
 
   useEffect(() => {

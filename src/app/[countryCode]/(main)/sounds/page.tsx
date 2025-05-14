@@ -612,82 +612,87 @@ export default function SoundsPage() {
   const togglePlay = async (trackId: string) => {
     // Prevent rapid toggling that can cause AbortError
     if (isChangingTrack.current) {
-      console.log("Track change in progress, ignoring request");
-      return;
+      console.log("Track change in progress, ignoring request")
+      return
     }
 
-    isChangingTrack.current = true;
+    isChangingTrack.current = true
 
     try {
-      const track = sounds.find((sound) => sound.id === trackId);
+      const track = sounds.find((sound) => sound.id === trackId)
       if (!track) {
-        console.error("Track not found:", trackId);
-        return;
+        console.error("Track not found:", trackId)
+        return
       }
-      console.log("Track data:", track);
+      console.log("Track data:", track)
 
       if (playingTrackId === trackId) {
         // Stop playing current track
-        console.log("Stopping playback");
-        setPlayingTrackId(null);
-        setCurrentAudioSrc("");
-        setAudioProgress(0); // Reset progress
+        console.log("Stopping playback")
+        setPlayingTrackId(null)
+        setCurrentAudioSrc("")
+        setAudioProgress(0) // Reset progress
       } else {
         // If another track is playing, stop it first
         if (playingTrackId) {
-          console.log("Stopping previous track before playing new one");
-          setPlayingTrackId(null);
-          setCurrentAudioSrc("");
+          console.log("Stopping previous track before playing new one")
+          setPlayingTrackId(null)
+          setCurrentAudioSrc("")
 
           // Small delay to ensure the previous audio is properly stopped
-          await new Promise((resolve) => setTimeout(resolve, 50));
+          await new Promise((resolve) => setTimeout(resolve, 50))
         }
 
         // Start playing new track
-        console.log("Starting playback for track:", trackId);
-        
+        console.log("Starting playback for track:", trackId)
+
         // Check if the album is purchased first
-        const albumId = track.parent_id;
-        const isAlbumPurchased = albumId && purchasedAlbums[albumId];
-        
+        const albumId = track.parent_id
+        const isAlbumPurchased = albumId && purchasedAlbums[albumId]
+
         // Check if individual track is purchased
-        const isTrackPurchased = purchasedSounds[trackId];
-        
+        const isTrackPurchased = purchasedSounds[trackId]
+
         // Determine which URL to use based on purchase status
-        let audioUrl;
-        
+        let audioUrl
+
         if (isAlbumPurchased || isTrackPurchased) {
           // If album or track is purchased, use content_url
-          audioUrl = purchasedContentUrl[trackId];
-          console.log(`Using full content URL (${isAlbumPurchased ? 'album purchased' : 'track purchased'}):`, audioUrl);
+          audioUrl = purchasedContentUrl[trackId]
+          console.log(
+            `Using full content URL (${
+              isAlbumPurchased ? "album purchased" : "track purchased"
+            }):`,
+            audioUrl
+          )
         } else {
           // Otherwise use preview_url
-          audioUrl = track.preview_url;
-          console.log("Using preview URL:", audioUrl);
+          audioUrl = track.preview_url
+          console.log("Using preview URL:", audioUrl)
         }
-        
+
         if (!audioUrl) {
-          console.error("No audio URL available for this track");
-          return;
+          console.error("No audio URL available for this track")
+          return
         }
 
         // Set the source first, then set the playing track ID
-        setCurrentAudioSrc(audioUrl);
+        setCurrentAudioSrc(audioUrl)
 
         // Small delay to ensure the audio source is set before playing
-        await new Promise((resolve) => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 50))
 
-        setPlayingTrackId(trackId);
+        setPlayingTrackId(trackId)
       }
     } catch (error) {
-      console.error("Error toggling playback:", error);
+      console.error("Error toggling playback:", error)
     } finally {
       // Allow track changes again
       setTimeout(() => {
-        isChangingTrack.current = false;
-      }, 300); // Add a small debounce to prevent rapid toggling
+        isChangingTrack.current = false
+      }, 300) // Add a small debounce to prevent rapid toggling
     }
-  };
+  }
 
   const handleAudioEnded = () => {
     console.log("Audio playback ended")
@@ -1236,6 +1241,8 @@ export default function SoundsPage() {
                 cardData={cardData}
                 setCardData={handleCardDataChange}
                 setPaymentData={setPaymentData}
+                setWalletPaymentType={setWalletPaymentType}
+                walletPaymentType={walletPaymentType}
                 errorMessage={errorMessage}
                 isAuthorizeNetFunc={isAuthorizeNetFunc}
                 handleSubmit={handlePaymentComplete}
