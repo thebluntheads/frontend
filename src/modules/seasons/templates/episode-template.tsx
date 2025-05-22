@@ -172,7 +172,7 @@ export default function EpisodeTemplate({
   }
 
   const bannerUrl = episode?.name.includes("1")
-    ? "/assets/episode1-cover.jpeg"
+    ? "/assets/episode_one_thumbnail.png"
     : "/assets/preview.png"
 
   if (!episode || !season) {
@@ -187,7 +187,7 @@ export default function EpisodeTemplate({
           description={""}
           ctaText={
             episode?.product_variant?.metadata?.unlocked
-              ? "Watch Now"
+              ? "Watch Now 🔓"
               : "Unlocks Soon 🔒"
           }
           ctaLink="#"

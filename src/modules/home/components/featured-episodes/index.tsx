@@ -43,7 +43,7 @@ const FeaturedEpisodes = ({ season, episodes }: FeaturedEpisodesProps) => {
                 <Image
                   src={
                     episode?.name?.includes("1")
-                      ? "/assets/episode1-cover.jpeg"
+                      ? "/assets/episode_one_thumbnail.png"
                       : "/assets/preview.png"
                   }
                   alt={episode.name || "Episode thumbnail"}
@@ -75,7 +75,23 @@ const FeaturedEpisodes = ({ season, episodes }: FeaturedEpisodesProps) => {
                 >
                   <Button className="w-full bg-dark-green hover:bg-light-green text-white border-none">
                     {episode?.product_variant?.metadata?.unlocked ? (
-                      "Watch Now"
+                      <span className="flex items-center gap-1">
+                        Watch Now
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </span>
                     ) : (
                       <span className="flex items-center gap-1">
                         Unlocks Soon

@@ -38,7 +38,7 @@ export default function CircularPlayButton({
 
       {/* Circular text */}
       <svg
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full animate-spin-slow"
         viewBox={`0 0 ${size} ${size}`}
       >
         <defs>

@@ -547,8 +547,8 @@ const Hero = ({
         {/* Content overlay - only visible when video is not playing */}
         {!isPlaying && (
           <div
-            className="absolute bottom-0 left-0 p-6 sm:p-8 md:p-12 w-full mt-auto"
-            style={{ zIndex: 30, bottom: 0 }}
+            className="absolute bottom-0 left-0 p-4 sm:p-6 md:p-12 w-full mt-auto pb-4 sm:pb-6 md:pb-12"
+            style={{ zIndex: 30 }}
           >
             <div className="max-w-3xl">
               <h1 className="text-white text-3xl md:text-5xl font-bold mb-4">
@@ -559,14 +559,14 @@ const Hero = ({
                   {episodeCount} Episode{episodeCount !== 1 ? "s" : ""}
                 </div>
               )}
-              <p className="text-white/90 text-xl mb-6 line-clamp-2">
+              <p className="text-white/90 text-base sm:text-lg md:text-xl mb-4 sm:mb-6 line-clamp-2">
                 {description}
               </p>
 
               {/* CTA Button */}
               {seasonHandle && (
                 <LocalizedClientLink href={`/seasons/${seasonHandle}`}>
-                  <Button className="bg-dark-green text-white hover:hover:bg-light-green border-none px-6 py-2 text-base font-medium">
+                  <Button className="bg-dark-green text-white hover:bg-light-green border-none px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base font-medium">
                     {ctaText}
                   </Button>
                 </LocalizedClientLink>
