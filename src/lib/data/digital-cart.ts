@@ -125,13 +125,11 @@ export async function addToStreamCart({
   quantity: number
   countryCode: string
 }) {
-  console.log("chfema:", variantId, quantity, countryCode)
 
   if (!variantId) {
     throw new Error("Missing variant ID when adding to cart")
   }
   const cart = await getOrSetStreamCart(countryCode)
-  console.log("aaaaa3cart:", cart)
   if (!cart) {
     throw new Error("Error retrieving or creating cart")
   }

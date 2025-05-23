@@ -71,8 +71,8 @@ export default async function Home(props: {
 
       {/* Hero section with featured season */}
       <Hero
-        title={featuredSeason?.name}
-        description={featuredSeason?.description}
+        title={"Episode 1 Trailer"}
+        description={"Full Episode Release May 24, 2025"}
         episodeCount={episodes?.length || 0}
         seasonHandle={featuredSeason?.handle}
         ctaText="Watch Season"

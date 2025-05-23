@@ -621,30 +621,22 @@ export default function SoundsPage() {
     try {
       const track = sounds.find((sound) => sound.id === trackId)
       if (!track) {
-        console.error("Track not found:", trackId)
         return
       }
-      console.log("Track data:", track)
 
       if (playingTrackId === trackId) {
-        // Stop playing current track
-        console.log("Stopping playback")
         setPlayingTrackId(null)
         setCurrentAudioSrc("")
         setAudioProgress(0) // Reset progress
       } else {
         // If another track is playing, stop it first
         if (playingTrackId) {
-          console.log("Stopping previous track before playing new one")
           setPlayingTrackId(null)
           setCurrentAudioSrc("")
 
           // Small delay to ensure the previous audio is properly stopped
           await new Promise((resolve) => setTimeout(resolve, 50))
         }
-
-        // Start playing new track
-        console.log("Starting playback for track:", trackId)
 
         // Check if the album is purchased first
         const albumId = track.parent_id

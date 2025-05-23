@@ -155,7 +155,6 @@ export const listDigitalProductCollections = async (
       }
     )
     .then(({ collections }) => {
-      console.log("waaaa", { collections })
       return {
         // Filter out collections with no products
         collections: collections.filter(
@@ -188,7 +187,6 @@ export const listSeasons = async (
       next,
     })
     .then(({ digital_products }) => {
-      console.log("waaaa", { digital_products })
       return {
         digital_products,
         count: digital_products.length,

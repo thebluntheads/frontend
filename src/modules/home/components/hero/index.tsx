@@ -554,14 +554,17 @@ const Hero = ({
               <h1 className="text-white text-3xl md:text-5xl font-bold mb-4">
                 {title}
               </h1>
-              {episodeCount > 0 && (
+              {/* {episodeCount > 0 && (
                 <div className="text-gray-300 text-sm md:text-base mb-3">
                   {episodeCount} Episode{episodeCount !== 1 ? "s" : ""}
                 </div>
-              )}
-              <p className="text-white/90 text-base sm:text-lg md:text-xl mb-4 sm:mb-6 line-clamp-2">
+              )} */}
+              <div className="text-gray-300 text-sm md:text-base mb-3">
+                {description}{" "}
+              </div>
+              {/* <p className="text-white/90 text-base sm:text-lg md:text-xl mb-4 sm:mb-6 line-clamp-2">
                 {description}
-              </p>
+              </p> */}
 
               {/* CTA Button */}
               {seasonHandle && (

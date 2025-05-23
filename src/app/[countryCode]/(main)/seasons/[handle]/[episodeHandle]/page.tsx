@@ -62,8 +62,5 @@ export default async function EpisodePage({ params }: Props) {
     .then(({ digital_products }) => digital_products[0])
     .catch(() => null)
 
-  console.log("Episode data:", episode)
-  console.log("Season data:", season)
-
   return <EpisodeTemplate episode={episode} season={season} />
 }
