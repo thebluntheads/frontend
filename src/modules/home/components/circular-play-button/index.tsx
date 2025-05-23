@@ -16,7 +16,10 @@ export default function CircularPlayButton({
   className = "",
   isWatchNow = false,
 }: CircularPlayButtonProps) {
-  const text = isWatchNow ? "Watch Now • Watch Now •" : "Press to play • Press to play •"
+  // Add more spacing between words and use fewer characters to prevent truncation
+  const text = isWatchNow
+    ? "WATCH NOW • • WATCH NOW • •"
+    : "PRESS TO PLAY • PRESS TO PLAY•"
   const radius = size / 2
   const textRadius = radius - 10
 
@@ -26,8 +29,8 @@ export default function CircularPlayButton({
       style={{ width: size, height: size }}
       onClick={onClick}
     >
-      {/* Outer circle */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-dark-green/30 to-light-green/30 backdrop-blur-sm group-hover:from-dark-green/50 group-hover:to-light-green/50 transition-all duration-300" />
+      {/* Outer circle with darker background for better text contrast */}
+      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-dark-green/40 to-light-green/40 backdrop-blur-md group-hover:from-dark-green/60 group-hover:to-light-green/60 transition-all duration-300" />
 
       {/* Inner circle with play icon */}
       <div className="absolute inset-4 rounded-full bg-black/70 flex items-center justify-center group-hover:bg-black/80 transition-all duration-300">
@@ -38,7 +41,7 @@ export default function CircularPlayButton({
         />
       </div>
 
-      {/* Circular text */}
+      {/* Circular text with background for better readability */}
       <svg
         className="absolute inset-0 w-full h-full animate-spin-slow"
         viewBox={`0 0 ${size} ${size}`}
@@ -50,11 +53,22 @@ export default function CircularPlayButton({
             fill="none"
           />
         </defs>
+        {/* Add a subtle background path for the text */}
+        <path
+          id="textBg"
+          d={`M ${radius}, ${radius} m 0, -${textRadius} a ${textRadius},${textRadius} 0 1,1 -0.1,0 z`}
+          fill="none"
+          stroke="rgba(0,0,0,0.5)"
+          strokeWidth="12"
+          strokeLinecap="round"
+        />
+
         <text
-          className="fill-white/70 group-hover:fill-light-green"
+          className="fill-white group-hover:fill-light-green"
           style={{
-            fontSize: size * 0.2,
-            letterSpacing: "0.5px",
+            fontSize: size * 0.15, // Slightly smaller font size
+            letterSpacing: "1px", // More letter spacing
+            fontWeight: "bold", // Make text bold
           }}
           textAnchor="middle"
           dominantBaseline="middle"
