@@ -15,6 +15,7 @@ interface HeroProps {
   videoUrl?: string
   episodeCount?: number
   seasonHandle?: string
+  isEpisodePage?: boolean
 }
 
 const Hero = ({
@@ -26,6 +27,7 @@ const Hero = ({
   videoUrl = "https://thebluntheads.s3.us-east-2.amazonaws.com/trailer.mp4",
   episodeCount = 0,
   seasonHandle,
+  isEpisodePage = false,
 }: HeroProps = {}) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
@@ -540,6 +542,7 @@ const Hero = ({
               onClick={handlePlayClick}
               size={140}
               className="transition-all duration-300 hover:scale-110"
+              isWatchNow={isEpisodePage}
             />
           </div>
         )}

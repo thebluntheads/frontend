@@ -193,6 +193,7 @@ export default function EpisodeTemplate({
           ctaLink="#"
           thumbnailUrl={bannerUrl}
           videoUrl={videoUrl}
+          isEpisodePage={true}
         />
       ) : (
         <div className="relative h-[80vh] w-full overflow-hidden">

@@ -7,14 +7,16 @@ interface CircularPlayButtonProps {
   onClick: (e: React.MouseEvent) => void
   size?: number
   className?: string
+  isWatchNow?: boolean
 }
 
 export default function CircularPlayButton({
   onClick,
   size = 120,
   className = "",
+  isWatchNow = false,
 }: CircularPlayButtonProps) {
-  const text = "Press to play • Press to play •"
+  const text = isWatchNow ? "Watch Now • Watch Now •" : "Press to play • Press to play •"
   const radius = size / 2
   const textRadius = radius - 10
 
