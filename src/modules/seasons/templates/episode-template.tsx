@@ -171,9 +171,14 @@ export default function EpisodeTemplate({
     }
   }
 
-  const bannerUrl = episode?.name.includes("1")
+  // Use the variant metadata thumbnailUrl if available, otherwise fall back to default images
+  const bannerUrl = episode?.product_variant?.metadata?.thumbnailUrl
+    ? episode.product_variant.metadata.thumbnailUrl as string
+    : episode?.name.includes("1")
     ? "/assets/episode_one_thumbnail.png"
     : "/assets/preview.png"
+  
+  console.log("Episode thumbnail URL:", bannerUrl, "Metadata:", episode?.product_variant?.metadata)
 
   if (!episode || !season) {
     notFound()
