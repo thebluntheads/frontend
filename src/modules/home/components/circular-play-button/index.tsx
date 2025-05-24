@@ -16,12 +16,15 @@ export default function CircularPlayButton({
   className = "",
   isWatchNow = false,
 }: CircularPlayButtonProps) {
-  // Add more spacing between words and use fewer characters to prevent truncation
+  // Shorter text to prevent crowding and ensure it fits
   const text = isWatchNow
-    ? "WATCH NOW • • WATCH NOW • •"
-    : "PRESS TO PLAY • PRESS TO PLAY•"
+    ? "WATCH NOW • WATCH NOW • "
+    : "PRESS TO PLAY • PRESS TO PLAY • "
+
   const radius = size / 2
-  const textRadius = radius - 10
+  // Adjust text radius to be more conservative for Safari
+  const textRadius = radius * 0.75 // More inward positioning
+  const center = radius
 
   return (
     <div
@@ -41,39 +44,61 @@ export default function CircularPlayButton({
         />
       </div>
 
-      {/* Circular text with background for better readability */}
+      {/* Circular text with Safari-specific fixes */}
       <svg
-        className="absolute inset-0 w-full h-full animate-spin-slow"
+        className="absolute inset-0 w-full h-full"
         viewBox={`0 0 ${size} ${size}`}
+        style={{ overflow: "visible" }}
       >
         <defs>
           <path
-            id="textPath"
-            d={`M ${radius}, ${radius} m 0, -${textRadius} a ${textRadius},${textRadius} 0 1,1 -0.1,0 z`}
+            id={`textPath-${size}`}
+            d={`M ${center} ${
+              center - textRadius
+            } A ${textRadius} ${textRadius} 0 1 1 ${center - 0.1} ${
+              center - textRadius
+            }`}
             fill="none"
           />
         </defs>
-        {/* Add a subtle background path for the text */}
-        <path
-          id="textBg"
-          d={`M ${radius}, ${radius} m 0, -${textRadius} a ${textRadius},${textRadius} 0 1,1 -0.1,0 z`}
+
+        {/* Dark background circle that matches text path exactly */}
+        <circle
+          cx={center}
+          cy={center}
+          r={textRadius}
           fill="none"
-          stroke="rgba(0,0,0,0.5)"
-          strokeWidth="12"
-          strokeLinecap="round"
+          stroke="rgba(0,0,0,0.8)"
+          strokeWidth="14"
+          strokeDasharray={`${2 * Math.PI * textRadius}`}
+          strokeDashoffset="0"
+          style={{
+            transformOrigin: `${center}px ${center}px`,
+            strokeLinecap: "round",
+            animation: "spin 20s linear infinite",
+          }}
         />
 
         <text
-          className="fill-white group-hover:fill-light-green"
+          className="fill-white group-hover:fill-light-green transition-colors duration-300"
           style={{
-            fontSize: size * 0.15, // Slightly smaller font size
-            letterSpacing: "1px", // More letter spacing
-            fontWeight: "bold", // Make text bold
+            fontSize: `${Math.max(8, size * 0.12)}px`, // Responsive font size with minimum
+            letterSpacing: "0.5px",
+            fontWeight: "600",
+            fontFamily: "system-ui, -apple-system, sans-serif", // Better Safari compatibility
+            textShadow: "0 1px 2px rgba(0,0,0,0.8)", // Better text visibility
+            transformOrigin: `${center}px ${center}px`,
+            animation: "spin 20s linear infinite",
           }}
-          textAnchor="middle"
-          dominantBaseline="middle"
         >
-          <textPath href="#textPath" startOffset="50%" dy="1.5">
+          <textPath
+            href={`#textPath-${size}`}
+            startOffset="0%"
+            style={{
+              dominantBaseline: "central", // Better cross-browser text alignment
+              textAnchor: "start",
+            }}
+          >
             {text}
           </textPath>
         </text>
