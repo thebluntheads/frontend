@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "The Blunt Heads",
+    "description": "محتوى بث متميز من The Blunt Heads"
+  },
+  "navigation": {
+    "languages": "اللغات",
+    "home": "الرئيسية",
+    "seasons": "المواسم",
+    "episodes": "الحلقات",
+    "account": "الحساب",
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "logout": "تسجيل الخروج"
+  },
+  "video": {
+    "watchNow": "شاهد الآن",
+    "pressToPlay": "اضغط للتشغيل",
+    "episode": "حلقة",
+    "season": "موسم",
+    "fullscreen": "ملء الشاشة",
+    "mute": "كتم الصوت",
+    "unmute": "إلغاء كتم الصوت"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "tryAgain": "حاول مرة أخرى",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "more": "المزيد"
+  },
+  "media": {
+    "videos": {
+      "hero": "https://thebluntheads.s3.us-east-2.amazonaws.com/trailer-arabic.mp4",
+      "season1": "https://thebluntheads.s3.us-east-2.amazonaws.com/season1-ar.mp4",
+      "season2": "https://thebluntheads.s3.us-east-2.amazonaws.com/season2-ar.mp4",
+      "episode": "https://thebluntheads.s3.us-east-2.amazonaws.com/episode-ar.mp4"
+    }
+  }
+}

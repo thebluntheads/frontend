@@ -2,9 +2,11 @@
 
 import React, { useState, useRef } from "react"
 import Image from "next/image"
+import { useTranslations, useLocale } from "next-intl"
 
 type VideoPlayerProps = {
-  videoUrl: string
+  videoUrl?: string
+  videoKey?: string
   thumbnailUrl: string
   alt?: string
   className?: string
@@ -12,10 +14,15 @@ type VideoPlayerProps = {
 
 const VideoPlayer = ({
   videoUrl,
+  videoKey,
   thumbnailUrl,
   alt = "Video thumbnail",
   className = "",
 }: VideoPlayerProps) => {
+  const t = useTranslations()
+
+  // Get video URL from translations if videoKey is provided, otherwise use provided videoUrl
+  const finalVideoUrl = videoKey ? t(`media.videos.${videoKey}`) : videoUrl
   const [isPlaying, setIsPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -45,7 +52,7 @@ const VideoPlayer = ({
       {/* Video element */}
       <video
         ref={videoRef}
-        src={videoUrl}
+        src={finalVideoUrl}
         className={`absolute inset-0 w-full h-full object-contain ${
           isPlaying ? "opacity-100" : "opacity-0"
         }`}

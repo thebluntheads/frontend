@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "The Blunt Heads",
+    "description": "The Blunt Heads의 프리미엄 스트리밍 콘텐츠"
+  },
+  "navigation": {
+    "languages": "언어",
+    "home": "홈",
+    "seasons": "시즌",
+    "episodes": "에피소드",
+    "account": "계정",
+    "login": "로그인",
+    "register": "회원가입",
+    "logout": "로그아웃"
+  },
+  "video": {
+    "watchNow": "지금 보기",
+    "pressToPlay": "재생하려면 누르세요",
+    "episode": "에피소드",
+    "season": "시즌",
+    "fullscreen": "전체 화면",
+    "mute": "음소거",
+    "unmute": "음소거 해제"
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "tryAgain": "다시 시도",
+    "back": "뒤로",
+    "next": "다음",
+    "previous": "이전",
+    "more": "더 보기"
+  },
+  "media": {
+    "videos": {
+      "hero": "https://thebluntheads.s3.us-east-2.amazonaws.com/trailer-korean.mp4",
+      "season1": "https://thebluntheads.s3.us-east-2.amazonaws.com/season1-ko.mp4",
+      "season2": "https://thebluntheads.s3.us-east-2.amazonaws.com/season2-ko.mp4",
+      "episode": "https://thebluntheads.s3.us-east-2.amazonaws.com/episode-ko.mp4"
+    }
+  }
+}

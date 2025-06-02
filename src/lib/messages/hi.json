@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "The Blunt Heads",
+    "description": "The Blunt Heads से प्रीमियम स्ट्रीमिंग सामग्री"
+  },
+  "navigation": {
+    "languages": "भाषाएँ",
+    "home": "होम",
+    "seasons": "सीज़न",
+    "episodes": "एपिसोड",
+    "account": "खाता",
+    "login": "लॉगिन",
+    "register": "रजिस्टर",
+    "logout": "लॉगआउट"
+  },
+  "video": {
+    "watchNow": "अभी देखें",
+    "pressToPlay": "चलाने के लिए दबाएं",
+    "episode": "एपिसोड",
+    "season": "सीज़न",
+    "fullscreen": "पूर्ण स्क्रीन",
+    "mute": "म्यूट",
+    "unmute": "अनम्यूट"
+  },
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "error": "एक त्रुटि हुई",
+    "tryAgain": "पुनः प्रयास करें",
+    "back": "वापस",
+    "next": "अगला",
+    "previous": "पिछला",
+    "more": "और"
+  },
+  "media": {
+    "videos": {
+      "hero": "https://thebluntheads.s3.us-east-2.amazonaws.com/trailer-hindi.mp4",
+      "season1": "https://thebluntheads.s3.us-east-2.amazonaws.com/season1-hi.mp4",
+      "season2": "https://thebluntheads.s3.us-east-2.amazonaws.com/season2-hi.mp4",
+      "episode": "https://thebluntheads.s3.us-east-2.amazonaws.com/episode-hi.mp4"
+    }
+  }
+}

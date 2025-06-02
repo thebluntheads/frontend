@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "The Blunt Heads",
+    "description": "Premium streaming content from The Blunt Heads"
+  },
+  "navigation": {
+    "languages": "Languages",
+    "home": "Home",
+    "seasons": "Seasons",
+    "episodes": "Episodes",
+    "account": "Account",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "video": {
+    "watchNow": "Watch Now",
+    "pressToPlay": "Press to Play",
+    "episode": "Episode",
+    "season": "Season",
+    "fullscreen": "Fullscreen",
+    "mute": "Mute",
+    "unmute": "Unmute"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "tryAgain": "Try Again",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "more": "More"
+  },
+  "media": {
+    "videos": {
+      "hero": "https://thebluntheads.s3.us-east-2.amazonaws.com/trailer.mp4",
+      "season1": "https://thebluntheads.s3.us-east-2.amazonaws.com/season1-en.mp4",
+      "season2": "https://thebluntheads.s3.us-east-2.amazonaws.com/season2-en.mp4",
+      "episode": "https://thebluntheads.s3.us-east-2.amazonaws.com/episode-en.mp4"
+    }
+  }
+}

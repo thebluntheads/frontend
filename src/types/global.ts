@@ -81,7 +81,7 @@ interface Sound extends DigitalProduct {
 type DigitalProductUnion = Season | Episode | Album | Sound
 
 // Base structure
-export interface DigitalProduct {
+export type DigitalProduct = {
   id: string
   name: string
   position: string
@@ -89,6 +89,7 @@ export interface DigitalProduct {
   parent_id: string | null
   preview_url?: string
   content_url?: string
+  translated_urls?: Record<string, string> // Map of locale codes to URLs
   product_variant: StoreProductVariant
   description: string
   handle: string

@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "The Blunt Heads",
+    "description": "Premium-Streaming-Inhalte von The Blunt Heads"
+  },
+  "navigation": {
+    "languages": "Sprachen",
+    "home": "Startseite",
+    "seasons": "Staffeln",
+    "episodes": "Episoden",
+    "account": "Konto",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden"
+  },
+  "video": {
+    "watchNow": "Jetzt Ansehen",
+    "pressToPlay": "Zum Abspielen Drücken",
+    "episode": "Episode",
+    "season": "Staffel",
+    "fullscreen": "Vollbild",
+    "mute": "Stummschalten",
+    "unmute": "Ton Einschalten"
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten",
+    "tryAgain": "Erneut Versuchen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "more": "Mehr"
+  },
+  "media": {
+    "videos": {
+      "hero": "https://thebluntheads.s3.us-east-2.amazonaws.com/trailer-german.mp4",
+      "season1": "https://thebluntheads.s3.us-east-2.amazonaws.com/season1-de.mp4",
+      "season2": "https://thebluntheads.s3.us-east-2.amazonaws.com/season2-de.mp4",
+      "episode": "https://thebluntheads.s3.us-east-2.amazonaws.com/episode-de.mp4"
+    }
+  }
+}

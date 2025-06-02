@@ -2,6 +2,8 @@ import { getBaseURL } from "@lib/util/env"
 import { Metadata } from "next"
 import { GoogleTagManager } from "@next/third-parties/google"
 import "styles/globals.css"
+import { NextIntlClientProvider } from "next-intl"
+import { DEFAULT_LOCALE } from "../i18n/routing"
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
@@ -22,9 +24,16 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export default async function RootLayout(props: { children: React.ReactNode }) {
+  // For now, use the default locale
+  // The actual locale will be determined by the middleware
+  const locale = DEFAULT_LOCALE
+  
+  // Load messages for the current locale
+  const messages = (await import(`../lib/messages/${locale}.json`)).default
+
   return (
-    <html lang="en" data-mode="light">
+    <html lang={locale} data-mode="light">
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -36,7 +45,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       </head>
       <GoogleTagManager gtmId="AW-17062730933" />
       <body className="bg-black">
-        <main className="relative">{props.children}</main>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <main className="relative">{props.children}</main>
+        </NextIntlClientProvider>
       </body>
     </html>
   )
