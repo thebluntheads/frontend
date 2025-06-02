@@ -76,15 +76,15 @@ const LanguageSelect: React.FC<LanguageSelectProps> = ({
   const handleLanguageSelect = (code: string) => {
     // Set cookie with a long expiration (1 year)
     setCookie(LANGUAGE_COOKIE, code, {
-      path: '/',
+      path: "/",
       maxAge: 60 * 60 * 24 * 365, // 1 year
-      sameSite: 'strict'
+      sameSite: "strict",
     })
-    
+
     // Update local state
     setCurrentLocale(code)
     setIsOpen(false)
-    
+
     // Reload the page to apply the new locale
     window.location.reload()
   }
@@ -97,7 +97,7 @@ const LanguageSelect: React.FC<LanguageSelectProps> = ({
         {showVideoText ? (
           <button
             onClick={toggleDropdown}
-            className="text-white text-base font-bold hover:text-white/80 transition-colors"
+            className="text-white text-lg font-bold hover:text-white/80 transition-colors"
             aria-label="Select language"
             aria-expanded={isOpen}
           >
