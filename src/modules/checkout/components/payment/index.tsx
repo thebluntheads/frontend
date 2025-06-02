@@ -167,8 +167,6 @@ const Payment = ({
         (resolve, reject) => {
           session.onvalidatemerchant = async (event: any) => {
             try {
-              console.log("Validating merchant with URL:", event.validationURL)
-
               // Call your backend to validate the merchant with Apple's validation URL
               const response = await fetch("/api/apple-pay/validate-merchant", {
                 method: "POST",
@@ -186,7 +184,6 @@ const Payment = ({
               }
 
               const merchantSession = await response.json()
-              console.log("Merchant validation successful:", merchantSession)
 
               // Complete merchant validation with the session from Apple
               session.completeMerchantValidation(merchantSession)
@@ -199,8 +196,6 @@ const Payment = ({
 
           session.onpaymentauthorized = async (event: any) => {
             try {
-              console.log("Payment authorized:", event.payment)
-
               // Get the payment data from the event
               const token = event.payment.token.paymentData
               const base64 = window.btoa(JSON.stringify(token))
@@ -226,7 +221,6 @@ const Payment = ({
           }
 
           session.oncancel = () => {
-            console.log("Apple Pay payment was canceled by the user")
             reject(new Error("Apple Pay payment was canceled"))
           }
 
@@ -636,7 +630,6 @@ const Payment = ({
               }}
               onLoadPaymentData={async (paymentRequest) => {
                 setPaymentData(paymentRequest)
-                console.log("load payment data", paymentRequest)
                 await handleSubmit()
               }}
               buttonColor="white"

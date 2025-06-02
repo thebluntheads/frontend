@@ -133,7 +133,6 @@ export default function SeasonTemplate({
 
         const hasPurchasedSeason = digitalProduct?.id === product_id
         setHasPurchased(hasPurchasedSeason)
-        console.log("Has purchased season:", hasPurchasedSeason)
       } catch (error) {
         console.log("Error checking purchase:", error)
         setHasPurchased(false)
@@ -159,7 +158,6 @@ export default function SeasonTemplate({
       })
 
       if (isSeasonInCart) {
-        console.log("Season already in cart, opening payment popup")
         setIsPaymentPopupOpen(true)
       } else {
         await addToStreamCart({

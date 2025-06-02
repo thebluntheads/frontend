@@ -7,6 +7,7 @@ import { Fragment } from "react"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CountrySelect from "../country-select"
+import LanguageSelect from "../language-select"
 import { HttpTypes } from "@medusajs/types"
 
 const SideMenuItems = {
@@ -85,6 +86,28 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                       </button>
                     </div>
                     <ul className="flex flex-col gap-3 items-start justify-start">
+                      {/* Language Selector - Placed at the top */}
+                      <li className="w-full">
+                        <div className="text-2xl leading-10 text-white/80 hover:text-white transition-colors flex items-center gap-3 w-full p-3 rounded-lg hover:bg-white/5">
+                          <div className="bg-dark-green/10 p-2 rounded-lg">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 text-light-green"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                              />
+                            </svg>
+                          </div>
+                          <LanguageSelect />
+                        </div>
+                      </li>
                       {Object.entries(SideMenuItems).map(([name, href]) => {
                         return (
                           <li key={name} className="w-full">
@@ -215,50 +238,54 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                         )
                       })}
                     </ul>
-                    {/* <div className="flex flex-col gap-y-6">
-                      <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-4 mb-4">
-                        <div
-                          className="flex justify-between items-center text-white/80 hover:text-white transition-colors"
-                          onMouseEnter={toggleState.open}
-                          onMouseLeave={toggleState.close}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="bg-dark-green/10 p-2 rounded-lg">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-light-green"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                            </div>
-                            {regions && (
+                    <div className="flex flex-col gap-y-6 mt-6">
+
+                      
+                      {/* Region Selector - Uncomment if needed */}
+                      {regions && (
+                        <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-4 mb-4">
+                          <div
+                            className="flex justify-between items-center text-white/80 hover:text-white transition-colors"
+                            onMouseEnter={toggleState.open}
+                            onMouseLeave={toggleState.close}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="bg-dark-green/10 p-2 rounded-lg">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-5 w-5 text-light-green"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                              </div>
                               <CountrySelect
                                 toggleState={toggleState}
                                 regions={regions}
                               />
-                            )}
+                            </div>
+                            <ArrowRightMini
+                              className={clx(
+                                "transition-transform duration-150 text-light-green",
+                                toggleState.state ? "-rotate-90" : ""
+                              )}
+                            />
                           </div>
-                          <ArrowRightMini
-                            className={clx(
-                              "transition-transform duration-150 text-light-green",
-                              toggleState.state ? "-rotate-90" : ""
-                            )}
-                          />
                         </div>
-                      </div>
+                      )}
+                      
                       <Text className="flex justify-center text-sm text-white/60 p-3">
                         © {new Date().getFullYear()} TheBluntHeads All rights
                         reserved.
                       </Text>
-                    </div> */}
+                    </div>
                   </div>
                 </PopoverPanel>
               </Transition>

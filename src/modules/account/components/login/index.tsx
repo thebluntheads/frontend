@@ -16,38 +16,47 @@ const Login = ({ setCurrentView }: Props) => {
   const router = useRouter()
   const [isRedirecting, setIsRedirecting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  
+
   // Custom action to handle form submission with redirect
   const handleSubmit = async (formData: FormData) => {
-    const result = await login(null, formData);
-    
+    const result = await login(null, formData)
+
     // Check if login was successful
-    if (result && typeof result === "object" && "success" in result && result.success) {
-      console.log("Login successful, redirecting to:", result.redirectTo);
+    if (
+      result &&
+      typeof result === "object" &&
+      "success" in result &&
+      result.success
+    ) {
       setIsRedirecting(true)
-      
+
       // Use window.location for a more forceful redirect
       if (typeof window !== "undefined" && result.redirectTo) {
-        window.location.href = result.redirectTo as string;
+        window.location.href = result.redirectTo as string
       }
     } else if (typeof result === "string") {
       // Handle error message
       setErrorMessage(result)
     }
-    
-    return result;
+
+    return result
   }
 
   // If redirecting, show a loading state
   if (isRedirecting) {
     return (
-      <div className="w-full flex flex-col items-center justify-center py-12" data-testid="login-page">
-        <div className="text-light-green text-xl">Login successful! Redirecting...</div>
+      <div
+        className="w-full flex flex-col items-center justify-center py-12"
+        data-testid="login-page"
+      >
+        <div className="text-light-green text-xl">
+          Login successful! Redirecting...
+        </div>
         <div className="mt-4 animate-pulse">Please wait...</div>
       </div>
     )
   }
-  
+
   return (
     <div className="w-full flex flex-col items-center" data-testid="login-page">
       <h1 className="text-large-semi uppercase mb-6">Welcome back</h1>

@@ -24,6 +24,7 @@ import {
 import Hero from "@modules/home/components/hero"
 import { DigitalProduct } from "types/global"
 import EnhancedEpisodeDetails from "../components/enhanced-episode-details"
+import { useTranslations, useLocale } from "next-intl"
 
 interface EpisodeTemplateProps {
   episode: DigitalProduct | null
@@ -34,10 +35,10 @@ export default function EpisodeTemplate({
   episode,
   season,
 }: EpisodeTemplateProps) {
-  const [cart, setCart] = useState<StoreCart | null>(null)
-  const [submitting, setSubmitting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const t = useTranslations()
+  const locale = useLocale()
 
+  const [cart, setCart] = useState<StoreCart | null>(null)
   const [hasPurchased, setHasPurchased] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false)
@@ -51,6 +52,9 @@ export default function EpisodeTemplate({
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [relatedEpisodes, setRelatedEpisodes] = useState<DigitalProduct[]>([])
+
+  // Get fallback localized video URL from translations
+  const localizedEpisodeVideoUrl = t("media.videos.episode")
 
   const handlePlayVideo = () => {
     if (videoUrl) {
@@ -104,14 +108,44 @@ export default function EpisodeTemplate({
           parent_id
         )
 
-        console.log({ digitalProduct })
         const hasPurchasedEpisode = digitalProduct?.id === product_id
         setHasPurchased(hasPurchasedEpisode)
 
+        // Check if translated_urls exists and has an entry for the current locale
+        const hasTranslatedUrls =
+          digitalProduct?.translated_urls &&
+          typeof digitalProduct.translated_urls === "object" &&
+          Object.keys(digitalProduct.translated_urls).length > 0
+
+        let translatedUrl = null
+        if (hasTranslatedUrls && digitalProduct.translated_urls) {
+          if (digitalProduct.translated_urls[locale]) {
+            translatedUrl = digitalProduct.translated_urls[locale]
+          }
+          // If no exact match, try to find a URL with the locale as a parameter
+          else {
+            translatedUrl = digitalProduct.translated_urls["en"]
+          }
+        }
+
         if (hasPurchasedEpisode) {
-          setVideoUrl(digitalProduct.content_url!)
+          // Priority: 1. Translated URL for current locale, 2. Content URL, 3. Fallback from translations
+          setVideoUrl(
+            translatedUrl
+              ? translatedUrl
+              : digitalProduct.content_url && digitalProduct.content_url !== ""
+              ? digitalProduct.content_url
+              : localizedEpisodeVideoUrl
+          )
         } else {
-          setVideoUrl(digitalProduct.preview_url!)
+          // Priority: 1. Translated URL for current locale, 2. Preview URL, 3. Fallback from translations
+          setVideoUrl(
+            translatedUrl
+              ? translatedUrl
+              : digitalProduct.preview_url && digitalProduct.preview_url !== ""
+              ? digitalProduct.preview_url
+              : localizedEpisodeVideoUrl
+          )
         }
 
         // Fetch related episodes from the same season
@@ -123,10 +157,7 @@ export default function EpisodeTemplate({
             .slice(0, 4)
           setRelatedEpisodes(filteredEpisodes)
         }
-
-        console.log("Has purchased:", hasPurchasedEpisode)
       } catch (error) {
-        console.log("Error checking purchase:", error)
         setHasPurchased(false)
       } finally {
         setIsLoading(false)
@@ -150,7 +181,6 @@ export default function EpisodeTemplate({
       })
 
       if (isEpisodeInCart) {
-        console.log("Episode already in cart, opening payment popup")
         setIsPaymentPopupOpen(true)
       } else {
         await addToStreamCart({
@@ -173,12 +203,10 @@ export default function EpisodeTemplate({
 
   // Use the variant metadata thumbnailUrl if available, otherwise fall back to default images
   const bannerUrl = episode?.product_variant?.metadata?.thumbnailUrl
-    ? episode.product_variant.metadata.thumbnailUrl as string
+    ? (episode.product_variant.metadata.thumbnailUrl as string)
     : episode?.name.includes("1")
     ? "/assets/episode_one_thumbnail.png"
     : "/assets/preview.png"
-  
-  console.log("Episode thumbnail URL:", bannerUrl, "Metadata:", episode?.product_variant?.metadata)
 
   if (!episode || !season) {
     notFound()
@@ -197,7 +225,7 @@ export default function EpisodeTemplate({
           }
           ctaLink="#"
           thumbnailUrl={bannerUrl}
-          videoUrl={videoUrl}
+          videoUrl={videoUrl} // Using the videoUrl state which now has fallback to localized URL
           isEpisodePage={true}
         />
       ) : (

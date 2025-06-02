@@ -196,7 +196,6 @@ const AuthorizeNetPayment: React.FC<AuthorizeNetPaymentProps> = ({
                     value={cardData.fullName} // This binds the input to the fullName state
                     onChange={(e) => {
                       const newFullName = e.target.value
-                      console.log("Full Name Input:", newFullName)
                       setCardData({
                         ...cardData,
                         fullName: newFullName,

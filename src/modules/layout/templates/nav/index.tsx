@@ -5,6 +5,7 @@ import { StoreRegion } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
+import LanguageSelect from "@modules/layout/components/language-select"
 
 export default async function Nav() {
   const regions = await listRegions().then((regions: StoreRegion[]) => regions)
@@ -70,6 +71,11 @@ export default async function Nav() {
               >
                 Account
               </LocalizedClientLink>
+              
+              {/* Language Selector */}
+              <div className="flex items-center ml-4">
+                <LanguageSelect minimal={true} align="right" />
+              </div>
             </div>
             <Suspense
               fallback={

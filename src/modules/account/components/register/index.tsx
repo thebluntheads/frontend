@@ -29,7 +29,6 @@ const Register = ({ setCurrentView }: Props) => {
       "success" in result &&
       result.success
     ) {
-      console.log("Registration successful, redirecting to:", result.redirectTo)
       setIsRedirecting(true)
 
       // Use window.location for a more forceful redirect

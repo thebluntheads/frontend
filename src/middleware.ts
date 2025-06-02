@@ -1,5 +1,11 @@
 import { HttpTypes } from "@medusajs/types"
 import { NextRequest, NextResponse } from "next/server"
+import {
+  DEFAULT_LOCALE,
+  LANGUAGE_COOKIE,
+  supportedLocales,
+} from "./i18n/routing"
+import createMiddleware from "next-intl/middleware"
 
 const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
 const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
@@ -101,9 +107,27 @@ async function getCountryCode(
 }
 
 /**
- * Middleware to handle region selection, onboarding status, age verification, and 404 redirects.
+ * Create the next-intl middleware for handling localization
  */
-export async function middleware(request: NextRequest) {
+const intlMiddleware = createMiddleware({
+  // A list of all locales that are supported
+  locales: supportedLocales,
+  // Used when no locale matches
+  defaultLocale: DEFAULT_LOCALE,
+  // Don't use URL-based locale detection
+  localePrefix: "never",
+  // Use cookies for locale detection
+  localeDetection: true
+})
+
+/**
+ * Middleware to handle region selection, onboarding status, age verification, and 404 redirects.
+ * Also handles internationalization with next-intl.
+ */
+export const middleware = async (request: NextRequest) => {
+  // Run the request through next-intl middleware first to handle locale
+  const intlResponse = await intlMiddleware(request)
+  
   // Check for age verification cookie
   const ageVerifiedCookie = request.cookies.get("ageVerified")
   const isAgeVerified = ageVerifiedCookie?.value === "true"
@@ -119,7 +143,18 @@ export async function middleware(request: NextRequest) {
   // If age verification is false and not already on restricted page, redirect to restricted
   if (ageVerifiedCookie?.value === "false" && !isRestrictedPage) {
     const restrictedUrl = `${request.nextUrl.origin}/${countryCodeFromUrl}/restricted`
-    return NextResponse.redirect(restrictedUrl, 307)
+    const restrictedResponse = NextResponse.redirect(restrictedUrl, 307)
+    
+    // Copy locale cookie to the redirect response
+    const localeCookie = intlResponse.cookies.get(LANGUAGE_COOKIE)
+    if (localeCookie) {
+      restrictedResponse.cookies.set(LANGUAGE_COOKIE, localeCookie.value, {
+        path: '/',
+        sameSite: 'strict'
+      })
+    }
+    
+    return restrictedResponse
   }
 
   // Continue with normal region handling
@@ -141,27 +176,40 @@ export async function middleware(request: NextRequest) {
 
   // if one of the country codes is in the url and the cache id is set, continue with 404 check
   if (urlHasCountryCode && cacheIdCookie) {
-    // Handle 404 pages by checking if the path exists
-    try {
-      // Create a response to check if the page exists
-      const pageCheckResponse = NextResponse.next()
-
-      // If we get here, the page exists, so continue normally
-      return pageCheckResponse
-    } catch (error) {
-      // If there's an error, it's likely a 404, so redirect to home
-      const homeUrl = `${request.nextUrl.origin}/${countryCode}`
-      return NextResponse.redirect(homeUrl, 307)
-    }
+    // Create a final response that will be our response
+    const finalResponse = NextResponse.next()
+    
+    // Copy ALL cookies from the intl middleware response to our final response
+    // This ensures we don't lose the locale cookie
+    intlResponse.cookies.getAll().forEach(cookie => {
+      finalResponse.cookies.set(cookie.name, cookie.value, {
+        path: cookie.path || '/',
+        sameSite: cookie.sameSite || 'strict'
+      })
+    })
+    
+    // Return the final response with all cookies preserved
+    return finalResponse
   }
 
   // if one of the country codes is in the url and the cache id is not set, set the cache id and redirect
   if (urlHasCountryCode && !cacheIdCookie) {
-    response.cookies.set("_medusa_cache_id", cacheId, {
+    const newResponse = NextResponse.redirect(request.nextUrl.href, 307)
+    
+    newResponse.cookies.set("_medusa_cache_id", cacheId, {
       maxAge: 60 * 60 * 24,
     })
+    
+    // Copy locale cookie to the new response
+    const localeCookie = intlResponse.cookies.get(LANGUAGE_COOKIE)
+    if (localeCookie) {
+      newResponse.cookies.set(LANGUAGE_COOKIE, localeCookie.value, {
+        path: '/',
+        sameSite: 'strict'
+      })
+    }
 
-    return response
+    return newResponse
   }
 
   const redirectPath =

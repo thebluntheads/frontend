@@ -219,8 +219,6 @@ export default function SoundsPage() {
         }
 
         setPurchasedAlbums(purchaseAlbumStatus)
-
-        console.log("Purchased sounds:", purchaseAlbumStatus)
       } catch (error) {
         console.log("Error checking purchases:", error)
       }
@@ -256,8 +254,6 @@ export default function SoundsPage() {
 
         setPurchasedSounds(purchaseStatus)
         setPurchasedContentUrl(purchasedContentUrl)
-
-        console.log("Purchased sounds:", purchaseStatus)
       } catch (error) {
         console.log("Error checking purchases:", error)
       }
@@ -330,7 +326,6 @@ export default function SoundsPage() {
       })
 
       if (isSoundInCart) {
-        console.log("Sound already in cart, opening payment popup")
         setIsPaymentPopupOpen(true)
       } else {
         await addToStreamCart({
@@ -385,8 +380,6 @@ export default function SoundsPage() {
         (resolve, reject) => {
           session.onvalidatemerchant = async (event: any) => {
             try {
-              console.log("Validating merchant with URL:", event.validationURL)
-
               // Call your backend to validate the merchant with Apple's validation URL
               const response = await fetch("/api/apple-pay/validate-merchant", {
                 method: "POST",
@@ -404,7 +397,6 @@ export default function SoundsPage() {
               }
 
               const merchantSession = await response.json()
-              console.log("Merchant validation successful:", merchantSession)
 
               // Complete merchant validation with the session from Apple
               session.completeMerchantValidation(merchantSession)
@@ -417,8 +409,6 @@ export default function SoundsPage() {
 
           session.onpaymentauthorized = async (event: any) => {
             try {
-              console.log("Payment authorized:", event.payment)
-
               // Get the payment data from the event
               const token = event.payment.token.paymentData
               const base64 = window.btoa(JSON.stringify(token))
@@ -444,7 +434,6 @@ export default function SoundsPage() {
           }
 
           session.oncancel = () => {
-            console.log("Apple Pay payment was canceled by the user")
             reject(new Error("Apple Pay payment was canceled"))
           }
 
@@ -612,7 +601,6 @@ export default function SoundsPage() {
   const togglePlay = async (trackId: string) => {
     // Prevent rapid toggling that can cause AbortError
     if (isChangingTrack.current) {
-      console.log("Track change in progress, ignoring request")
       return
     }
 
@@ -651,20 +639,12 @@ export default function SoundsPage() {
         if (isAlbumPurchased || isTrackPurchased) {
           // If album or track is purchased, use content_url
           audioUrl = purchasedContentUrl[trackId]
-          console.log(
-            `Using full content URL (${
-              isAlbumPurchased ? "album purchased" : "track purchased"
-            }):`,
-            audioUrl
-          )
         } else {
           // Otherwise use preview_url
           audioUrl = track.preview_url
-          console.log("Using preview URL:", audioUrl)
         }
 
         if (!audioUrl) {
-          console.error("No audio URL available for this track")
           return
         }
 
@@ -687,7 +667,6 @@ export default function SoundsPage() {
   }
 
   const handleAudioEnded = () => {
-    console.log("Audio playback ended")
     setPlayingTrackId(null)
     setCurrentAudioSrc("")
     setAudioProgress(0) // Reset progress
@@ -695,7 +674,6 @@ export default function SoundsPage() {
 
   // Debug function to track progress
   const handleProgress = (progress: number) => {
-    console.log(`Audio progress: ${Math.round(progress * 100)}%`)
     setAudioProgress(progress)
   }
 
@@ -781,10 +759,6 @@ export default function SoundsPage() {
     )
   }
 
-  console.log({
-    purchasedAlbums: Object.values(purchasedAlbums)?.filter((ps) => !ps).length,
-    ok: Object.values(purchasedAlbums)?.filter((ps) => !ps).length,
-  })
   return (
     <div className="bg-black min-h-screen">
       {/* Audio player (hidden) */}

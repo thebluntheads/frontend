@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useState, useRef, useEffect } from "react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CircularPlayButton from "../circular-play-button"
+import { useTranslations } from "next-intl"
 
 interface HeroProps {
   title?: string
@@ -24,11 +25,17 @@ const Hero = ({
   ctaLink,
   ctaText = "Watch Season",
   thumbnailUrl = "/assets/preview.png",
-  videoUrl = "https://thebluntheads.s3.us-east-2.amazonaws.com/trailer.mp4",
+  videoUrl,
   episodeCount = 0,
   seasonHandle,
   isEpisodePage = false,
 }: HeroProps = {}) => {
+  const t = useTranslations()
+
+  // Get localized video URL if not explicitly provided
+  // For episode pages, prioritize the explicitly provided videoUrl
+  const localizedVideoUrl =
+    isEpisodePage && videoUrl ? videoUrl : videoUrl || t("media.videos.hero")
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [volume, setVolume] = useState(1)
@@ -277,7 +284,7 @@ const Hero = ({
           >
             <video
               ref={videoRef}
-              src={videoUrl}
+              src={localizedVideoUrl}
               className="w-full h-full object-contain"
               onEnded={handleVideoEnd}
               onTimeUpdate={handleTimeUpdate}

@@ -24,16 +24,16 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  // For now, use the default locale
-  // The actual locale will be determined by the middleware
-  const locale = DEFAULT_LOCALE
-  
-  // Load messages for the current locale
-  const messages = (await import(`../lib/messages/${locale}.json`)).default
+export default async function RootLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  // The locale and messages are handled by the request.ts file
+  // which is automatically used by NextIntlClientProvider
 
   return (
-    <html lang={locale} data-mode="light">
+    <html lang={DEFAULT_LOCALE} data-mode="light">
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -43,11 +43,11 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
       </head>
-      <GoogleTagManager gtmId="AW-17062730933" />
-      <body className="bg-black">
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <main className="relative">{props.children}</main>
+      <body className="bg-black text-white">
+        <NextIntlClientProvider>
+          {children}
         </NextIntlClientProvider>
+        <GoogleTagManager gtmId="GTM-XXXXXXX" />
       </body>
     </html>
   )

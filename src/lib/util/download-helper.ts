@@ -8,36 +8,35 @@
 export const downloadFile = async (url: string, filename: string) => {
   try {
     // For S3 URLs, we need to fetch the file first and then create a blob
-    console.log(`Downloading file from ${url} as ${filename}`)
-    
+
     // Fetch the file
     const response = await fetch(url)
     if (!response.ok) {
       throw new Error(`Failed to fetch file: ${response.statusText}`)
     }
-    
+
     // Convert to blob
     const blob = await response.blob()
-    
+
     // Create a blob URL
     const blobUrl = URL.createObjectURL(blob)
-    
+
     // Create a temporary anchor element
-    const link = document.createElement('a')
+    const link = document.createElement("a")
     link.href = blobUrl
-    link.setAttribute('download', filename)
-    
+    link.setAttribute("download", filename)
+
     // Append to the document
     document.body.appendChild(link)
-    
+
     // Trigger the download
     link.click()
-    
+
     // Clean up
     document.body.removeChild(link)
     URL.revokeObjectURL(blobUrl) // Free up memory
   } catch (error) {
-    console.error('Error downloading file:', error)
+    console.error("Error downloading file:", error)
     throw error
   }
 }
@@ -46,9 +45,11 @@ export const downloadFile = async (url: string, filename: string) => {
  * Helper function to download multiple files sequentially
  * @param files Array of file objects with name and url
  */
-export const downloadMultipleFiles = async (files: { name: string; url: string }[]) => {
+export const downloadMultipleFiles = async (
+  files: { name: string; url: string }[]
+) => {
   if (!files || files.length === 0) {
-    throw new Error('No files to download')
+    throw new Error("No files to download")
   }
 
   // For a single file, just download it directly
@@ -60,10 +61,10 @@ export const downloadMultipleFiles = async (files: { name: string; url: string }
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
     await downloadFile(file.url, `${file.name}.mp3`)
-    
+
     // Add a small delay between downloads to prevent browser blocking
     if (i < files.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500))
     }
   }
 }
@@ -72,7 +73,9 @@ export const downloadMultipleFiles = async (files: { name: string; url: string }
  * Create a ZIP file from multiple audio files (not implemented yet)
  * This would require additional libraries to implement properly
  */
-export const createZipFromAudioFiles = async (files: { name: string; url: string }[]) => {
+export const createZipFromAudioFiles = async (
+  files: { name: string; url: string }[]
+) => {
   // This would require a ZIP library like JSZip
   // For now, we'll just download files sequentially
   return downloadMultipleFiles(files)

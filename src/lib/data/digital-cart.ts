@@ -78,12 +78,7 @@ export async function getOrSetStreamCart(countryCode: string) {
   }
 
   if (cart && cart?.region_id !== region.id) {
-    await sdk.store.cart.update(
-      cart.id,
-      { region_id: region.id },
-      {},
-      headers
-    )
+    await sdk.store.cart.update(cart.id, { region_id: region.id }, {}, headers)
     const cartCacheTag = await getCacheTag("carts")
     revalidateTag(cartCacheTag)
   }
@@ -125,7 +120,6 @@ export async function addToStreamCart({
   quantity: number
   countryCode: string
 }) {
-
   if (!variantId) {
     throw new Error("Missing variant ID when adding to cart")
   }
@@ -329,7 +323,6 @@ export async function placeDigitalProductOrder(cartId?: string) {
       headers,
     })
     .then(async (cartRes) => {
-      console.log({ cartRes })
       const cartCacheTag = await getCacheTag("carts")
       revalidateTag(cartCacheTag)
       return cartRes

@@ -11,14 +11,18 @@ import {
 } from "../../../../components/ui/tabs"
 import { PlayButton } from "../../../../components/ui/audio-wave"
 import AudioPlayer from "../../../../components/ui/audio-player"
-import { listSounds, listAlbums, getCustomerDigitalProducts } from "@lib/data/digital-products"
+import {
+  listSounds,
+  listAlbums,
+  getCustomerDigitalProducts,
+} from "@lib/data/digital-products"
 import { getDigitalProductPrice } from "@lib/util/get-product-price"
 import { Button } from "components/ui/button"
 import { useCustomer } from "@lib/hooks/use-customer"
 
 export const FeaturedPlayer = () => {
   const { customer, isLoading: isLoadingCustomer } = useCustomer()
-  
+
   const [sounds, setSounds] = useState<DigitalProduct[]>([])
   const [albums, setAlbums] = useState<DigitalProduct[]>([])
   const [activeAlbumId, setActiveAlbumId] = useState<string | null>(null)
@@ -29,9 +33,15 @@ export const FeaturedPlayer = () => {
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null)
   const [currentAudioSrc, setCurrentAudioSrc] = useState<string>("")
   const [audioProgress, setAudioProgress] = useState(0)
-  const [purchasedSounds, setPurchasedSounds] = useState<Record<string, boolean>>({})
-  const [purchasedAlbums, setPurchasedAlbums] = useState<Record<string, boolean>>({})
-  const [purchasedContentUrl, setPurchasedContentUrl] = useState<Record<string, string>>({})
+  const [purchasedSounds, setPurchasedSounds] = useState<
+    Record<string, boolean>
+  >({})
+  const [purchasedAlbums, setPurchasedAlbums] = useState<
+    Record<string, boolean>
+  >({})
+  const [purchasedContentUrl, setPurchasedContentUrl] = useState<
+    Record<string, string>
+  >({})
 
   const [enlargedAlbumCover, setEnlargedAlbumCover] = useState<string | null>(
     null
@@ -94,12 +104,12 @@ export const FeaturedPlayer = () => {
 
     fetchSoundsByAlbum()
   }, [activeAlbumId])
-  
+
   // Check if user has purchased albums
   useEffect(() => {
     const checkPurchasedAlbums = async () => {
       if (!customer) return // Only check for logged-in users
-      
+
       try {
         // Create a map to store purchase status for each album
         const purchaseAlbumStatus: Record<string, boolean> = {}
@@ -116,7 +126,6 @@ export const FeaturedPlayer = () => {
         }
 
         setPurchasedAlbums(purchaseAlbumStatus)
-        console.log("Purchased albums:", purchaseAlbumStatus)
       } catch (error) {
         console.log("Error checking album purchases:", error)
       }
@@ -131,7 +140,7 @@ export const FeaturedPlayer = () => {
   useEffect(() => {
     const checkPurchasedSounds = async () => {
       if (!customer) return // Only check for logged-in users
-      
+
       try {
         // Create a map to store purchase status for each sound
         const purchaseStatus: Record<string, boolean> = {}
@@ -155,7 +164,6 @@ export const FeaturedPlayer = () => {
 
         setPurchasedSounds(purchaseStatus)
         setPurchasedContentUrl(contentUrls)
-        console.log("Purchased sounds:", purchaseStatus)
       } catch (error) {
         console.log("Error checking sound purchases:", error)
       }
@@ -172,27 +180,22 @@ export const FeaturedPlayer = () => {
   const togglePlay = async (trackId: string) => {
     // Prevent rapid toggling that can cause AbortError
     if (isChangingTrack.current) {
-      console.log("Track change in progress, ignoring request")
       return
     }
 
     isChangingTrack.current = true
 
     try {
-      console.log(trackId, sounds)
       const track = sounds.find((sound) => sound.id === trackId)
-      console.log("Track data:", track) // Debug track data
 
       if (playingTrackId === trackId) {
         // Stop playing current track
-        console.log("Stopping playback")
         setPlayingTrackId(null)
         setCurrentAudioSrc("")
         setAudioProgress(0) // Reset progress
       } else {
         // If another track is playing, stop it first
         if (playingTrackId) {
-          console.log("Stopping previous track before playing new one")
           setPlayingTrackId(null)
           setCurrentAudioSrc("")
 
@@ -200,21 +203,12 @@ export const FeaturedPlayer = () => {
           await new Promise((resolve) => setTimeout(resolve, 50))
         }
 
-        // Start playing new track
-        console.log("Starting playback for track:", trackId)
-        
         // Determine which URL to use based on purchase status
         const hasPurchased = purchasedSounds[trackId] || false
-        
+
         const audioUrl = hasPurchased
           ? purchasedContentUrl[trackId]
           : track?.preview_url
-          
-        console.log(
-          `Using ${hasPurchased ? "full content" : "preview"} URL:`,
-          audioUrl,
-          track
-        )
 
         // Set the source first, then set the playing track ID
         setCurrentAudioSrc(audioUrl || "")
@@ -235,7 +229,6 @@ export const FeaturedPlayer = () => {
   }
 
   const handleAudioEnded = () => {
-    console.log("Audio playback ended")
     setPlayingTrackId(null)
     setCurrentAudioSrc("")
     setAudioProgress(0) // Reset progress
@@ -243,7 +236,6 @@ export const FeaturedPlayer = () => {
 
   // Debug function to track progress
   const handleProgress = (progress: number) => {
-    console.log(`Audio progress: ${Math.round(progress * 100)}%`)
     setAudioProgress(progress)
   }
 
@@ -375,9 +367,15 @@ export const FeaturedPlayer = () => {
                         <span className="w-14 sm:w-16 text-right hidden sm:inline">
                           Duration
                         </span>
-                        {customer && albumTracks[album.id] && albumTracks[album.id].some(track => !purchasedSounds[track.id]) && (
-                          <span className="w-16 sm:w-20 text-right">Price</span>
-                        )}
+                        {customer &&
+                          albumTracks[album.id] &&
+                          albumTracks[album.id].some(
+                            (track) => !purchasedSounds[track.id]
+                          ) && (
+                            <span className="w-16 sm:w-20 text-right">
+                              Price
+                            </span>
+                          )}
                       </div>
                     </div>
 
@@ -433,7 +431,8 @@ export const FeaturedPlayer = () => {
                                   <span className="text-dark-green font-medium text-xs">
                                     {getDigitalProductPrice({
                                       variant: track.product_variant,
-                                    }).cheapestPrice?.calculated_price || "$1.99"}
+                                    }).cheapestPrice?.calculated_price ||
+                                      "$1.99"}
                                   </span>
                                 )}
                               </div>

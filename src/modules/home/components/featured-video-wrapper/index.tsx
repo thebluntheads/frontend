@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react"
 import ReactPlayer from "react-player"
 import { Text } from "@medusajs/ui"
+import { useTranslations, useLocale } from "next-intl"
 
 const FeaturedVideoWrapper = () => {
   const [isPlaying, setIsPlaying] = useState(false)
@@ -11,8 +12,10 @@ const FeaturedVideoWrapper = () => {
   const playerRef = useRef<ReactPlayer>(null)
   const controlsTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const videoUrl =
-    "https://onconnects-media.s3.us-east-1.amazonaws.com/p/pu/s-5583_1737735753_06dbfce4af3d16db6839.mp4"
+  const t = useTranslations()
+
+  // Get localized video URL from translations - using season1 as featured video
+  const videoUrl = t("media.videos.season1")
   const thumbnailUrl =
     "https://onconnects-media.s3.us-east-1.amazonaws.com/video-thumbnail.jpg"
   const CONTROLS_TIMEOUT = 2000
