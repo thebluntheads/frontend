@@ -25,6 +25,7 @@ import { StoreCart, StoreCartShippingOption } from "@medusajs/types"
 import { listCartPaymentMethods } from "@lib/data/payment"
 import EpisodePaymentPopup from "../components/episode-payment-popup"
 import { useCustomer } from "@lib/hooks/use-customer"
+import LanguageSelect from "@modules/layout/components/language-select"
 
 export default function SeasonTemplate({
   season,
@@ -188,6 +189,10 @@ export default function SeasonTemplate({
     <div className="bg-black min-h-screen">
       {/* Hero Banner */}
       <div className="relative h-[60vh] w-full overflow-hidden">
+        {/* Language selector for video */}
+        <div className="absolute top-4 right-4 z-30">
+          <LanguageSelect minimal={true} showVideoText={true} />
+        </div>
         <Image
           src="/assets/preview.png"
           alt={season.name}

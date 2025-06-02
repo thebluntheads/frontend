@@ -97,11 +97,12 @@ const LanguageSelect: React.FC<LanguageSelectProps> = ({
         {showVideoText ? (
           <button
             onClick={toggleDropdown}
-            className="text-white text-lg font-bold hover:text-white/80 transition-colors"
+            className="flex items-center gap-2 bg-black/80 backdrop-blur-sm px-3 py-2 rounded-md text-white text-sm font-medium hover:bg-black/90 transition-colors"
             aria-label="Select language"
             aria-expanded={isOpen}
           >
-            Click Here to Select Video Language
+            <span className="text-lg">{currentLanguage.flag}</span>
+            Choose Language
           </button>
         ) : (
           <button

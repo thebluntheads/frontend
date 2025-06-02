@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CircularPlayButton from "../circular-play-button"
 import { useTranslations } from "next-intl"
+import LanguageSelect from "@modules/layout/components/language-select"
 
 interface HeroProps {
   title?: string
@@ -273,6 +274,10 @@ const Hero = ({
         className="relative h-[70vh] sm:h-[85vh] w-full overflow-hidden"
         style={{ isolation: "isolate" }}
       >
+        {/* Language selector for video */}
+        <div className="absolute top-4 right-4 z-30">
+          <LanguageSelect minimal={true} showVideoText={true} />
+        </div>
         {isPlaying ? (
           // Video container - only shown when playing
           <div
