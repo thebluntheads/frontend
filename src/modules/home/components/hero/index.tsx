@@ -549,6 +549,7 @@ const Hero = ({
               onClick={handlePlayClick}
               size={140}
               className="transition-all duration-300 hover:scale-110"
+              showLanguageSelector={true}
               isWatchNow={isEpisodePage}
             />
           </div>

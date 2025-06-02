@@ -2,12 +2,14 @@
 
 import React from "react"
 import { Play } from "lucide-react"
+import LanguageSelect from "@modules/layout/components/language-select"
 
 interface CircularPlayButtonProps {
   onClick: (e: React.MouseEvent) => void
   size?: number
   className?: string
   isWatchNow?: boolean
+  showLanguageSelector?: boolean
 }
 
 export default function CircularPlayButton({
@@ -15,6 +17,7 @@ export default function CircularPlayButton({
   size = 120,
   className = "",
   isWatchNow = false,
+  showLanguageSelector = true,
 }: CircularPlayButtonProps) {
   // Shorter text to prevent crowding and ensure it fits
   const text = isWatchNow
@@ -27,11 +30,19 @@ export default function CircularPlayButton({
   const center = radius
 
   return (
-    <div
-      className={`relative group cursor-pointer ${className}`}
-      style={{ width: size, height: size }}
-      onClick={onClick}
-    >
+    <div className="flex flex-col items-center">
+      {/* Language selector above the play button */}
+      {showLanguageSelector && (
+        <div className="mb-4">
+          <LanguageSelect minimal={true} showVideoText={true} />
+        </div>
+      )}
+      
+      <div
+        className={`relative group cursor-pointer ${className}`}
+        style={{ width: size, height: size }}
+        onClick={onClick}
+      >
       {/* Outer circle with darker background for better text contrast */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-r from-dark-green/40 to-light-green/40 backdrop-blur-md group-hover:from-dark-green/60 group-hover:to-light-green/60 transition-all duration-300" />
 
@@ -103,6 +114,7 @@ export default function CircularPlayButton({
           </textPath>
         </text>
       </svg>
+      </div>
     </div>
   )
 }

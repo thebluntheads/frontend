@@ -30,11 +30,13 @@ const languages: Language[] = [
 interface LanguageSelectProps {
   minimal?: boolean
   align?: "left" | "right"
+  showVideoText?: boolean
 }
 
 const LanguageSelect: React.FC<LanguageSelectProps> = ({
   minimal = false,
   align = "right",
+  showVideoText = false,
 }) => {
   const locale = useLocale()
   const [currentLocale, setCurrentLocale] = useState<string>(locale || "")
@@ -91,20 +93,31 @@ const LanguageSelect: React.FC<LanguageSelectProps> = ({
 
   if (minimal) {
     return (
-      <div className="relative" ref={dropdownRef}>
-        <button
-          onClick={toggleDropdown}
-          className="flex items-center gap-1 text-white/80 hover:text-white transition-colors"
-          aria-label="Select language"
-          aria-expanded={isOpen}
-        >
-          <span className="text-lg">{currentLanguage.flag}</span>
-          <ChevronDown
-            className={`h-4 w-4 transition-transform ${
-              isOpen ? "rotate-180" : ""
-            }`}
-          />
-        </button>
+      <div className="relative flex flex-col items-center" ref={dropdownRef}>
+        {showVideoText ? (
+          <button
+            onClick={toggleDropdown}
+            className="text-white text-base font-bold hover:text-white/80 transition-colors"
+            aria-label="Select language"
+            aria-expanded={isOpen}
+          >
+            Click Here to Select Video Language
+          </button>
+        ) : (
+          <button
+            onClick={toggleDropdown}
+            className="flex items-center gap-1 text-white/80 hover:text-white transition-colors"
+            aria-label="Select language"
+            aria-expanded={isOpen}
+          >
+            <span className="text-lg">{currentLanguage.flag}</span>
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${
+                isOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        )}
 
         {isOpen && (
           <div
