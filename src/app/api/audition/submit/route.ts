@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     // Also send a confirmation email to the applicant
     await resend.emails.send({
-      from: "TheBluntHeads Audition<info@thebluntheads.com>",
+      from: "The Blunt Heads <auditions@thebluntheads.com>",
       to: [email],
       subject: `Your Audition Application - The Blunt Heads`,
       react: AuditionConfirmationEmail({
