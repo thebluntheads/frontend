@@ -7,11 +7,13 @@ import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
 import LanguageSelect from "@modules/layout/components/language-select"
 
+interface NavProps {}
+
 export default async function Nav() {
   const regions = await listRegions().then((regions: StoreRegion[]) => regions)
 
   return (
-    <div className="absolute top-0 inset-x-0 z-50 group">
+    <div className="w-full bg-black bg-opacity-90 shadow-md">
       <header className="h-20 mx-auto duration-200">
         <nav className="px-8 md:px-12 text-white flex items-center justify-between w-full h-full text-small-regular max-w-[1440px] mx-auto">
           {/* Mobile burger menu */}
@@ -65,13 +67,20 @@ export default async function Nav() {
                 Events
               </LocalizedClientLink>
               <LocalizedClientLink
+                className="hover:text-white/80 transition-colors text-sm font-medium text-light-green"
+                href="/audition"
+                data-testid="nav-audition-link"
+              >
+                Audition Now
+              </LocalizedClientLink>
+              <LocalizedClientLink
                 className="text-white hover:text-white/80 transition-colors text-sm font-medium"
                 href="/account"
                 data-testid="nav-account-link"
               >
                 Account
               </LocalizedClientLink>
-              
+
               {/* Language Selector */}
               <div className="flex items-center ml-4">
                 <LanguageSelect minimal={true} align="right" />
