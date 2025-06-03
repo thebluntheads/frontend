@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     // Send email using Resend
     const { data, error } = await resend.emails.send({
       from: "The Blunt Heads <auditions@thebluntheads.com>",
-      to: ["kcm.anouar@gmail.com"],
+      to: ["info@thebluntheads.com"],
       subject: `New Audition: ${name} for ${characterName}`,
       react: AuditionSubmissionEmail({
         name,
