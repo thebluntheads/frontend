@@ -8,6 +8,7 @@ import { X } from "lucide-react"
 import { addToCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
 import { getCookie, setCookie } from "cookies-next"
+import AuditionPopup from "@modules/audition/components/audition-popup"
 
 interface PromoPopupProps {
   countryCode: string
@@ -47,6 +48,8 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
 
   // Check if the promo popup has been closed before
   const checkPromoPopup = () => {
+    // Temporarily commented out promo popup
+    /*
     const hasClosedPopup = localStorage.getItem("promoPopupClosed")
 
     // Only show popup if it hasn't been closed in this session
@@ -57,6 +60,7 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
 
       return () => clearTimeout(timer)
     }
+    */
   }
 
   const handleClose = (e: React.MouseEvent) => {
@@ -161,57 +165,11 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
     )
   }
   
-  // Promo popup
-  if (!isVisible) return null
-
+  // Return the new audition popup and age verification instead of the promo popup
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm transition-opacity"
-      onClick={handleClose} // Close when clicking the backdrop
-    >
-      <div
-        className="relative max-w-md w-full mx-4 animate-fade-in-up"
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the popup content
-      >
-        {/* Close button */}
-        <button
-          onClick={handleClose}
-          className="absolute -top-3 -right-3 bg-dark-green rounded-full p-1 text-white hover:bg-light-green transition-colors z-10 shadow-lg"
-          aria-label="Close popup"
-        >
-          <X size={20} />
-        </button>
-
-        {/* Banner image */}
-        <div
-          className="relative cursor-pointer rounded-lg overflow-hidden shadow-xl"
-          onClick={handleAddToCartAndCheckout}
-        >
-          <Image
-            src="/assets/Banner.jpeg"
-            alt="Special Promotion"
-            width={600}
-            height={300}
-            className="w-full h-auto"
-            priority
-          />
-
-          {/* Overlay buttons */}
-          <div className="absolute bottom-4 right-4 flex gap-3">
-            <Button
-              className="bg-dark-green hover:bg-light-green text-white font-medium px-4 py-1 text-sm rounded-full"
-              onClick={(e) => {
-                e.stopPropagation()
-                router.push(`/${countryCode}/giveaway-rules`)
-                setIsVisible(false)
-              }}
-            >
-              Giveaway Rules
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <>
+      <AuditionPopup countryCode={countryCode} />
+    </>
   )
 }
 
