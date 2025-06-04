@@ -79,9 +79,11 @@ export default async function Home(props: {
       />
 
       {/* Featured episodes section */}
-      {episodes && episodes.length > 0 && (
-        <FeaturedEpisodes season={featuredSeason} episodes={episodes} />
-      )}
+      <div id="episodes-section">
+        {episodes && episodes.length > 0 && (
+          <FeaturedEpisodes season={featuredSeason} episodes={episodes} />
+        )}
+      </div>
 
       {/* Featured sounds section */}
       {sounds && sounds.length > 0 && <FeaturedPlayer />}
