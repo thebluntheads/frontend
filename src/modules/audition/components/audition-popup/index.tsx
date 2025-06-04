@@ -57,6 +57,8 @@ const AuditionPopup = ({ countryCode }: AuditionPopupProps) => {
 
   const handleClick = () => {
     setIsVisible(false)
+    // Store that the user has closed the popup
+    localStorage.setItem("auditionPopupClosed", "true")
     router.push(`/${countryCode}/audition`)
   }
 
