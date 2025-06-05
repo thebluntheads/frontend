@@ -13,59 +13,53 @@ const AuditionPopup = ({ countryCode }: AuditionPopupProps) => {
   const [isVisible, setIsVisible] = useState(false)
   const router = useRouter()
 
-  // Show popup when user scrolls to the episode section
+  // Show popup after 2 seconds
   useEffect(() => {
-    // Check if the popup has been closed before
-    const hasClosedPopup = localStorage.getItem("auditionPopupClosed")
+    // Check how many times the popup has been closed
+    const closeCount = parseInt(
+      localStorage.getItem("auditionPopupCloseCount") || "0"
+    )
 
-    if (!hasClosedPopup) {
-      const handleScroll = () => {
-        // Find the episode section element by ID
-        const episodeSection = document.getElementById("episodes-section")
+    // Only show if it has been closed less than 3 times
+    if (closeCount < 3) {
+      // Show popup after 2 seconds
+      const timer = setTimeout(() => {
+        setIsVisible(true)
+      }, 2000)
 
-        if (episodeSection) {
-          const rect = episodeSection.getBoundingClientRect()
-          // Check if the section is in the middle of the viewport
-          const middleOfViewport = window.innerHeight / 2
-          const elementMiddle = rect.top + rect.height / 2
-
-          // Show popup when episode section is in the middle of the viewport
-          if (Math.abs(elementMiddle - middleOfViewport) < 100) {
-            setIsVisible(true)
-            // Remove the scroll event listener once the popup is shown
-            window.removeEventListener("scroll", handleScroll)
-          }
-        }
-      }
-
-      // Add scroll event listener
-      window.addEventListener("scroll", handleScroll)
-
-      // Clean up the event listener
-      return () => {
-        window.removeEventListener("scroll", handleScroll)
-      }
+      return () => clearTimeout(timer)
     }
   }, [])
 
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation()
     setIsVisible(false)
-    // Store that the user has closed the popup
-    localStorage.setItem("auditionPopupClosed", "true")
+
+    // Increment and store close count
+    const currentCloseCount = parseInt(
+      localStorage.getItem("auditionPopupCloseCount") || "0"
+    )
+    const newCloseCount = currentCloseCount + 1
+    localStorage.setItem("auditionPopupCloseCount", newCloseCount.toString())
   }
 
   const handleClick = () => {
     setIsVisible(false)
-    // Store that the user has closed the popup
-    localStorage.setItem("auditionPopupClosed", "true")
+
+    // Increment and store close count
+    const currentCloseCount = parseInt(
+      localStorage.getItem("auditionPopupCloseCount") || "0"
+    )
+    const newCloseCount = currentCloseCount + 1
+    localStorage.setItem("auditionPopupCloseCount", newCloseCount.toString())
+
     router.push(`/${countryCode}/audition`)
   }
 
   if (!isVisible) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity top-10">
       <div className="relative max-w-md w-full mx-4 animate-fade-in-up">
         {/* Close button */}
         <button

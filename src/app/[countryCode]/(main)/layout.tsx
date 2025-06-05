@@ -9,6 +9,7 @@ import Footer from "@modules/layout/templates/footer"
 import Nav from "@modules/layout/templates/nav"
 import FreeShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
 import AuditionBanner from "@modules/audition/components/audition-banner"
+import AuditionPopupWrapper from "@modules/audition/components/audition-popup-wrapper"
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
@@ -27,6 +28,9 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-black to-black text-white">
+      {/* Audition popup that appears on all pages */}
+      <AuditionPopupWrapper />
+      
       {/* Fixed banner at the very top */}
       <div className="fixed top-0 inset-x-0 w-full z-50">
         <AuditionBanner />

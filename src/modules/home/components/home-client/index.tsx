@@ -25,7 +25,7 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
   useEffect(() => {
     const ageVerified = getCookie("ageVerified")
     const localAgeVerified = localStorage.getItem("ageVerified")
-    
+
     // Check both cookie and localStorage for backward compatibility
     if (ageVerified === "true" || localAgeVerified === "true") {
       setIsAgeVerified(true)
@@ -72,14 +72,14 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
 
   const handleAgeVerification = (isOver18: boolean) => {
     setIsAgeVerified(isOver18)
-    
+
     // Store in both localStorage and cookie
     localStorage.setItem("ageVerified", isOver18.toString())
     setCookie("ageVerified", isOver18.toString(), {
       maxAge: 60 * 60 * 24 * 30, // 30 days
-      path: "/"
+      path: "/",
     })
-    
+
     if (isOver18) {
       setShowAgeVerification(false)
       checkPromoPopup()
@@ -139,12 +139,16 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
                 priority
               />
             </div>
-            
-            <h2 className="text-2xl font-bold text-white mb-2">Are you 18 or older?</h2>
+
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Are you 18 or older?
+            </h2>
             <p className="text-gray-300 text-center mb-8">
-              You must be <span className="text-light-green font-semibold">18</span> or older to access The Blunt Heads. Are you over 18 years old?
+              You must be{" "}
+              <span className="text-light-green font-semibold">18</span> or
+              older to access The Blunt Heads. Are you over 18 years old?
             </p>
-            
+
             <div className="flex gap-4 w-full">
               <Button
                 className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-medium py-2"
@@ -164,13 +168,9 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
       </div>
     )
   }
-  
+
   // Return the new audition popup and age verification instead of the promo popup
-  return (
-    <>
-      <AuditionPopup countryCode={countryCode} />
-    </>
-  )
+  return <>{/* <AuditionPopup countryCode={countryCode} /> */}</>
 }
 
 export default HomeClient
