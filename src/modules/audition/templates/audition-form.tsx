@@ -9,26 +9,30 @@ const characters = [
     id: "black-cake",
     name: "Black Cake",
     image: "/assets/black-cake.png",
-    script: "What did I tell you to do? I'm not going to say it\nAgain. Now, go back in the house and put on\nSomething decent. Stop looking like a 1959 Tramp"
+    script:
+      "What did I tell you to do? I'm not going to say it\nAgain. Now, go back in the house and put on\nSomething decent. Stop looking like a 1959 Tramp",
   },
   {
     id: "gelato",
     name: "Gelato",
     image: "/assets/gelato.png",
-    script: "Hey Kush, let's catch the bus down to the hood\nTo see hang up with the homies. I was thinking\nBout getting another tattoo."
+    script:
+      "Hey Kush, let's catch the bus down to the hood\nTo see hang up with the homies. I was thinking\nBout getting another tattoo.",
   },
   {
     id: "thai-stick",
     name: "Thai Stick",
     image: "/assets/thai-stick.png",
-    script: "I Know you. You want Chinese fried rice wit\nExtra chicken and shrimp. That would be\n$17.93. No EBT card, only cash or credit card."
+    script:
+      "I Know you. You want Chinese fried rice wit\nExtra chicken and shrimp. That would be\n$17.93. No EBT card, only cash or credit card.",
   },
   {
     id: "skittle-wrap",
     name: "Skittle Wrap",
     image: "/assets/skittle-rap.png",
-    script: "H E Y-G I R L! What are you doing this Saturday, nothing!?\nWell, have plans to go to the WEHO Pride Parade around one\no' clock. I can pick you up or I can meet you there."
-  }
+    script:
+      "H E Y-G I R L! What are you doing this Saturday, nothing!?\nWell, have plans to go to the WEHO Pride Parade around one\no' clock. I can pick you up or I can meet you there.",
+  },
 ]
 
 export default function AuditionForm() {
@@ -38,19 +42,21 @@ export default function AuditionForm() {
     character: "",
     instagram: "",
     tiktok: "",
-    videoLink: ""
+    videoLink: "",
   })
   const [formError, setFormError] = useState("")
   const [formSubmitted, setFormSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleCharacterSelect = (characterId: string) => {
-    setFormData(prev => ({ ...prev, character: characterId }))
+    setFormData((prev) => ({ ...prev, character: characterId }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,17 +65,22 @@ export default function AuditionForm() {
     setIsSubmitting(true)
 
     // Validate required fields
-    if (!formData.name || !formData.email || !formData.character || !formData.videoLink) {
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.character ||
+      !formData.videoLink
+    ) {
       setFormError("Please fill in all required fields")
       setIsSubmitting(false)
       return
     }
 
     try {
-      const response = await fetch('/api/audition/submit', {
-        method: 'POST',
+      const response = await fetch("/api/audition/submit", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       })
@@ -85,7 +96,7 @@ export default function AuditionForm() {
           instagram: "",
           tiktok: "",
           character: "",
-          videoLink: ""
+          videoLink: "",
         })
       } else {
         setFormError(data.message || "Something went wrong")
@@ -102,12 +113,18 @@ export default function AuditionForm() {
     return (
       <div className="bg-dark-green/20 border border-light-green rounded-lg p-8 text-center">
         <div className="text-light-green text-5xl mb-4">🎭</div>
-        <h2 className="text-white text-2xl font-bold mb-4">Thank You for Your Audition!</h2>
+        <h2 className="text-white text-2xl font-bold mb-4">
+          Thank You for Your Audition!
+        </h2>
         <p className="text-white/80 mb-6">
-          Thanks {formData.name}! Your audition has been submitted successfully. Our casting team will review your application and contact you soon.
+          Thanks {formData.name}! Your audition has been submitted successfully.
+          Our casting team will review your application and contact you soon.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Link href="/" className="inline-block bg-light-green text-black font-medium px-6 py-3 rounded-lg hover:bg-light-green/90 transition-all">
+          <Link
+            href="/"
+            className="inline-block bg-light-green text-black font-medium px-6 py-3 rounded-lg hover:bg-light-green/90 transition-all"
+          >
             Return to Homepage
           </Link>
           <button
@@ -124,13 +141,13 @@ export default function AuditionForm() {
   return (
     <div className="bg-gray-900/30 rounded-xl border border-gray-800 p-8 md:p-12">
       <h2 className="text-2xl font-bold text-white mb-6">📝 Audition Form</h2>
-      
+
       {formError && (
         <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4 mb-6">
           <p className="text-red-400">{formError}</p>
         </div>
       )}
-      
+
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Name */}
@@ -149,7 +166,7 @@ export default function AuditionForm() {
               required
             />
           </div>
-          
+
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-white mb-2">
@@ -166,13 +183,7 @@ export default function AuditionForm() {
             />
           </div>
         </div>
-        
 
-        
-
-        
-
-        
         {/* Social Media */}
         <div className="mb-8">
           <h3 className="text-white text-lg mb-4">Social Media Handles</h3>
@@ -195,7 +206,7 @@ export default function AuditionForm() {
                 />
               </div>
             </div>
-            
+
             <div>
               <label htmlFor="tiktok" className="block text-white mb-2">
                 TikTok
@@ -216,12 +227,17 @@ export default function AuditionForm() {
             </div>
           </div>
         </div>
-        
+
         {/* Character Selection */}
         <div className="mb-8">
           <h3 className="text-white text-lg mb-4">
-            Which Character Are You Auditioning For? <span className="text-red-400">*</span>
+            Which Character Are You Auditioning For?{" "}
+            <span className="text-red-400">*</span>
           </h3>
+          <p className="text-md text-light-green font-medium mb-12 max-w-3xl">
+            *For all selected voice actors. You get compensated when asked to
+            read for character.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {characters.map((character) => (
               <div
@@ -243,32 +259,48 @@ export default function AuditionForm() {
                     />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-white font-medium text-lg">{character.name}</h4>
+                    <h4 className="text-white font-medium text-lg">
+                      {character.name}
+                    </h4>
                   </div>
-                  
+
                   {formData.character === character.id && (
                     <div className="ml-auto bg-light-green rounded-full p-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 text-black"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     </div>
                   )}
                 </div>
-                
+
                 {/* Character Script */}
                 <div className="mb-4 p-3 bg-gray-900/50 rounded border border-gray-700 text-white/80 text-sm whitespace-pre-line">
-                  <p className="font-medium text-light-green mb-1">Audition Script:</p>
+                  <p className="font-medium text-light-green mb-1">
+                    Audition Script:
+                  </p>
                   {character.script}
                 </div>
-                
+
                 <button
                   onClick={(e) => {
-                    e.stopPropagation();
-                    handleCharacterSelect(character.id);
+                    e.stopPropagation()
+                    handleCharacterSelect(character.id)
                   }}
-                  className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${formData.character === character.id
-                    ? "bg-light-green text-black"
-                    : "bg-gray-700 text-white hover:bg-gray-600"
+                  className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                    formData.character === character.id
+                      ? "bg-light-green text-black"
+                      : "bg-gray-700 text-white hover:bg-gray-600"
                   }`}
                 >
                   {formData.character === character.id ? "Selected" : "Select"}
@@ -277,7 +309,7 @@ export default function AuditionForm() {
             ))}
           </div>
         </div>
-        
+
         {/* Video Link */}
         <div className="mb-8">
           <label htmlFor="videoLink" className="block text-white mb-2">
@@ -294,23 +326,36 @@ export default function AuditionForm() {
             required
           />
         </div>
-        
+
         {/* Audition Instructions */}
         <div className="mb-8 bg-gray-800/30 rounded-lg p-6 border border-gray-700">
-          <h3 className="text-white text-lg font-medium mb-4">Audition Instructions</h3>
+          <h3 className="text-white text-lg font-medium mb-4">
+            Audition Instructions
+          </h3>
           <ol className="list-decimal pl-5 text-white/80 space-y-2">
-            <li>Record up to 30 seconds of your voice performing the character's script (feel free to add flair and improv if you feel it).</li>
-            <li>Upload your video to YouTube or Vimeo (set it to unlisted if you want it private).</li>
+            <li>
+              Record up to 30 seconds of your voice performing the character's
+              script (feel free to add flair and improv if you feel it).
+            </li>
+            <li>
+              Upload your video to YouTube or Vimeo (set it to unlisted if you
+              want it private).
+            </li>
             <li>Paste the video link below so we can check it out.</li>
           </ol>
         </div>
-        
+
         {/* Character Scripts */}
         <div className="mb-8">
-          <h3 className="text-white text-lg font-medium mb-4">Character Scripts</h3>
+          <h3 className="text-white text-lg font-medium mb-4">
+            Character Scripts
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {characters.map((character) => (
-              <div key={character.id} className="bg-gray-800/30 rounded-lg p-5 border border-gray-700">
+              <div
+                key={character.id}
+                className="bg-gray-800/30 rounded-lg p-5 border border-gray-700"
+              >
                 <div className="flex items-center mb-3">
                   <div className="relative w-10 h-10 mr-3 overflow-hidden rounded-lg">
                     <Image
@@ -322,12 +367,14 @@ export default function AuditionForm() {
                   </div>
                   <h4 className="text-white font-medium">{character.name}</h4>
                 </div>
-                <p className="text-white/80 whitespace-pre-line">{character.script}</p>
+                <p className="text-white/80 whitespace-pre-line">
+                  {character.script}
+                </p>
               </div>
             ))}
           </div>
         </div>
-        
+
         {/* Submit Button */}
         <button
           type="submit"
