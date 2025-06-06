@@ -51,13 +51,13 @@ const MuxVideoPlayer = ({
     setShowThumbnail(true)
     if (onEnded) onEnded()
   }
-  
+
   // Handle play button click
   const handlePlayClick = (e: React.MouseEvent) => {
     e.preventDefault()
     setShowThumbnail(false)
     setIsPlaying(true)
-    
+
     // Start playing the video immediately
     setTimeout(() => {
       if (playerRef.current) {
@@ -96,6 +96,7 @@ const MuxVideoPlayer = ({
           theme="custom"
           accent-color="#2D5F2D" // Primary green color
           secondary-color="#1A3C1A" // Darker green for secondary elements
+          envKey=""
           themeProps={{
             loadingIndicator: {
               color: "#2D5F2D", // Match the website's green theme
