@@ -94,4 +94,5 @@ export type DigitalProduct = {
   description: string
   handle: string
   muxJwt?: string // JWT token for Mux Player authentication
+  muxPlaybackId?: string // Mux playback ID for the selected locale
 }

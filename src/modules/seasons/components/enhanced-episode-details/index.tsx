@@ -20,7 +20,7 @@ const EnhancedEpisodeDetails = ({
 }: EnhancedEpisodeDetailsProps) => {
   return (
     <div className="py-12">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Episode details section */}
         <div className="mb-16">
           <h2 className="text-white text-2xl font-bold mb-6">
