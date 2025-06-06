@@ -93,4 +93,5 @@ export type DigitalProduct = {
   product_variant: StoreProductVariant
   description: string
   handle: string
+  muxJwt?: string // JWT token for Mux Player authentication
 }
