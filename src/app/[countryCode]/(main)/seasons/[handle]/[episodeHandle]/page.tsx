@@ -46,7 +46,7 @@ type Props = {
 // }
 
 export default async function EpisodePage({ params }: Props) {
-  const { handle, episodeHandle, countryCode } = params
+  const { handle, episodeHandle, countryCode } = await params
   const customer = await retrieveCustomer().catch(() => null)
 
   if (!customer) {
