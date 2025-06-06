@@ -455,6 +455,43 @@
     sonner "^1.5.0"
     tailwind-merge "^2.2.1"
 
+"@mux/mux-player-react@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.npmjs.org/@mux/mux-player-react/-/mux-player-react-3.4.0.tgz"
+  integrity sha512-IPzxyETJkaZTqyRew3j2+BJNePHWXnzqGWl8FRLfcVe5WHMbPk6EwsIGk2/ILUqy0HovrxO3ydXrE7VJRaYOug==
+  dependencies:
+    "@mux/mux-player" "3.4.0"
+    "@mux/playback-core" "0.29.0"
+    prop-types "^15.8.1"
+
+"@mux/mux-player@3.4.0":
+  version "3.4.0"
+  resolved "https://registry.npmjs.org/@mux/mux-player/-/mux-player-3.4.0.tgz"
+  integrity sha512-+EK0w+Uw9RPod7VKgMojnUpyE3uK6C37+hwAyuL297wm5aHxsIevWdQMdUOJonsJpQ0MfjnZXMzqLOTEjTgXHQ==
+  dependencies:
+    "@mux/mux-video" "0.25.2"
+    "@mux/playback-core" "0.29.0"
+    media-chrome "~4.9.1"
+    player.style "^0.1.8"
+
+"@mux/mux-video@0.25.2":
+  version "0.25.2"
+  resolved "https://registry.npmjs.org/@mux/mux-video/-/mux-video-0.25.2.tgz"
+  integrity sha512-mP7WTyAcoZemf298OhaDLuTvOZq8wGCtuVMwBO34BR6Lol8JBg0nqb9O3QHfGLIAV+yaTJcODeZk76Ml/jYbDw==
+  dependencies:
+    "@mux/playback-core" "0.29.0"
+    castable-video "~1.1.7"
+    custom-media-element "~1.4.2"
+    media-tracks "~0.3.3"
+
+"@mux/playback-core@0.29.0":
+  version "0.29.0"
+  resolved "https://registry.npmjs.org/@mux/playback-core/-/playback-core-0.29.0.tgz"
+  integrity sha512-Bd12B1pW/1o6+Z+FXIs0ejlS5ejzApCX4sTd/Jn/bqxmOYA2tR7HjTq856hSGd441WtJQmfm/aNT5oDK9UyTSA==
+  dependencies:
+    hls.js "~1.5.19"
+    mux-embed "^5.8.3"
+
 "@next/env@15.3.2":
   version "15.3.2"
   resolved "https://registry.npmjs.org/@next/env/-/env-15.3.2.tgz"
@@ -2420,8 +2457,21 @@
 "@types/json5@^0.0.29":
   version "0.0.29"
 
+"@types/jsonwebtoken@^9.0.9":
+  version "9.0.9"
+  resolved "https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-9.0.9.tgz"
+  integrity sha512-uoe+GxEuHbvy12OUQct2X9JenKM3qAscquYymuQN4fMWG9DBQtykrQEFcAbVACF7qaLw9BePSodUL0kquqBJpQ==
+  dependencies:
+    "@types/ms" "*"
+    "@types/node" "*"
+
 "@types/lodash@^4.14.195":
   version "4.17.13"
+
+"@types/ms@*":
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/@types/ms/-/ms-2.1.0.tgz"
+  integrity sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==
 
 "@types/node-fetch@^2.6.12":
   version "2.6.12"
@@ -2467,7 +2517,7 @@
     "@types/react" "*"
     "@types/react-instantsearch-core" "*"
 
-"@types/react@*", "@types/react@^18.0.0", "@types/react@^18.3.12", "@types/react@>=16.0.0":
+"@types/react@*", "@types/react@^17.0.0 || ^17.0.0-0 || ^18 || ^18.0.0-0 || ^19 || ^19.0.0-0", "@types/react@^18.0.0", "@types/react@^18.3.12", "@types/react@>=16.0.0":
   version "18.3.18"
   resolved "https://registry.npmjs.org/@types/react/-/react-18.3.18.tgz"
   integrity sha512-t4yC+vtgnkYjNSKlFx1jkAhH8LgTo2N/7Qvi83kdEaUtMDiwpbLAktKDaAMlRcJ5eSxZkH74eEGt1ky31d7kfQ==
@@ -2539,6 +2589,11 @@
   dependencies:
     "@typescript-eslint/types" "8.18.0"
     eslint-visitor-keys "^4.2.0"
+
+"@vercel/edge@^1.2.1":
+  version "1.2.2"
+  resolved "https://registry.npmjs.org/@vercel/edge/-/edge-1.2.2.tgz"
+  integrity sha512-1+y+f6rk0Yc9ss9bRDgz/gdpLimwoRteKHhrcgHvEpjbP1nyT3ByqEMWm2BTcpIO5UtDmIFXc8zdq4LR190PDA==
 
 "@webassemblyjs/ast@^1.14.1", "@webassemblyjs/ast@1.14.1":
   version "1.14.1"
@@ -2874,6 +2929,11 @@ browserslist@^4.23.3, browserslist@^4.24.0, "browserslist@>= 4.21.0":
     node-releases "^2.0.18"
     update-browserslist-db "^1.1.1"
 
+buffer-equal-constant-time@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz"
+  integrity sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==
+
 buffer-from@^1.0.0:
   version "1.1.2"
 
@@ -2914,6 +2974,18 @@ camelcase-css@^2.0.1:
 
 caniuse-lite@^1.0.30001579, caniuse-lite@^1.0.30001646, caniuse-lite@^1.0.30001669:
   version "1.0.30001687"
+
+castable-video@~1.1.7:
+  version "1.1.8"
+  resolved "https://registry.npmjs.org/castable-video/-/castable-video-1.1.8.tgz"
+  integrity sha512-86xTxbVoIIX0gnorM10pl7ScdELdqPTMInvzSjQM/YbMxq7ml7OosCMYbZi0O4bZwgsN3Dq75o+XLb0q6dGtIA==
+  dependencies:
+    custom-media-element "~1.4.3"
+
+ce-la-react@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.npmjs.org/ce-la-react/-/ce-la-react-0.1.3.tgz"
+  integrity sha512-zZwEEJv9XukeEGbswQXObaDJjYAufOIilSnDg4BWCpKNEYN84H9fpaB+wl+rYKWOIH4wBBPbLnOxKvDIwsL/JQ==
 
 chalk@^4.0.0:
   version "4.1.2"
@@ -3048,6 +3120,11 @@ cssesc@^3.0.0:
 
 csstype@^3.0.2:
   version "3.1.3"
+
+custom-media-element@~1.4.2, custom-media-element@~1.4.3:
+  version "1.4.3"
+  resolved "https://registry.npmjs.org/custom-media-element/-/custom-media-element-1.4.3.tgz"
+  integrity sha512-6DAQAC9VfpdUEc684Kr1Uvw+49vKUY3+hAQcBrqMNL577PeA8eM8YgpOmbySoTZ517EIqSVFrXH2nu8gqFJS4g==
 
 cva@1.0.0-beta.1:
   version "1.0.0-beta.1"
@@ -3197,6 +3274,13 @@ dunder-proto@^1.0.0, dunder-proto@^1.0.1:
 
 eastasianwidth@^0.2.0:
   version "0.2.0"
+
+ecdsa-sig-formatter@1.0.11:
+  version "1.0.11"
+  resolved "https://registry.npmjs.org/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz"
+  integrity sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==
+  dependencies:
+    safe-buffer "^5.0.1"
 
 electron-to-chromium@^1.5.41:
   version "1.5.72"
@@ -3817,6 +3901,11 @@ hasown@^2.0.0, hasown@^2.0.2:
   dependencies:
     function-bind "^1.1.2"
 
+hls.js@~1.5.19:
+  version "1.5.20"
+  resolved "https://registry.npmjs.org/hls.js/-/hls.js-1.5.20.tgz"
+  integrity sha512-uu0VXUK52JhihhnN/MVVo1lvqNNuhoxkonqgO3IpjvQiGpJBdIXMGkofjQb/j9zvV7a1SW8U9g1FslWx/1HOiQ==
+
 html-to-text@^9.0.5, html-to-text@9.0.5:
   version "9.0.5"
   resolved "https://registry.npmjs.org/html-to-text/-/html-to-text-9.0.5.tgz"
@@ -4081,6 +4170,22 @@ json5@^1.0.2:
 json5@^2.1.2, json5@^2.2.3:
   version "2.2.3"
 
+jsonwebtoken@^9.0.2:
+  version "9.0.2"
+  resolved "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-9.0.2.tgz"
+  integrity sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==
+  dependencies:
+    jws "^3.2.2"
+    lodash.includes "^4.3.0"
+    lodash.isboolean "^3.0.3"
+    lodash.isinteger "^4.0.4"
+    lodash.isnumber "^3.0.3"
+    lodash.isplainobject "^4.0.6"
+    lodash.isstring "^4.0.1"
+    lodash.once "^4.0.0"
+    ms "^2.1.1"
+    semver "^7.5.4"
+
 "jsx-ast-utils@^2.4.1 || ^3.0.0", jsx-ast-utils@^3.3.5:
   version "3.3.5"
   dependencies:
@@ -4088,6 +4193,23 @@ json5@^2.1.2, json5@^2.2.3:
     array.prototype.flat "^1.3.1"
     object.assign "^4.1.4"
     object.values "^1.1.6"
+
+jwa@^1.4.1:
+  version "1.4.2"
+  resolved "https://registry.npmjs.org/jwa/-/jwa-1.4.2.tgz"
+  integrity sha512-eeH5JO+21J78qMvTIDdBXidBd6nG2kZjg5Ohz/1fpa28Z4CcsWUzJ1ZZyFq/3z3N17aZy+ZuBoHljASbL1WfOw==
+  dependencies:
+    buffer-equal-constant-time "^1.0.1"
+    ecdsa-sig-formatter "1.0.11"
+    safe-buffer "^5.0.1"
+
+jws@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.npmjs.org/jws/-/jws-3.2.2.tgz"
+  integrity sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==
+  dependencies:
+    jwa "^1.4.1"
+    safe-buffer "^5.0.1"
 
 keyv@^4.5.3:
   version "4.5.4"
@@ -4139,8 +4261,43 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
+lodash.includes@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.npmjs.org/lodash.includes/-/lodash.includes-4.3.0.tgz"
+  integrity sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w==
+
+lodash.isboolean@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz"
+  integrity sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg==
+
+lodash.isinteger@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.npmjs.org/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz"
+  integrity sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA==
+
+lodash.isnumber@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz"
+  integrity sha512-QYqzpfwO3/CWf3XP+Z+tkQsfaLL/EnUlXWVkIk5FUPc4sBdTehEqZONuyRt2P67PXAk+NXmTBcc97zw9t1FQrw==
+
+lodash.isplainobject@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.npmjs.org/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz"
+  integrity sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==
+
+lodash.isstring@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/lodash.isstring/-/lodash.isstring-4.0.1.tgz"
+  integrity sha512-0wJxfxH1wgO3GrbuP+dTTk7op+6L41QCXbGINEmD+ny/G/eCqGzxyCsh7159S+mgDDcoarnBw6PC1PS5+wUGgw==
+
 lodash.merge@^4.6.2:
   version "4.6.2"
+
+lodash.once@^4.0.0:
+  version "4.1.1"
+  resolved "https://registry.npmjs.org/lodash.once/-/lodash.once-4.1.1.tgz"
+  integrity sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==
 
 lodash@^4.17.21:
   version "4.17.21"
@@ -4191,6 +4348,19 @@ md-to-react-email@^5.0.5:
   integrity sha512-OvAXqwq57uOk+WZqFFNCMZz8yDp8BD3WazW1wAKHUrPbbdr89K9DWS6JXY09vd9xNdPNeurI8DU/X4flcfaD8A==
   dependencies:
     marked "7.0.4"
+
+media-chrome@~4.9.0, media-chrome@~4.9.1:
+  version "4.9.1"
+  resolved "https://registry.npmjs.org/media-chrome/-/media-chrome-4.9.1.tgz"
+  integrity sha512-lOdYhWVCYg0Az2VnVKPoE/eUflVrNyauHg8cLa/ibsBg4CB6RhRQBTdQsq36NuiSNSQU0B3vtmaTNFTUFT12RA==
+  dependencies:
+    "@vercel/edge" "^1.2.1"
+    ce-la-react "^0.1.3"
+
+media-tracks@~0.3.3:
+  version "0.3.3"
+  resolved "https://registry.npmjs.org/media-tracks/-/media-tracks-0.3.3.tgz"
+  integrity sha512-9P2FuUHnZZ3iji+2RQk7Zkh5AmZTnOG5fODACnjhCVveX1McY3jmCRHofIEI+yTBqplz7LXy48c7fQ3Uigp88w==
 
 memoize-one@^5.1.1:
   version "5.2.1"
@@ -4248,6 +4418,11 @@ minimist@^1.2.0, minimist@^1.2.6:
 
 ms@^2.1.1, ms@^2.1.3:
   version "2.1.3"
+
+mux-embed@^5.8.3:
+  version "5.9.0"
+  resolved "https://registry.npmjs.org/mux-embed/-/mux-embed-5.9.0.tgz"
+  integrity sha512-wmunL3uoPhma/tWy8PrDPZkvJpXvSFBwbD3KkC4PG8Ztjfb1X3hRJwGUAQyRz7z99b/ovLm2UTTitrkvStjH4w==
 
 mz@^2.7.0:
   version "2.7.0"
@@ -4523,6 +4698,13 @@ pkg-dir@^4.1.0:
   version "4.2.0"
   dependencies:
     find-up "^4.0.0"
+
+player.style@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.npmjs.org/player.style/-/player.style-0.1.8.tgz"
+  integrity sha512-r/k2gX1IS3tIH/MQJsXQ0pt54s0NqQ70jSePQSKBlu1Rwf/qqdFUmSKACL10ebS48B0VioclwbvKzBnqgb52Tw==
+  dependencies:
+    media-chrome "~4.9.0"
 
 possible-typed-array-names@^1.0.0:
   version "1.0.0"
@@ -4953,7 +5135,7 @@ safe-array-concat@^1.1.2:
     has-symbols "^1.0.3"
     isarray "^2.0.5"
 
-safe-buffer@^5.1.0, safe-buffer@^5.2.1:
+safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.2.1:
   version "5.2.1"
 
 safe-buffer@~5.1.0:
@@ -4999,6 +5181,11 @@ selderee@^0.11.0:
 
 semver@^6.0.0, semver@^6.3.1:
   version "6.3.1"
+
+semver@^7.5.4:
+  version "7.7.2"
+  resolved "https://registry.npmjs.org/semver/-/semver-7.7.2.tgz"
+  integrity sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==
 
 semver@^7.6.0:
   version "7.6.3"
