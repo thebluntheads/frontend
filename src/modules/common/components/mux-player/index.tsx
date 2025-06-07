@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useState, useEffect } from "react"
 import MuxPlayerReact from "@mux/mux-player-react"
 import Image from "next/image"
 import CircularPlayButton from "@modules/home/components/circular-play-button"
@@ -15,6 +15,13 @@ type MuxVideoPlayerProps = {
   loop?: boolean
   jwt?: string
   onEnded?: () => void
+  customerId?: string
+  videoTitle?: string
+  metadata?: {
+    video_id: string
+    video_title: string
+    viewer_user_id: string
+  }
 }
 
 const MuxVideoPlayer = ({
@@ -26,11 +33,61 @@ const MuxVideoPlayer = ({
   muted = false,
   loop = false,
   jwt,
+  metadata,
   onEnded,
+  customerId,
+  videoTitle,
 }: MuxVideoPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [showThumbnail, setShowThumbnail] = useState(true)
+  const [visitorId, setVisitorId] = useState<string>("")
+
+  // Generate a unique visitor ID using browser fingerprinting and store in localStorage
+  useEffect(() => {
+    // Function to generate a simple fingerprint based on browser information
+    const generateBrowserFingerprint = () => {
+      if (typeof window === "undefined") return "visitor"
+
+      const nav = window.navigator
+      const screen = window.screen
+
+      // Combine various browser properties to create a unique identifier
+      const fingerprint = [
+        nav.userAgent,
+        nav.language,
+        screen.colorDepth,
+        screen.width + "x" + screen.height,
+        new Date().getTimezoneOffset(),
+        nav.platform,
+        !!nav.cookieEnabled,
+      ].join("|")
+
+      // Create a simple hash from the fingerprint string
+      let hash = 0
+      for (let i = 0; i < fingerprint.length; i++) {
+        hash = (hash << 5) - hash + fingerprint.charCodeAt(i)
+        hash = hash & hash // Convert to 32bit integer
+      }
+
+      // Return a positive hex string
+      return "visitor-" + Math.abs(hash).toString(16)
+    }
+
+    // Check if we already have a visitor ID in localStorage
+    if (typeof window !== "undefined") {
+      const storedVisitorId = localStorage.getItem("mux_visitor_id")
+
+      if (storedVisitorId) {
+        setVisitorId(storedVisitorId)
+      } else {
+        // Generate new ID and store it
+        const newVisitorId = generateBrowserFingerprint()
+        localStorage.setItem("mux_visitor_id", newVisitorId)
+        setVisitorId(newVisitorId)
+      }
+    }
+  }, [])
 
   // Handle play state changes
   // Reference to the Mux Player
@@ -96,7 +153,7 @@ const MuxVideoPlayer = ({
           theme="custom"
           accent-color="#2D5F2D" // Primary green color
           secondary-color="#1A3C1A" // Darker green for secondary elements
-          envKey=""
+          envKey={process.env.MUX_DATA_ENV_KEY || "s57kfeu7kfsh2vpqamnrplf33"}
           themeProps={{
             loadingIndicator: {
               color: "#2D5F2D", // Match the website's green theme
@@ -105,6 +162,13 @@ const MuxVideoPlayer = ({
               backgroundColor: "rgba(0, 0, 0, 0.6)",
             },
           }}
+          metadata={
+            metadata || {
+              video_id: playbackId,
+              video_title: videoTitle || alt,
+              viewer_user_id: customerId || visitorId || "visitor",
+            }
+          }
         />
       </div>
 
