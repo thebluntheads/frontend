@@ -153,7 +153,7 @@ const MuxVideoPlayer = ({
           theme="custom"
           accent-color="#2D5F2D" // Primary green color
           secondary-color="#1A3C1A" // Darker green for secondary elements
-          envKey={process.env.MUX_DATA_ENV_KEY || "s57kfeu7kfsh2vpqamnrplf33"}
+          envKey={process.env.NEXT_PUBLIC_MUX_DATA_ENV_KEY}
           themeProps={{
             loadingIndicator: {
               color: "#2D5F2D", // Match the website's green theme

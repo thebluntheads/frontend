@@ -59,6 +59,7 @@
     "@babel/core": "^7.17.5",
     "@medusajs/types": "latest",
     "@medusajs/ui-preset": "latest",
+    "@types/google_interactive_media_ads_types": "^3.697.0",
     "@types/lodash": "^4.14.195",
     "@types/node": "17.0.21",
     "@types/node-fetch": "^2.6.12",

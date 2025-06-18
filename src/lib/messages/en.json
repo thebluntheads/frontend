@@ -33,11 +33,16 @@
   },
   "media": {
     "videos": {
-      "hero_playback_id": "uPCSVAGU5yQbiRWkdV01w5FDSBabqVc00XyNIHGQeywPI",
+      "hero_playback_id": "hPDQL4B800JRfMD0288HRDOumJIz7p7wCAR8PTnZpHxZQ",
       "hero": "https://thebluntheads.s3.us-east-2.amazonaws.com/trailer.mp4",
       "season1": "https://thebluntheads.s3.us-east-2.amazonaws.com/season1-en.mp4",
       "season2": "https://thebluntheads.s3.us-east-2.amazonaws.com/season2-en.mp4",
       "episode": "https://thebluntheads.s3.us-east-2.amazonaws.com/episode-en.mp4"
+    },
+    "ads": {
+      "hero_ad_tag": "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=",
+      "season_ad_tag": "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=",
+      "episode_ad_tag": "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/vmap_ad_samples&sz=640x480&cust_params=sample_ar%3Dpreonly&ciu_szs=300x250&gdfp_req=1&ad_rule=1&output=vmap&unviewed_position_start=1&env=vp&impl=s&correlator="
     }
   }
 }

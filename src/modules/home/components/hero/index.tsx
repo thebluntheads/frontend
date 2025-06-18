@@ -8,6 +8,7 @@ import CircularPlayButton from "../circular-play-button"
 import { useTranslations } from "next-intl"
 import LanguageSelect from "@modules/layout/components/language-select"
 import MuxVideoPlayer from "@modules/common/components/mux-player"
+import MuxPlayerAdsWrapper from "@modules/common/components/mux-player-ads-wrapper"
 import { useCustomer } from "@lib/hooks/use-customer"
 
 interface HeroProps {
@@ -117,7 +118,7 @@ const Hero = ({
                 <LanguageSelect minimal={true} showVideoText={true} />
               </div>
 
-              <MuxVideoPlayer
+              <MuxPlayerAdsWrapper
                 playbackId={muxPlaybackId || t("media.videos.hero_playback_id")}
                 thumbnailUrl={thumbnailUrl}
                 alt={title}
@@ -126,6 +127,8 @@ const Hero = ({
                 onEnded={handleVideoEnd}
                 customerId={customer?.id}
                 videoTitle={"Trailer"}
+                enableAds={true}
+                // adTagUrl={t("media.ads.hero_ad_tag", { fallback: "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=" })}
               />
             </div>
           ) : (

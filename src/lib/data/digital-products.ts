@@ -74,12 +74,6 @@ export const getCustomerDigitalProducts = async (
         console.log(`Using content_url as playback ID:`, selectedPlaybackId)
       }
 
-      // For testing purposes, use a hardcoded ID if none is found
-      if (!selectedPlaybackId) {
-        selectedPlaybackId = "cV017nnvD6UV7sF400QFlfCHIOqL9hoBzom01YiLdWGm7Q"
-        console.log(`Using hardcoded playback ID:`, selectedPlaybackId)
-      }
-
       if (selectedPlaybackId) {
         try {
           // Step 3: Generate a JWT token for the selected playback ID
@@ -93,7 +87,7 @@ export const getCustomerDigitalProducts = async (
             // Generate token specifically for this playback ID
             const token = jwt.sign(
               {
-                sub: "cV017nnvD6UV7sF400QFlfCHIOqL9hoBzom01YiLdWGm7Q", // Use the locale-specific playback ID
+                sub: selectedPlaybackId, // Use the locale-specific playback ID
                 aud: "v",
                 exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiry
                 kid: signingKeyId,
@@ -108,8 +102,7 @@ export const getCustomerDigitalProducts = async (
 
             // Add the JWT token to the digital product metadata
             digital_product.muxJwt = token
-            digital_product.muxPlaybackId =
-              "cV017nnvD6UV7sF400QFlfCHIOqL9hoBzom01YiLdWGm7Q"
+            digital_product.muxPlaybackId = selectedPlaybackId
           }
         } catch (tokenError) {
           console.error("Error generating Mux JWT token:", tokenError)

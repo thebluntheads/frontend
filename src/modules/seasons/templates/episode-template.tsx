@@ -27,6 +27,7 @@ import EnhancedEpisodeDetails from "../components/enhanced-episode-details"
 import { useTranslations, useLocale } from "next-intl"
 import LanguageSelect from "@modules/layout/components/language-select"
 import MuxVideoPlayer from "@modules/common/components/mux-player"
+import MuxPlayerAdsWrapper from "@modules/common/components/mux-player-ads-wrapper"
 import Spinner from "@modules/common/icons/spinner"
 import { useCustomer } from "@lib/hooks/use-customer"
 
@@ -60,52 +61,52 @@ export default function EpisodeTemplate({
   const [relatedEpisodes, setRelatedEpisodes] = useState<DigitalProduct[]>([])
   const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null)
   const [muxJwt, setMuxJwt] = useState<string | null>(null)
-  
+
   // Generate a unique visitor ID using browser fingerprinting and store in localStorage
   useEffect(() => {
     // Function to generate a simple fingerprint based on browser information
     const generateBrowserFingerprint = () => {
-      if (typeof window === 'undefined') return 'visitor'
-      
-      const nav = window.navigator;
-      const screen = window.screen;
-      
+      if (typeof window === "undefined") return "visitor"
+
+      const nav = window.navigator
+      const screen = window.screen
+
       // Combine various browser properties to create a unique identifier
       const fingerprint = [
         nav.userAgent,
         nav.language,
         screen.colorDepth,
-        screen.width + 'x' + screen.height,
+        screen.width + "x" + screen.height,
         new Date().getTimezoneOffset(),
         nav.platform,
-        !!nav.cookieEnabled
-      ].join('|');
-      
+        !!nav.cookieEnabled,
+      ].join("|")
+
       // Create a simple hash from the fingerprint string
-      let hash = 0;
+      let hash = 0
       for (let i = 0; i < fingerprint.length; i++) {
-        hash = ((hash << 5) - hash) + fingerprint.charCodeAt(i);
-        hash = hash & hash; // Convert to 32bit integer
+        hash = (hash << 5) - hash + fingerprint.charCodeAt(i)
+        hash = hash & hash // Convert to 32bit integer
       }
-      
+
       // Return a positive hex string
-      return 'visitor-' + Math.abs(hash).toString(16);
-    };
+      return "visitor-" + Math.abs(hash).toString(16)
+    }
 
     // Check if we already have a visitor ID in localStorage
-    if (typeof window !== 'undefined') {
-      const storedVisitorId = localStorage.getItem('mux_visitor_id');
-      
+    if (typeof window !== "undefined") {
+      const storedVisitorId = localStorage.getItem("mux_visitor_id")
+
       if (storedVisitorId) {
-        setVisitorId(storedVisitorId);
+        setVisitorId(storedVisitorId)
       } else {
         // Generate new ID and store it
-        const newVisitorId = generateBrowserFingerprint();
-        localStorage.setItem('mux_visitor_id', newVisitorId);
-        setVisitorId(newVisitorId);
+        const newVisitorId = generateBrowserFingerprint()
+        localStorage.setItem("mux_visitor_id", newVisitorId)
+        setVisitorId(newVisitorId)
       }
     }
-  }, []);
+  }, [])
 
   // Get fallback localized video URL from translations
   const localizedEpisodeVideoUrl = t("media.videos.episode")
@@ -264,7 +265,7 @@ export default function EpisodeTemplate({
               <LanguageSelect minimal={true} showVideoText={true} />
             </div>
 
-            <MuxVideoPlayer
+            <MuxPlayerAdsWrapper
               playbackId={muxPlaybackId || ""}
               thumbnailUrl={bannerUrl || "/assets/preview.png"}
               alt={episode.name}
@@ -273,6 +274,12 @@ export default function EpisodeTemplate({
               autoPlay={false}
               customerId={customer?.id || visitorId}
               videoTitle={episode.name}
+              // Only show ads for non-purchased episodes
+              enableAds={!hasPurchased}
+              // adTagUrl={t("media.ads.episode_ad_tag", {
+              //   fallback:
+              //     "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=",
+              // })}
             />
           </div>
         ) : videoUrl ? (
@@ -286,7 +293,6 @@ export default function EpisodeTemplate({
             }
             ctaLink="#"
             thumbnailUrl={bannerUrl}
-            videoUrl={videoUrl} // Using the videoUrl state which now has fallback to localized URL
             isEpisodePage={true}
           />
         ) : (

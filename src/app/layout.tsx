@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({
-  children
+  children,
 }: {
   children: React.ReactNode
 }) {
@@ -43,11 +43,9 @@ export default async function RootLayout({
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
       </head>
+      <GoogleTagManager gtmId="AW-17062730933" />
       <body className="bg-black text-white">
-        <NextIntlClientProvider>
-          {children}
-        </NextIntlClientProvider>
-        <GoogleTagManager gtmId="GTM-XXXXXXX" />
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   )

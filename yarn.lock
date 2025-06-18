@@ -2446,6 +2446,11 @@
 "@types/estree@*", "@types/estree@^1.0.6":
   version "1.0.6"
 
+"@types/google_interactive_media_ads_types@^3.697.0":
+  version "3.697.0"
+  resolved "https://registry.npmjs.org/@types/google_interactive_media_ads_types/-/google_interactive_media_ads_types-3.697.0.tgz"
+  integrity sha512-BvhC/zIqh6y0XvUQW75dq7JpZ6B9ZRs3KsxSh5dbY2kA9hKhBoTUob7MPl/2qZMbY9a6XSeO9y+rI+juCCe+ew==
+
 "@types/googlepay@^0.7.0":
   version "0.7.6"
   resolved "https://registry.npmjs.org/@types/googlepay/-/googlepay-0.7.6.tgz"
