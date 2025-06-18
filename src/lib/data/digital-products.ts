@@ -5,11 +5,16 @@ import { DigitalProduct } from "../../types/global"
 import { sdk, streamSDK } from "../config"
 import { getAuthHeaders, getCacheOptions } from "./cookies"
 import { getRegion, retrieveRegion } from "./regions"
+import jwt from "jsonwebtoken"
 
 export const getCustomerDigitalProducts = async (
   product_id?: string,
-  parent_id?: string
+  parent_id?: string,
+  mediaType?: string,
+  locale?: string
 ) => {
+  // Declare playbackId at the top level of the function
+  let selectedPlaybackId: string | undefined = undefined
   try {
     const headers = {
       ...(await getAuthHeaders()),
@@ -27,6 +32,84 @@ export const getCustomerDigitalProducts = async (
         next: { revalidate: 0 }, // Ensure no caching
       }
     )
+
+    console.log({ digital_product })
+
+    // If we have a valid digital product and it's an episode (has parent_id)
+    if (
+      mediaType === "episode" &&
+      digital_product &&
+      Object.keys(digital_product).length > 0 &&
+      parent_id
+    ) {
+      // Check if translated_urls exists and has an entry for the current locale
+      const hasTranslatedUrls =
+        digital_product?.translated_urls &&
+        typeof digital_product.translated_urls === "object" &&
+        Object.keys(digital_product.translated_urls).length > 0
+
+      // Step 2: Use the locale to get the right translatedUrl (playback ID)
+      if (hasTranslatedUrls && locale && digital_product.translated_urls) {
+        // First try the exact locale match
+        if (digital_product.translated_urls[locale]) {
+          selectedPlaybackId = digital_product.translated_urls[locale]
+          console.log(
+            `Using playback ID for locale ${locale}:`,
+            selectedPlaybackId
+          )
+        }
+        // Fall back to English if the specific locale isn't available
+        else if (digital_product.translated_urls["en"]) {
+          selectedPlaybackId = digital_product.translated_urls["en"]
+          console.log(
+            `Falling back to English playback ID:`,
+            selectedPlaybackId
+          )
+        }
+      }
+
+      // If we still don't have a playback ID, use the content_url as fallback
+      if (!selectedPlaybackId && digital_product.content_url) {
+        selectedPlaybackId = digital_product.content_url
+        console.log(`Using content_url as playback ID:`, selectedPlaybackId)
+      }
+
+      if (selectedPlaybackId) {
+        try {
+          // Step 3: Generate a JWT token for the selected playback ID
+          const signingKeyId = process.env.MUX_SIGNING_KEY_ID
+          const signingKey = Buffer.from(
+            process.env.MUX_SIGNING_KEY!,
+            "base64"
+          ).toString("ascii")
+
+          if (signingKey && signingKeyId) {
+            // Generate token specifically for this playback ID
+            const token = jwt.sign(
+              {
+                sub: selectedPlaybackId, // Use the locale-specific playback ID
+                aud: "v",
+                exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiry
+                kid: signingKeyId,
+              },
+              signingKey,
+              { algorithm: "RS256" }
+            )
+
+            console.log(
+              `Generated JWT token for playback ID ${selectedPlaybackId}`
+            )
+
+            // Add the JWT token to the digital product metadata
+            digital_product.muxJwt = token
+            digital_product.muxPlaybackId = selectedPlaybackId
+          }
+        } catch (tokenError) {
+          console.error("Error generating Mux JWT token:", tokenError)
+          // Continue without token if there's an error
+        }
+      }
+    }
 
     return digital_product as DigitalProduct
   } catch (error) {

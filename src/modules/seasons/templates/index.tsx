@@ -26,6 +26,9 @@ import { listCartPaymentMethods } from "@lib/data/payment"
 import EpisodePaymentPopup from "../components/episode-payment-popup"
 import { useCustomer } from "@lib/hooks/use-customer"
 import LanguageSelect from "@modules/layout/components/language-select"
+import MuxVideoPlayer from "@modules/common/components/mux-player"
+import MuxPlayerAdsWrapper from "@modules/common/components/mux-player-ads-wrapper"
+import { useTranslations } from "next-intl"
 
 export default function SeasonTemplate({
   season,
@@ -61,6 +64,8 @@ export default function SeasonTemplate({
   >([])
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const t = useTranslations()
 
   // Format price
   const { cheapestPrice } = getDigitalProductPrice({
@@ -189,20 +194,24 @@ export default function SeasonTemplate({
     <div className="bg-black min-h-screen">
       {/* Hero Banner */}
       <div className="relative h-[60vh] w-full overflow-hidden">
-        {/* Language selector for video */}
-        <div className="absolute top-4 right-4 z-30">
-          <LanguageSelect minimal={true} showVideoText={true} />
-        </div>
-        <Image
-          src="/assets/preview.png"
-          alt={season.name}
-          fill
-          className="object-cover object-center brightness-75"
-          priority
-        />
+        {/* Thumbnail image */}
+        <div className="relative w-full h-full">
+          {/* Language selector */}
+          <div className="absolute top-4 right-4 z-30">
+            <LanguageSelect minimal={true} showVideoText={true} />
+          </div>
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90"></div>
+          <Image
+            src={"/assets/preview.png"}
+            alt={season.name}
+            fill
+            className="object-cover object-center brightness-75"
+            priority
+          />
+
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90"></div>
+        </div>
 
         {/* Content overlay */}
         <div className="absolute bottom-0 left-0 p-12 w-full z-10">

@@ -25,6 +25,11 @@ import Hero from "@modules/home/components/hero"
 import { DigitalProduct } from "types/global"
 import EnhancedEpisodeDetails from "../components/enhanced-episode-details"
 import { useTranslations, useLocale } from "next-intl"
+import LanguageSelect from "@modules/layout/components/language-select"
+import MuxVideoPlayer from "@modules/common/components/mux-player"
+import MuxPlayerAdsWrapper from "@modules/common/components/mux-player-ads-wrapper"
+import Spinner from "@modules/common/icons/spinner"
+import { useCustomer } from "@lib/hooks/use-customer"
 
 interface EpisodeTemplateProps {
   episode: DigitalProduct | null
@@ -37,6 +42,8 @@ export default function EpisodeTemplate({
 }: EpisodeTemplateProps) {
   const t = useTranslations()
   const locale = useLocale()
+  const { customer } = useCustomer()
+  const [visitorId, setVisitorId] = useState<string>("")
 
   const [cart, setCart] = useState<StoreCart | null>(null)
   const [hasPurchased, setHasPurchased] = useState<boolean>(false)
@@ -52,6 +59,54 @@ export default function EpisodeTemplate({
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [relatedEpisodes, setRelatedEpisodes] = useState<DigitalProduct[]>([])
+  const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null)
+  const [muxJwt, setMuxJwt] = useState<string | null>(null)
+
+  // Generate a unique visitor ID using browser fingerprinting and store in localStorage
+  useEffect(() => {
+    // Function to generate a simple fingerprint based on browser information
+    const generateBrowserFingerprint = () => {
+      if (typeof window === "undefined") return "visitor"
+
+      const nav = window.navigator
+      const screen = window.screen
+
+      // Combine various browser properties to create a unique identifier
+      const fingerprint = [
+        nav.userAgent,
+        nav.language,
+        screen.colorDepth,
+        screen.width + "x" + screen.height,
+        new Date().getTimezoneOffset(),
+        nav.platform,
+        !!nav.cookieEnabled,
+      ].join("|")
+
+      // Create a simple hash from the fingerprint string
+      let hash = 0
+      for (let i = 0; i < fingerprint.length; i++) {
+        hash = (hash << 5) - hash + fingerprint.charCodeAt(i)
+        hash = hash & hash // Convert to 32bit integer
+      }
+
+      // Return a positive hex string
+      return "visitor-" + Math.abs(hash).toString(16)
+    }
+
+    // Check if we already have a visitor ID in localStorage
+    if (typeof window !== "undefined") {
+      const storedVisitorId = localStorage.getItem("mux_visitor_id")
+
+      if (storedVisitorId) {
+        setVisitorId(storedVisitorId)
+      } else {
+        // Generate new ID and store it
+        const newVisitorId = generateBrowserFingerprint()
+        localStorage.setItem("mux_visitor_id", newVisitorId)
+        setVisitorId(newVisitorId)
+      }
+    }
+  }, [])
 
   // Get fallback localized video URL from translations
   const localizedEpisodeVideoUrl = t("media.videos.episode")
@@ -105,47 +160,35 @@ export default function EpisodeTemplate({
         const parent_id = episode?.parent_id!
         const digitalProduct = await getCustomerDigitalProducts(
           product_id,
-          parent_id
+          parent_id,
+          "episode",
+          locale
         )
 
         const hasPurchasedEpisode = digitalProduct?.id === product_id
         setHasPurchased(hasPurchasedEpisode)
 
-        // Check if translated_urls exists and has an entry for the current locale
-        const hasTranslatedUrls =
-          digitalProduct?.translated_urls &&
-          typeof digitalProduct.translated_urls === "object" &&
-          Object.keys(digitalProduct.translated_urls).length > 0
+        // The backend now handles locale-specific playback ID selection
+        // and returns it directly in digitalProduct.muxPlaybackId
 
-        let translatedUrl = null
-        if (hasTranslatedUrls && digitalProduct.translated_urls) {
-          if (digitalProduct.translated_urls[locale]) {
-            translatedUrl = digitalProduct.translated_urls[locale]
-          }
-          // If no exact match, try to find a URL with the locale as a parameter
-          else {
-            translatedUrl = digitalProduct.translated_urls["en"]
-          }
+        if (digitalProduct?.muxPlaybackId) {
+          // Use the playback ID that was selected based on locale in the backend
+          setMuxPlaybackId(digitalProduct.muxPlaybackId)
+          // Also set as video URL for backward compatibility
+          setVideoUrl(digitalProduct.muxPlaybackId)
         }
 
-        if (hasPurchasedEpisode) {
-          // Priority: 1. Translated URL for current locale, 2. Content URL, 3. Fallback from translations
-          setVideoUrl(
-            translatedUrl
-              ? translatedUrl
-              : digitalProduct.content_url && digitalProduct.content_url !== ""
-              ? digitalProduct.content_url
-              : localizedEpisodeVideoUrl
-          )
-        } else {
-          // Priority: 1. Translated URL for current locale, 2. Preview URL, 3. Fallback from translations
-          setVideoUrl(
-            translatedUrl
-              ? translatedUrl
-              : digitalProduct.preview_url && digitalProduct.preview_url !== ""
-              ? digitalProduct.preview_url
-              : localizedEpisodeVideoUrl
-          )
+        if (hasPurchasedEpisode && digitalProduct?.muxJwt) {
+          // For purchased episodes, use the JWT token generated by the backend
+          setMuxJwt(digitalProduct.muxJwt)
+        } else if (digitalProduct?.preview_url) {
+          // For non-purchased episodes, use the preview URL
+          setVideoUrl(digitalProduct.preview_url)
+          setMuxPlaybackId(digitalProduct.preview_url)
+        } else if (localizedEpisodeVideoUrl) {
+          // Fallback to localized URL from translations
+          setVideoUrl(localizedEpisodeVideoUrl)
+          setMuxPlaybackId(localizedEpisodeVideoUrl)
         }
 
         // Fetch related episodes from the same season
@@ -214,20 +257,49 @@ export default function EpisodeTemplate({
 
   return (
     <div className="bg-black min-h-screen">
-      {hasPurchased && videoUrl ? (
-        <Hero
-          title={episode.name}
-          description={""}
-          ctaText={
-            episode?.product_variant?.metadata?.unlocked
-              ? "Watch Now 🔓"
-              : "Unlocks Soon 🔒"
-          }
-          ctaLink="#"
-          thumbnailUrl={bannerUrl}
-          videoUrl={videoUrl} // Using the videoUrl state which now has fallback to localized URL
-          isEpisodePage={true}
-        />
+      {hasPurchased ? (
+        muxPlaybackId ? (
+          <div className="relative w-full h-[80vh] bg-black">
+            {/* Language selector for video */}
+            <div className="absolute top-4 right-4 z-30">
+              <LanguageSelect minimal={true} showVideoText={true} />
+            </div>
+
+            <MuxPlayerAdsWrapper
+              playbackId={muxPlaybackId || ""}
+              thumbnailUrl={bannerUrl || "/assets/preview.png"}
+              alt={episode.name}
+              jwt={muxJwt || undefined}
+              className="w-full h-full"
+              autoPlay={false}
+              customerId={customer?.id || visitorId}
+              videoTitle={episode.name}
+              // Only show ads for non-purchased episodes
+              enableAds={!hasPurchased}
+              // adTagUrl={t("media.ads.episode_ad_tag", {
+              //   fallback:
+              //     "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=",
+              // })}
+            />
+          </div>
+        ) : videoUrl ? (
+          <Hero
+            title={episode.name}
+            description={""}
+            ctaText={
+              episode?.product_variant?.metadata?.unlocked
+                ? "Watch Now 🔓"
+                : "Unlocks Soon 🔒"
+            }
+            ctaLink="#"
+            thumbnailUrl={bannerUrl}
+            isEpisodePage={true}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-[80vh] bg-black">
+            <Spinner />
+          </div>
+        )
       ) : (
         <div className="relative h-[80vh] w-full overflow-hidden">
           <Image
