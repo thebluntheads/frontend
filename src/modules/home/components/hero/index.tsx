@@ -90,7 +90,11 @@ const Hero = ({
 
   // Handle play button click
   const handlePlayClick = () => {
-    setIsPlaying(true)
+    // Set a small delay before setting isPlaying to true
+    // This gives time for any ongoing operations to complete
+    setTimeout(() => {
+      setIsPlaying(true)
+    }, 50)
   }
 
   // Handle video end
@@ -152,6 +156,14 @@ const Hero = ({
                 style={{ zIndex: 10 }}
               ></div>
 
+              {/* Language selector in top right */}
+              <div
+                className="absolute top-4 right-4"
+                style={{ zIndex: 30 }}
+              >
+                <LanguageSelect minimal={true} showVideoText={true} />
+              </div>
+              
               {/* Play button */}
               <div
                 className="absolute inset-0 flex items-center justify-center"
@@ -161,7 +173,7 @@ const Hero = ({
                   onClick={handlePlayClick}
                   size={140}
                   className="transition-all duration-300 hover:scale-110"
-                  showLanguageSelector={true}
+                  showLanguageSelector={false}
                   isWatchNow={isEpisodePage}
                 />
               </div>

@@ -40,7 +40,7 @@ const MuxVideoPlayer = ({
 }: MuxVideoPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [showThumbnail, setShowThumbnail] = useState(true)
+  const [showThumbnail, setShowThumbnail] = useState(!autoPlay)
   const [visitorId, setVisitorId] = useState<string>("")
 
   // Generate a unique visitor ID using browser fingerprinting and store in localStorage
@@ -122,6 +122,22 @@ const MuxVideoPlayer = ({
       }
     }, 100)
   }
+  
+  // Auto-play the video when autoPlay is true and player is ready
+  useEffect(() => {
+    if (autoPlay && playerRef.current && isLoaded) {
+      setIsPlaying(true)
+      setShowThumbnail(false)
+      // Use a small delay to ensure the player is fully ready
+      setTimeout(() => {
+        if (playerRef.current) {
+          playerRef.current.play().catch((error: Error) => {
+            console.error('Error playing video:', error)
+          })
+        }
+      }, 300)
+    }
+  }, [autoPlay, isLoaded])
 
   return (
     <div
