@@ -10,24 +10,17 @@ import EpisodesList from "./episodes-list"
 import { DigitalProduct } from "types/global"
 import { Text, clx, Button } from "@medusajs/ui"
 import { useEffect, useState } from "react"
-import {
-  getDigitalProductPrice,
-  getProductPrice,
-} from "@lib/util/get-product-price"
-import { convertToLocale } from "@lib/util/money"
+import { getDigitalProductPrice } from "@lib/util/get-product-price"
 import {
   addToStreamCart,
   retrieveStreamCart,
   listStreamCartOptions,
-  placeDigitalProductOrder,
 } from "@lib/data/digital-cart"
 import { StoreCart, StoreCartShippingOption } from "@medusajs/types"
 import { listCartPaymentMethods } from "@lib/data/payment"
 import EpisodePaymentPopup from "../components/episode-payment-popup"
 import { useCustomer } from "@lib/hooks/use-customer"
 import LanguageSelect from "@modules/layout/components/language-select"
-import MuxVideoPlayer from "@modules/common/components/mux-player"
-import MuxPlayerAdsWrapper from "@modules/common/components/mux-player-ads-wrapper"
 import { useTranslations } from "next-intl"
 
 export default function SeasonTemplate({

@@ -18,7 +18,6 @@ import { listCartPaymentMethods } from "@lib/data/payment"
 import {
   addToStreamCart,
   listStreamCartOptions,
-  placeDigitalProductOrder,
   retrieveStreamCart,
 } from "@lib/data/digital-cart"
 import Hero from "@modules/home/components/hero"
@@ -27,7 +26,6 @@ import EnhancedEpisodeDetails from "../components/enhanced-episode-details"
 import { useTranslations, useLocale } from "next-intl"
 import LanguageSelect from "@modules/layout/components/language-select"
 import MuxVideoPlayer from "@modules/common/components/mux-player"
-import MuxPlayerAdsWrapper from "@modules/common/components/mux-player-ads-wrapper"
 import Spinner from "@modules/common/icons/spinner"
 import { useCustomer } from "@lib/hooks/use-customer"
 
@@ -264,8 +262,7 @@ export default function EpisodeTemplate({
             <div className="absolute top-4 right-4 z-30">
               <LanguageSelect minimal={true} showVideoText={true} />
             </div>
-
-            <MuxPlayerAdsWrapper
+            <MuxVideoPlayer
               playbackId={muxPlaybackId || ""}
               thumbnailUrl={bannerUrl || "/assets/preview.png"}
               alt={episode.name}
@@ -274,12 +271,6 @@ export default function EpisodeTemplate({
               autoPlay={false}
               customerId={customer?.id || visitorId}
               videoTitle={episode.name}
-              // Only show ads for non-purchased episodes
-              enableAds={!hasPurchased}
-              // adTagUrl={t("media.ads.episode_ad_tag", {
-              //   fallback:
-              //     "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=",
-              // })}
             />
           </div>
         ) : videoUrl ? (

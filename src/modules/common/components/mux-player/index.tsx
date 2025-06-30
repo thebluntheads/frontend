@@ -17,10 +17,12 @@ type MuxVideoPlayerProps = {
   onEnded?: () => void
   customerId?: string
   videoTitle?: string
+  locale?: string
   metadata?: {
     video_id: string
     video_title: string
     viewer_user_id: string
+    locale?: string
   }
 }
 
@@ -37,6 +39,7 @@ const MuxVideoPlayer = ({
   onEnded,
   customerId,
   videoTitle,
+  locale,
 }: MuxVideoPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -183,6 +186,7 @@ const MuxVideoPlayer = ({
               video_id: playbackId,
               video_title: videoTitle || alt,
               viewer_user_id: customerId || visitorId || "visitor",
+              locale: locale || "en",
             }
           }
         />
