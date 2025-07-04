@@ -26,6 +26,7 @@ import EnhancedEpisodeDetails from "../components/enhanced-episode-details"
 import { useTranslations, useLocale } from "next-intl"
 import LanguageSelect from "@modules/layout/components/language-select"
 import MuxVideoPlayer from "@modules/common/components/mux-player"
+import MuxAdPlayer from "@modules/common/components/mux-ad-player"
 import Spinner from "@modules/common/icons/spinner"
 import { useCustomer } from "@lib/hooks/use-customer"
 
@@ -59,6 +60,11 @@ export default function EpisodeTemplate({
   const [relatedEpisodes, setRelatedEpisodes] = useState<DigitalProduct[]>([])
   const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null)
   const [muxJwt, setMuxJwt] = useState<string | null>(null)
+  const [showAd, setShowAd] = useState<boolean>(true)
+  const [adAnalytics, setAdAnalytics] = useState<{
+    skipped: boolean
+    timeWatched: number
+  } | null>(null)
 
   // Generate a unique visitor ID using browser fingerprinting and store in localStorage
   useEffect(() => {
@@ -262,16 +268,47 @@ export default function EpisodeTemplate({
             <div className="absolute top-4 right-4 z-30">
               <LanguageSelect minimal={true} showVideoText={true} />
             </div>
-            <MuxVideoPlayer
-              playbackId={muxPlaybackId || ""}
-              thumbnailUrl={bannerUrl || "/assets/preview.png"}
-              alt={episode.name}
-              jwt={muxJwt || undefined}
-              className="w-full h-full"
-              autoPlay={false}
-              customerId={customer?.id || visitorId}
-              videoTitle={episode.name}
-            />
+            {showAd && typeof episode?.product_variant.metadata?.ad_mux_id === 'string' ? (
+              <MuxAdPlayer
+                playbackId={episode?.product_variant.metadata?.ad_mux_id as string}
+                thumbnailUrl={bannerUrl || "/assets/preview.png"}
+                alt={`Advertisement for ${episode.name}`}
+                className="w-full h-full"
+                onAdEnded={() => {
+                  setShowAd(false)
+                  setAdAnalytics({ skipped: false, timeWatched: -1 }) // -1 indicates full watch
+
+                  // Analytics are handled by Mux metadata
+                  console.log("Ad completed fully")
+                }}
+                onAdSkipped={(timeWatched) => {
+                  setShowAd(false)
+                  setAdAnalytics({ skipped: true, timeWatched })
+
+                  // Analytics are handled by Mux metadata
+                  console.log("Ad skipped at", timeWatched, "seconds")
+                }}
+                customerId={customer?.id || visitorId}
+                videoTitle={episode.name}
+                locale={locale}
+                skipAfterSeconds={10}
+                allowSkip={false}
+                metadata={episode?.product_variant.metadata}
+                // Custom fields are now handled internally in MuxAdPlayer
+              />
+            ) : (
+              <MuxVideoPlayer
+                playbackId={muxPlaybackId || ""}
+                thumbnailUrl={bannerUrl || "/assets/preview.png"}
+                alt={episode.name}
+                jwt={muxJwt || undefined}
+                className="w-full h-full"
+                autoPlay={true} // Auto play content after ad
+                customerId={customer?.id || visitorId}
+                videoTitle={episode.name}
+                locale={locale}
+              />
+            )}
           </div>
         ) : videoUrl ? (
           <Hero

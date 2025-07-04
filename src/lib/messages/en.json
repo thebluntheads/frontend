@@ -29,7 +29,9 @@
     "back": "Back",
     "next": "Next",
     "previous": "Previous",
-    "more": "More"
+    "more": "More",
+    "skip_ad": "Skip Ad",
+    "ad": "Ad"
   },
   "media": {
     "videos": {
