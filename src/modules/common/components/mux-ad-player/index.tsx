@@ -23,7 +23,7 @@ type MuxAdPlayerProps = {
   locale?: string
   skipAfterSeconds?: number
   allowSkip?: boolean
-  metadata?: Record<string, any>
+  metadata?: Record<string, any> | null
 }
 
 const MuxAdPlayer = ({

@@ -268,9 +268,11 @@ export default function EpisodeTemplate({
             <div className="absolute top-4 right-4 z-30">
               <LanguageSelect minimal={true} showVideoText={true} />
             </div>
-            {showAd && typeof episode?.product_variant.metadata?.ad_mux_id === 'string' ? (
+            {showAd && episode?.product_variant.metadata?.ad_mux_id !== "" ? (
               <MuxAdPlayer
-                playbackId={episode?.product_variant.metadata?.ad_mux_id as string}
+                playbackId={
+                  episode?.product_variant.metadata?.ad_mux_id as string
+                }
                 thumbnailUrl={bannerUrl || "/assets/preview.png"}
                 alt={`Advertisement for ${episode.name}`}
                 className="w-full h-full"
@@ -293,7 +295,7 @@ export default function EpisodeTemplate({
                 locale={locale}
                 skipAfterSeconds={10}
                 allowSkip={false}
-                metadata={episode?.product_variant.metadata}
+                metadata={episode?.product_variant?.metadata}
                 // Custom fields are now handled internally in MuxAdPlayer
               />
             ) : (
