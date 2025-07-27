@@ -268,7 +268,9 @@ export default function EpisodeTemplate({
             <div className="absolute top-4 right-4 z-30">
               <LanguageSelect minimal={true} showVideoText={true} />
             </div>
-            {showAd && episode?.product_variant.metadata?.ad_mux_id !== "" ? (
+            {showAd &&
+            episode?.product_variant?.metadata?.ad_mux_id &&
+            episode?.product_variant?.metadata?.ad_mux_id !== "" ? (
               <MuxAdPlayer
                 playbackId={
                   episode?.product_variant.metadata?.ad_mux_id as string
