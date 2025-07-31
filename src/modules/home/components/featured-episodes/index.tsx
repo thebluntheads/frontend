@@ -13,7 +13,7 @@ const FeaturedEpisodes = ({ season, episodes }: FeaturedEpisodesProps) => {
   if (!episodes || episodes.length === 0) {
     return null
   }
-
+  console.log({ episodes })
   return (
     <div className="py-12 px-4 md:px-8 lg:px-12 bg-black">
       <div className="max-w-7xl mx-auto">
@@ -42,7 +42,10 @@ const FeaturedEpisodes = ({ season, episodes }: FeaturedEpisodesProps) => {
               <div className="relative aspect-video">
                 <Image
                   src={
-                    episode?.name?.includes("1")
+                    episode?.product_variant?.metadata?.thumbnailUrl
+                      ? (episode.product_variant.metadata
+                          .thumbnailUrl as string)
+                      : episode?.name.includes("1")
                       ? "/assets/episode_one_thumbnail.png"
                       : "/assets/preview.png"
                   }
