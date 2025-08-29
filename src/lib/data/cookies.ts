@@ -48,7 +48,9 @@ export const getCacheOptions = async (
 export const setAuthToken = async (token: string) => {
   const cookies = await nextCookies()
   cookies.set("_medusa_jwt", token, {
-    maxAge: 60 * 60 * 24 * 7,
+    // Make session effectively non-expiring by using a far-future expires date
+    // Note: Browsers may cap cookie lifetimes; adjust if needed.
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 10), // ~10 years
     httpOnly: true,
     sameSite: "strict",
     secure: process.env.NODE_ENV === "production",
