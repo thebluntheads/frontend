@@ -34,6 +34,10 @@ export const paymentInfoMap: Record<
     title: "Credit Card",
     icon: <CreditCard />,
   },
+  pp_clover_clover: {
+    title: "Pay with Clover",
+    icon: <CreditCard />,
+  },
   // Add more payment providers here
 }
 
@@ -50,6 +54,10 @@ export const isManual = (providerId?: string) => {
 
 export const isAuthorizeNet = (providerId?: string) => {
   return providerId?.startsWith("pp_authorize-net")
+}
+
+export const isClover = (providerId?: string) => {
+  return providerId?.startsWith("pp_clover")
 }
 
 // Add currencies that don't need to be divided by 100

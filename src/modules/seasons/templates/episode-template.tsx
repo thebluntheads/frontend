@@ -519,10 +519,10 @@ export default function EpisodeTemplate({
         hasPurchased={hasPurchased}
       />
 
-      {/* Payment Popup */}
-      {Number(cart?.items?.length) > 0 && (
+      {/* Payment Popup — always mounted when a cart exists, isOpen controls visibility */}
+      {cart && (
         <EpisodePaymentPopup
-          cart={cart!}
+          cart={cart}
           availablePaymentMethods={availablePaymentMethods}
           availableShippingMethods={availableShippingMethods}
           isOpen={isPaymentPopupOpen}

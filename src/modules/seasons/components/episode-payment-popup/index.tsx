@@ -1,28 +1,26 @@
 "use client"
-import { isAuthorizeNet as isAuthorizeNetFunc } from "@lib/constants"
-import AuthorizeNetPayment, {
-  AuthorizeNetCardInfo,
-} from "@modules/common/components/authorize-net-payment"
-import React, { useEffect, useMemo, useState } from "react"
+
+import React, { useEffect, useState } from "react"
 import { Dialog } from "@headlessui/react"
 import { XMark } from "@medusajs/icons"
+import { Button } from "@medusajs/ui"
 import {
-  placeDigitalProductOrder,
   setStreamShippingMethod,
   updateStreamCart,
 } from "@lib/data/digital-cart"
 import { StoreCart, StoreCartShippingOption } from "@medusajs/types"
 import { useCustomer } from "@lib/hooks/use-customer"
-import { useAcceptJs } from "react-acceptjs"
 import { initiatePaymentSession, retrieveCart } from "@lib/data/cart"
 
-const authData = {
-  apiLoginID: process.env.NEXT_PUBLIC_AUTHORIZE_NET_LOGIN_ID || "",
-  clientKey: process.env.NEXT_PUBLIC_AUTHORIZE_NET_CLIENT_KEY || "",
-}
-
-type WalletPaymentType = "apple-pay" | "google-pay" | null
-
+/**
+ * Single-item digital purchase popup.
+ *
+ * After dropping Authorize.net, the only supported flow is Clover Hosted
+ * Checkout. The user clicks "Pay with Clover", we initiate a payment session,
+ * read the Clover hosted page URL from the session data, and redirect them.
+ * Order completion happens server-side via the Clover webhook + the
+ * `/checkout/return` page polling for cart completion.
+ */
 const EpisodePaymentPopup = ({
   cart,
   availablePaymentMethods,
@@ -36,35 +34,9 @@ const EpisodePaymentPopup = ({
   isOpen: boolean
   onClose: () => void
 }) => {
-  const activeSession = cart?.payment_collection?.payment_sessions?.find(
-    (paymentSession: any) => paymentSession.status === "pending"
-  )
-
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setErrorMessage] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
-    activeSession?.provider_id ?? "pp_authorize-net_authorize-net"
-  )
-  const [paymentData, setPaymentData] =
-    useState<google.payments.api.PaymentData>()
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [newCart, setNewCart] = useState<StoreCart | null>(null)
-
-  const [cardData, setCardData] = useState<AuthorizeNetCardInfo>({
-    cardNumber: "",
-    expiration: "",
-    cardCode: "",
-    fullName: "",
-  })
-
-  const {
-    dispatchData,
-    loading,
-    error: err,
-  } = useAcceptJs({ environment: "PRODUCTION", authData })
-  const [month, year] = cardData.expiration.split("/")
-
   const { customer, isLoading: isLoadingCustomer } = useCustomer()
 
   const [formData, setFormData] = useState<Record<string, any>>({
@@ -78,12 +50,14 @@ const EpisodePaymentPopup = ({
     "shipping_address.phone": "",
     email: customer?.email || "",
   })
-  const [walletPaymentType, setWalletPaymentType] =
-    useState<WalletPaymentType>(null)
 
   const shippingMethod = availableShippingMethods?.filter(
     (sm) => sm.amount === 0
   )[0]
+
+  const hasClover = availablePaymentMethods?.some(
+    (m: any) => m.id === "pp_clover_clover"
+  )
 
   useEffect(() => {
     if (customer && isOpen) {
@@ -98,310 +72,40 @@ const EpisodePaymentPopup = ({
     }
   }, [customer, isOpen])
 
+  // Populate the cart with the customer's default address + shipping method
+  // before the user can pay. Same as before — Clover doesn't change this step.
   useEffect(() => {
+    if (!isOpen) return
     const setupCart = async () => {
-      if (!cart?.id || !isOpen) return
       try {
-        setIsLoading(true)
-
-        // 1. Set address only if it's not already set
-        if (!cart.shipping_address) {
+        if (customer && !cart?.shipping_address) {
           const defaultAddress = {
-            first_name: customer?.first_name || "",
-            last_name: customer?.last_name || "",
+            first_name: customer.first_name || "",
+            last_name: customer.last_name || "",
             address_1: "Default Address",
-            city: "Default City",
-            country_code: customer?.billing_address?.country_code || "us",
             postal_code: "00000",
+            city: "Default City",
+            country_code:
+              customer.billing_address?.country_code || "us",
             province: "",
             phone: "",
           }
-
           await updateStreamCart({
             shipping_address: defaultAddress,
             billing_address: defaultAddress,
-            email: customer?.email || "",
-          })
-        }
-
-        // 2. Set shipping method if not already set
-        if (shippingMethod?.id) {
-          await setStreamShippingMethod({
-            cartId: cart.id,
-            shippingMethodId: shippingMethod.id,
+            email: customer.email || "",
           })
           const updatedCart = await retrieveCart(cart.id)
-          setNewCart(updatedCart)
+          setNewCart(updatedCart as StoreCart | null)
+        } else {
+          setNewCart(cart)
         }
-      } catch (err: any) {
-        setErrorMessage(err.message)
-        setNewCart(cart)
-      } finally {
-        setIsLoading(false)
-        setNewCart(cart)
+      } catch (e) {
+        console.error("[episode-popup] failed to setup cart", e)
       }
     }
-
     setupCart()
-  }, [cart?.id, isOpen, customer, shippingMethod])
-
-  const handleApplePay = async () => {
-    try {
-      // Check if Apple Pay is available
-      if (
-        !window.ApplePaySession ||
-        !window.ApplePaySession.canMakePayments()
-      ) {
-        throw new Error("Apple Pay is not available on this device or browser")
-      }
-
-      // Configure the payment request
-      const paymentRequest = {
-        countryCode: "US",
-        currencyCode: "USD",
-        supportedNetworks: ["visa", "masterCard", "amex", "discover"],
-        merchantCapabilities: [
-          "supports3DS",
-          "supportsCredit",
-          "supportsDebit",
-        ],
-        requiredBillingContactFields: ["postalAddress", "email", "phone"],
-        total: {
-          label: "The Blunt Heads",
-          amount: cart.total.toFixed(2),
-        },
-      }
-
-      // Create an Apple Pay session
-      const session = new window.ApplePaySession(3, paymentRequest)
-      // Handle payment authorization
-      return new Promise<{ token: string; billing_address: any }>(
-        (resolve, reject) => {
-          session.onvalidatemerchant = async (event: any) => {
-            try {
-              // Call your backend to validate the merchant with Apple's validation URL
-              const response = await fetch("/api/apple-pay/validate-merchant", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  validationURL: event.validationURL,
-                }),
-              })
-
-              if (!response.ok) {
-                const errorText = await response.text()
-                throw new Error(`Merchant validation failed: ${errorText}`)
-              }
-
-              const merchantSession = await response.json()
-              // Complete merchant validation with the session from Apple
-              session.completeMerchantValidation(merchantSession)
-            } catch (error) {
-              console.error("Merchant validation failed:", error)
-              session.abort()
-              reject(error as Error)
-            }
-          }
-
-          session.onpaymentauthorized = async (event: any) => {
-            try {
-              // Get the payment data from the event
-              const token = event.payment.token.paymentData
-              const base64 = window.btoa(JSON.stringify(token))
-              const billingContact = event.payment.billingContact
-
-              // Complete the payment
-              session.completePayment(window.ApplePaySession.STATUS_SUCCESS)
-
-              const billing_address = billingContact
-                ? billingContact
-                : cart?.billing_address
-
-              // Return the token for processing with Authorize.Net
-              resolve({
-                token: base64,
-                billing_address: billing_address,
-              })
-            } catch (error) {
-              console.error("Payment authorization failed:", error)
-              session.completePayment(window.ApplePaySession.STATUS_FAILURE)
-              reject(error as Error)
-            }
-          }
-
-          session.oncancel = () => {
-            reject(new Error("Apple Pay payment was canceled"))
-          }
-
-          // Start the session
-          session.begin()
-        }
-      )
-    } catch (error) {
-      console.error("Apple Pay error:", error)
-      throw error
-    }
-  }
-
-  const handleGooglePay = async () => {
-    try {
-      const tokenData = paymentData?.paymentMethodData.tokenizationData.token!
-      const base64 = window.btoa(tokenData)
-      const billingAddress =
-        paymentData?.paymentMethodData?.info?.billingAddress
-
-      const billing_address = billingAddress
-        ? billingAddress
-        : cart?.billing_address
-
-      return {
-        token: base64,
-        billing_address: billing_address,
-      }
-    } catch (error) {
-      console.error("Google Pay error:", error)
-      throw error
-    }
-  }
-
-  // Handle payment completion
-  const handlePaymentComplete = async () => {
-    setIsLoading(true)
-    setErrorMessage(null)
-
-    if (newCart?.shipping_methods?.length === 0) {
-      await assignShippingMethod()
-    }
-
-    try {
-      if (walletPaymentType) {
-        let walletPaymentData
-
-        if (walletPaymentType === "apple-pay") {
-          walletPaymentData = await handleApplePay()
-
-          const payc = await initiatePaymentSession(cart, {
-            provider_id: selectedPaymentMethod,
-            data: {
-              billing_address: walletPaymentData.billing_address,
-              //@ts-ignore
-              customer: cart?.customer,
-              applePayData: walletPaymentData.token,
-            },
-          })
-
-          const pendingSession =
-            payc?.payment_collection?.payment_sessions?.find(
-              (session: any) => session.status === "pending"
-            )
-
-          if (pendingSession) {
-            setSubmitting(true)
-            await placeDigitalProductOrder()
-            return
-          }
-        } else if (walletPaymentType === "google-pay") {
-          walletPaymentData = await handleGooglePay()
-
-          const payc = await initiatePaymentSession(cart, {
-            provider_id: selectedPaymentMethod,
-            data: {
-              billing_address: walletPaymentData.billing_address,
-              //@ts-ignore
-              customer: cart.customer,
-              googlePayData: walletPaymentData?.token!,
-            },
-          })
-
-          const pendingSession =
-            payc?.payment_collection?.payment_sessions?.find(
-              (session: any) => session.status === "pending"
-            )
-
-          if (pendingSession) {
-            setSubmitting(true)
-            await placeDigitalProductOrder()
-            return
-          }
-        }
-
-        // Handle unexpected session state
-        setErrorMessage(
-          "Digital wallet payment session initiation failed. Please try again."
-        )
-        return
-      }
-
-      if (cardData.cardNumber) {
-        // Step 1: Send card data to Authorize.Net
-        const transactionResponse = await dispatchData({
-          cardData: {
-            cardNumber: cardData.cardNumber.replace(/\s+/g, ""),
-            month,
-            year,
-            cardCode: cardData.cardCode,
-            fullName: cardData.fullName, // Include full name in the dispatch
-          },
-        })
-        // Handle transaction errors
-        if (transactionResponse?.messages?.resultCode === "Error") {
-          const errorText =
-            transactionResponse.messages.message[0]?.text || "Payment failed"
-          setErrorMessage(errorText)
-          return
-        }
-
-        // Step 2: Initiate payment session with opaque data
-        if (transactionResponse?.messages?.resultCode === "Ok") {
-          const opaqueData = transactionResponse.opaqueData.dataValue
-          const payc = await initiatePaymentSession(cart, {
-            provider_id: selectedPaymentMethod,
-            data: {
-              billing_address: cart.billing_address,
-              //@ts-ignore
-              customer: cart.customer,
-              opaqueData,
-              fullName: cardData.fullName, // Include full name in payment session data
-            },
-          })
-
-          // Handle successful payment initiation
-          const pendingSession =
-            payc?.payment_collection?.payment_sessions?.find(
-              (session: any) => session.status === "pending"
-            )
-
-          if (pendingSession) {
-            setSubmitting(true)
-            await placeDigitalProductOrder()
-            return
-          }
-
-          // Handle unexpected session state
-          setErrorMessage(
-            "Payment session initiation failed. Please try again."
-          )
-        }
-      }
-
-      const checkActiveSession =
-        activeSession?.provider_id === selectedPaymentMethod
-
-      if (!checkActiveSession) {
-        await initiatePaymentSession(cart, {
-          provider_id: selectedPaymentMethod,
-        })
-      }
-    } catch (err: any) {
-      console.log(err)
-      const msg = err?.messages?.message?.[0]?.text || err.message
-      setErrorMessage(msg)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  }, [isOpen, customer, cart])
 
   const assignShippingMethod = async () => {
     if (!newCart?.shipping_methods?.length && shippingMethod?.id) {
@@ -409,9 +113,97 @@ const EpisodePaymentPopup = ({
         cartId: cart.id,
         shippingMethodId: shippingMethod.id,
       })
-
       const updatedCart = await retrieveCart(cart.id)
-      setNewCart(updatedCart)
+      setNewCart(updatedCart as StoreCart | null)
+    }
+  }
+
+  const handlePayWithClover = async () => {
+    setIsLoading(true)
+    setErrorMessage(null)
+
+    try {
+      if (!hasClover) {
+        setErrorMessage(
+          "Clover payment is not available for this region. Please contact support."
+        )
+        return
+      }
+
+      if (newCart?.shipping_methods?.length === 0) {
+        await assignShippingMethod()
+      }
+
+      // Re-fetch the cart immediately before initiating so we have the latest
+      // totals + items. The cart prop can be stale right after add-to-cart.
+      const freshCart = (await retrieveCart(cart.id)) ?? cart
+      console.log("[episode-popup] freshCart at pay time", {
+        id: freshCart?.id,
+        total: (freshCart as any)?.total,
+        item_total: (freshCart as any)?.item_total,
+        items: freshCart?.items?.map((i: any) => ({
+          title: i.title,
+          unit_price: i.unit_price,
+          total: i.total,
+          quantity: i.quantity,
+        })),
+        region_currency: (freshCart as any)?.region?.currency_code,
+      })
+
+      if (!(freshCart as any)?.total || Number((freshCart as any).total) <= 0) {
+        setErrorMessage(
+          "Cart total is 0 — make sure the item has a price in your region. Check the Medusa admin product/variant prices."
+        )
+        return
+      }
+
+      // After Clover, the user always returns to /{countryCode}/checkout
+      // with a `clover_status` query param. The checkout page renders:
+      //   - clover_status=success → CloverCompletion (polls + finalizes order)
+      //   - clover_status=failure → banner + normal checkout
+      //   - clover_status=cancel  → banner + normal checkout
+      const countryCode =
+        (typeof window !== "undefined" &&
+          window.location.pathname.split("/")[1]) ||
+        "us"
+      const checkoutBase = `${window.location.origin}/${countryCode}/checkout`
+      const successUrl = `${checkoutBase}?clover_status=success&cart_id=${freshCart.id}`
+      const failureUrl = `${checkoutBase}?clover_status=failure&cart_id=${freshCart.id}`
+      const cancelUrl = `${checkoutBase}?clover_status=cancel&cart_id=${freshCart.id}`
+
+      const payc = await initiatePaymentSession(freshCart as any, {
+        provider_id: "pp_clover_clover",
+        data: {
+          successUrl,
+          cancelUrl,
+          failureUrl,
+          email: formData.email,
+          customer: {
+            email: formData.email,
+            first_name: formData["shipping_address.first_name"],
+            last_name: formData["shipping_address.last_name"],
+            phone: formData["shipping_address.phone"],
+          },
+          billing_address: (freshCart as any).billing_address,
+        },
+      })
+
+      const pendingSession = payc?.payment_collection?.payment_sessions?.find(
+        (session: any) => session.status === "pending"
+      )
+      const href = pendingSession?.data?.href as string | undefined
+
+      if (href) {
+        window.location.href = href
+        return
+      }
+
+      setErrorMessage("Could not start Clover checkout. Please try again.")
+    } catch (err: any) {
+      console.error("[episode-popup] payment error", err)
+      setErrorMessage(err?.message || "Payment failed. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -462,12 +254,12 @@ const EpisodePaymentPopup = ({
                   </React.Fragment>
                 ))}
 
-                {cart?.discount_total > 0 && (
+                {(cart as any)?.discount_total > 0 && (
                   <div className="flex justify-between mb-2 text-green-600">
                     <span>Discount</span>
                     <span>
                       - {cart?.region?.currency_code?.toUpperCase()}{" "}
-                      {cart?.discount_total}
+                      {(cart as any)?.discount_total}
                     </span>
                   </div>
                 )}
@@ -520,20 +312,30 @@ const EpisodePaymentPopup = ({
               </div>
             </div>
 
-            <AuthorizeNetPayment
-              cardData={cardData}
-              setCardData={setCardData}
-              setPaymentData={setPaymentData}
-              setWalletPaymentType={setWalletPaymentType}
-              walletPaymentType={walletPaymentType}
-              errorMessage={error}
-              paymentMethod={selectedPaymentMethod}
-              isAuthorizeNetFunc={isAuthorizeNetFunc}
-              handleSubmit={handlePaymentComplete}
-              isLoading={isLoading}
-              buttonText="Complete Purchase"
-              totalPrice={cart.total.toFixed(2)}
-            />
+            {/* Pay with Clover */}
+            <div className="mb-6">
+              <Button
+                size="large"
+                className="w-full h-14 text-base rounded-full bg-dark-green hover:bg-dark-green shadow-md text-white"
+                onClick={handlePayWithClover}
+                isLoading={isLoading}
+                disabled={!hasClover || isLoading}
+              >
+                Pay with Clover
+              </Button>
+              {!hasClover && (
+                <p className="mt-3 text-sm text-red-300">
+                  Clover payment isn&apos;t enabled for your region. Please
+                  contact support.
+                </p>
+              )}
+            </div>
+
+            {errorMessage && (
+              <div className="mb-6 p-4 border border-red-700 rounded-md bg-red-900/50">
+                <p className="text-red-300">{errorMessage}</p>
+              </div>
+            )}
           </div>
         </Dialog.Panel>
       </div>
