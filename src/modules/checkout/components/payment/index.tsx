@@ -2,6 +2,7 @@
 
 import {
   isAuthorizeNet as isAuthorizeNetFunc,
+  isClover as isCloverFunc,
   paymentInfoMap,
 } from "@lib/constants"
 import { initiatePaymentSession, placeOrder } from "@lib/data/cart"
@@ -65,8 +66,24 @@ const Payment = ({
     useState<google.payments.api.PaymentData>()
 
   const [error, setError] = useState<string | null>(null)
+
+  // Which providers does the backend actually expose for this region?
+  const hasAuthorizeNet = availablePaymentMethods?.some(
+    (m: any) => m.id === "pp_authorize-net_authorize-net"
+  )
+  const hasClover = availablePaymentMethods?.some(
+    (m: any) => m.id === "pp_clover_clover"
+  )
+
+  // Default selection priority: existing session > Clover (preferred) > Authorize.net.
+  const defaultProvider = activeSession?.provider_id
+    ?? (hasClover ? "pp_clover_clover" : undefined)
+    ?? (hasAuthorizeNet ? "pp_authorize-net_authorize-net" : undefined)
+    ?? availablePaymentMethods?.[0]?.id
+    ?? ""
+
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
-    activeSession?.provider_id ?? "pp_authorize-net_authorize-net"
+    defaultProvider
   )
 
   const [cardData, setCardData] = useState<BasicCardInfo>({
@@ -371,6 +388,59 @@ const Payment = ({
         }
       }
 
+      // ---- Clover Hosted Checkout: initiate, then redirect to Clover ----
+      if (isCloverFunc(selectedPaymentMethod)) {
+        // After Clover, the user returns to /{countryCode}/checkout with a
+        // `clover_status` query param. See `app/[countryCode]/(checkout)/
+        // checkout/page.tsx` for the status handling.
+        const countryCode =
+          (typeof window !== "undefined" &&
+            window.location.pathname.split("/")[1]) ||
+          "us"
+        const checkoutBase = `${window.location.origin}/${countryCode}/checkout`
+        const successUrl = `${checkoutBase}?clover_status=success&cart_id=${cart.id}`
+        const failureUrl = `${checkoutBase}?clover_status=failure&cart_id=${cart.id}`
+        const cancelUrl = `${checkoutBase}?clover_status=cancel&cart_id=${cart.id}`
+
+        const payc = await initiatePaymentSession(cart, {
+          provider_id: selectedPaymentMethod,
+          data: {
+            successUrl,
+            cancelUrl,
+            failureUrl,
+            email: cart.email,
+            customer: {
+              email: cart.email ?? cart.customer?.email,
+              first_name:
+                cart.billing_address?.first_name ??
+                cart.shipping_address?.first_name ??
+                cart.customer?.first_name,
+              last_name:
+                cart.billing_address?.last_name ??
+                cart.shipping_address?.last_name ??
+                cart.customer?.last_name,
+              phone:
+                cart.billing_address?.phone ??
+                cart.shipping_address?.phone ??
+                cart.customer?.phone,
+            },
+            billing_address: cart.billing_address,
+          },
+        })
+
+        const pendingSession =
+          payc?.payment_collection?.payment_sessions?.find(
+            (session: any) => session.status === "pending"
+          )
+        const href = pendingSession?.data?.href as string | undefined
+        if (href) {
+          window.location.href = href
+          return
+        }
+        setErrorMessage("Could not start Clover checkout. Please try again.")
+        return
+      }
+
       const checkActiveSession =
         activeSession?.provider_id === selectedPaymentMethod
 
@@ -466,72 +536,62 @@ const Payment = ({
                 <>
                   {/* Payment Method Radio Buttons */}
                   <div className="mb-6 space-y-4">
-                    {/* Google Pay Option */}
-                    <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-white-800 transition-colors bg-white">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        className="mr-3 h-5 w-5 accent-green-500"
-                        checked={walletPaymentType === "google-pay"}
-                        onChange={() => setWalletPaymentType("google-pay")}
-                      />
-                      <div className="flex items-center">
-                        <Image
-                          src="/images/payment/GPay_Acceptance_Mark_800.png"
-                          alt="Google Pay"
-                          width={80}
-                          height={40}
-                          className="object-contain"
-                        />
-                      </div>
-                    </label>
-
-                    {/* Apple Pay Option - Only show if available */}
-                    {isApplePayAvailable && (
+                    {/* Credit Card (Authorize.net) — only visible when the backend exposes it */}
+                    {hasAuthorizeNet && (
                       <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
                         <input
                           type="radio"
                           name="paymentMethod"
                           className="mr-3 h-5 w-5 accent-green-500"
-                          checked={walletPaymentType === "apple-pay"}
-                          onChange={() => setWalletPaymentType("apple-pay")}
+                          checked={isAuthorizeNetFunc(selectedPaymentMethod)}
+                          onChange={() => {
+                            setWalletPaymentType(null)
+                            setSelectedPaymentMethod(
+                              "pp_authorize-net_authorize-net"
+                            )
+                          }}
                         />
                         <div className="flex items-center">
-                          <Image
-                            src="/images/payment/apple-pay.svg"
-                            alt="Apple Pay"
-                            width={80}
-                            height={40}
-                            className="object-contain"
-                          />
+                          <div className="flex space-x-2 mr-3">
+                            {cardPaymentMethods.map((method, index) => (
+                              <Image
+                                key={index}
+                                width={40}
+                                height={25}
+                                alt={`method-${index}`}
+                                src={method}
+                                className="object-contain"
+                              />
+                            ))}
+                          </div>
+                          <span className="text-white">Credit Card</span>
                         </div>
                       </label>
                     )}
-                    {/* Credit Card Option */}
-                    <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        className="mr-3 h-5 w-5 accent-green-500"
-                        checked={walletPaymentType === null}
-                        onChange={() => setWalletPaymentType(null)}
-                      />
-                      <div className="flex items-center">
-                        <div className="flex space-x-2 mr-3">
-                          {cardPaymentMethods.map((method, index) => (
-                            <Image
-                              key={index}
-                              width={40}
-                              height={25}
-                              alt={`method-${index}`}
-                              src={method}
-                              className="object-contain"
-                            />
-                          ))}
+
+                    {/* Clover Hosted Checkout — only visible when the backend exposes it */}
+                    {hasClover && (
+                      <label className="flex items-center p-4 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          className="mr-3 h-5 w-5 accent-green-500"
+                          checked={isCloverFunc(selectedPaymentMethod)}
+                          onChange={() => {
+                            setWalletPaymentType(null)
+                            setSelectedPaymentMethod("pp_clover_clover")
+                          }}
+                        />
+                        <div className="flex items-center">
+                          <span className="text-white font-medium">
+                            Pay with Clover
+                          </span>
+                          <span className="ml-2 text-xs text-gray-400">
+                            (cards, Apple Pay, Google Pay on Clover&apos;s page)
+                          </span>
                         </div>
-                        <span className="text-white">Credit Card</span>
-                      </div>
-                    </label>
+                      </label>
+                    )}
                   </div>
 
                   {isAuthorizeNetFunc(selectedPaymentMethod) &&
@@ -587,120 +647,25 @@ const Payment = ({
         )}
       </div>
       <div className="mt-10 flex items-center justify-end gap-4">
-        {walletPaymentType === "google-pay" ? (
-          // Google Pay Button
-          <div className="w-full">
-            <GooglePayButton
-              environment="PRODUCTION"
-              paymentRequest={{
-                apiVersion: 2,
-                apiVersionMinor: 0,
-                allowedPaymentMethods: [
-                  {
-                    type: "CARD",
-                    parameters: {
-                      allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-                      allowedCardNetworks: [
-                        "MASTERCARD",
-                        "VISA",
-                        "AMEX",
-                        "DISCOVER",
-                      ],
-                    },
-                    tokenizationSpecification: {
-                      type: "PAYMENT_GATEWAY",
-                      parameters: {
-                        gateway: "authorizenet",
-                        gatewayMerchantId: "2740879",
-                      },
-                    },
-                  },
-                ],
-                merchantInfo: {
-                  merchantId: "BCR2DN7T5CVNTZDB",
-                  merchantName: "JOHN BOY ENTERTAINMENT, INC",
-                },
-                transactionInfo: {
-                  totalPriceStatus: "FINAL",
-                  totalPriceLabel: "Total",
-                  totalPrice: cart.total.toFixed(2),
-                  currencyCode: "USD",
-                  countryCode: "US",
-                },
-              }}
-              onLoadPaymentData={async (paymentRequest) => {
-                setPaymentData(paymentRequest)
-                await handleSubmit()
-              }}
-              buttonColor="white"
-              buttonType="buy"
-              buttonRadius={6}
-              buttonSizeMode="fill"
-              style={{ width: "100%", height: 56 }}
-            />
-          </div>
-        ) : walletPaymentType === "apple-pay" ? (
-          // Apple Pay Button
-          <button
-            className="mt-6 w-full h-14 bg-black text-white rounded-lg flex items-center justify-center border border-white"
-            onClick={(e) => {
-              e.preventDefault()
-              handleSubmit()
-            }}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <div className="flex items-center gap-2">
-                <svg
-                  className="animate-spin h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Processing...
-              </div>
-            ) : (
-              <div className="flex items-center justify-center w-full">
-                <p className="font-bold text-2xl">Buy With</p>
-                <Image
-                  src="/images/payment/apple-pay.svg"
-                  alt="Apple Pay"
-                  width={120}
-                  height={50}
-                  className="object-contain"
-                />
-              </div>
-            )}
-          </button>
-        ) : (
-          // Credit Card Button
-          <Button
+        {/* Single Continue button — covers Credit Card (Authorize.net) and
+            Clover. Wallet payments (Apple Pay / Google Pay) are handled
+            inside Clover Hosted Checkout, not here. */}
+        <Button
             size="large"
             className="h-14 text-base px-8 rounded-full bg-dark-green hover:bg-dark-green shadow-md text-white"
             onClick={handleSubmit}
             isLoading={isLoading}
             disabled={
-              (isAuthorizeNet && !cardData.cardNumber) || !selectedPaymentMethod
+              !selectedPaymentMethod ||
+              (isAuthorizeNetFunc(selectedPaymentMethod) &&
+                !cardData.cardNumber)
             }
             data-testid="submit-payment-button"
           >
-            Place Order
+            {isCloverFunc(selectedPaymentMethod)
+              ? "Continue to Clover"
+              : "Place Order"}
           </Button>
-        )}
       </div>
     </>
   )

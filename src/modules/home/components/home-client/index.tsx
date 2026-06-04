@@ -99,19 +99,46 @@ const HomeClient = ({ countryCode }: PromoPopupProps) => {
     }
 
     try {
-      // Add first item to cart
+      // The home page promo button sells the *featured season* + its
+      // companion **soundtrack album** in a single click. Both variant ids
+      // are env-driven so production data can change without code edits.
+      //
+      // - NEXT_PUBLIC_FEATURED_SEASON_VARIANT_ID: the season this promo
+      //   pushes (currently Season 1).
+      // - NEXT_PUBLIC_SEASON_SOUNDTRACK_VARIANT_ID: the soundtrack album
+      //   that bundles with that season. Same env var as the in-season-page
+      //   bundle in `seasons/templates/index.tsx`.
+      //
+      // ⚠️ This shortcut assumes the home page only ever features one
+      // season at a time. If the home page becomes multi-season, the
+      // soundtrack should be resolved dynamically (Album.parent_id →
+      // Season.id) rather than via this env var.
+      const seasonVariantId =
+        process.env.NEXT_PUBLIC_FEATURED_SEASON_VARIANT_ID ??
+        "variant_01JRVR3PRSEV42K0Q9KKN9WX94"
       await addToCart({
-        variantId: "variant_01JRVR3PRSEV42K0Q9KKN9WX94",
+        variantId: seasonVariantId,
         quantity: 1,
         countryCode,
       })
 
-      // Add second item to cart
-      await addToCart({
-        variantId: "variant_01JRVTERWFJQ9HXWZP17H13HXT",
-        quantity: 1,
-        countryCode,
-      })
+      const soundtrackVariantId =
+        process.env.NEXT_PUBLIC_SEASON_SOUNDTRACK_VARIANT_ID ??
+        "variant_01JRVTERWFJQ9HXWZP17H13HXT"
+      if (soundtrackVariantId) {
+        try {
+          await addToCart({
+            variantId: soundtrackVariantId,
+            quantity: 1,
+            countryCode,
+          })
+        } catch (soundtrackErr) {
+          console.warn(
+            "[home-client] soundtrack album add failed — continuing without it",
+            { soundtrackVariantId, error: soundtrackErr }
+          )
+        }
+      }
 
       // Close popup and redirect to checkout
       setIsVisible(false)

@@ -1,6 +1,6 @@
 "use client"
 
-import { isManual, isStripe } from "@lib/constants"
+import { isClover, isManual, isStripe } from "@lib/constants"
 import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
@@ -42,9 +42,71 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
       return (
         <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} className={className} />
       )
+    case isClover(paymentSession?.provider_id):
+      return (
+        <CloverPaymentButton
+          notReady={notReady}
+          paymentSession={paymentSession}
+          data-testid={dataTestId}
+          className={className}
+        />
+      )
     default:
       return <Button disabled className={className}>Select a payment method</Button>
   }
+}
+
+/**
+ * For Clover Hosted Checkout, the payment happens off-site on Clover's page.
+ * If the user reaches the review step with a Clover session already created,
+ * we show a button that re-redirects them to the `href` we stored on the
+ * session during `initiatePayment`.
+ */
+const CloverPaymentButton = ({
+  notReady,
+  paymentSession,
+  "data-testid": dataTestId,
+  className,
+}: {
+  notReady: boolean
+  paymentSession: any
+  "data-testid"?: string
+  className?: string
+}) => {
+  const [submitting, setSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  const href = paymentSession?.data?.href as string | undefined
+
+  const handleRedirect = () => {
+    if (!href) {
+      setErrorMessage(
+        "Clover checkout URL is missing — go back and re-select Clover."
+      )
+      return
+    }
+    setSubmitting(true)
+    window.location.href = href
+  }
+
+  return (
+    <>
+      <Button
+        disabled={notReady || !href}
+        isLoading={submitting}
+        onClick={handleRedirect}
+        size="large"
+        data-testid={dataTestId}
+        className={className}
+      >
+        Continue to Clover
+      </Button>
+      <ErrorMessage
+        error={errorMessage}
+        data-testid="clover-payment-error-message"
+      />
+    </>
+  )
 }
 
 const StripePaymentButton = ({

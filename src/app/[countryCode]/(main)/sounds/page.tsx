@@ -1200,28 +1200,86 @@ export default function SoundsPage() {
               </div>
             </div>
 
-            {/* Payment Methods */}
+            {/* Payment Methods — Clover Hosted Checkout only */}
             <div className="mb-6 border-t border-gray-800 pt-4">
-              <AuthorizeNetPayment
-                paymentMethod={selectedPaymentMethod}
-                cardData={cardData}
-                setCardData={handleCardDataChange}
-                setPaymentData={setPaymentData}
-                setWalletPaymentType={setWalletPaymentType}
-                walletPaymentType={walletPaymentType}
-                errorMessage={errorMessage}
-                isAuthorizeNetFunc={isAuthorizeNetFunc}
-                handleSubmit={handlePaymentComplete}
-                isLoading={submitting}
-                buttonText="Complete Purchase"
-                totalPrice={
-                  currentSound?.product_variant
-                    ? getDigitalProductPrice({
-                        variant: currentSound.product_variant,
-                      }).cheapestPrice?.calculated_price
-                    : "1.99"
-                }
-              />
+              <Button
+                onClick={async () => {
+                  if (!cart) {
+                    setErrorMessage("No active cart. Please try again.")
+                    return
+                  }
+                  setSubmitting(true)
+                  setErrorMessage(null)
+                  try {
+                    // After Clover, the user returns to /{countryCode}/checkout
+                    // with a `clover_status` query param. See
+                    // `app/[countryCode]/(checkout)/checkout/page.tsx` for the
+                    // status handling.
+                    const countryCode =
+                      (typeof window !== "undefined" &&
+                        window.location.pathname.split("/")[1]) ||
+                      "us"
+                    const checkoutBase = `${window.location.origin}/${countryCode}/checkout`
+                    const successUrl = `${checkoutBase}?clover_status=success&cart_id=${cart.id}`
+                    const failureUrl = `${checkoutBase}?clover_status=failure&cart_id=${cart.id}`
+                    const cancelUrl = `${checkoutBase}?clover_status=cancel&cart_id=${cart.id}`
+
+                    const payc = await initiatePaymentSession(cart, {
+                      provider_id: "pp_clover_clover",
+                      data: {
+                        successUrl,
+                        cancelUrl,
+                        failureUrl,
+                        email: cart?.email,
+                        customer: {
+                          email: cart?.email ?? cart?.customer?.email,
+                          first_name:
+                            cart?.billing_address?.first_name ??
+                            cart?.shipping_address?.first_name ??
+                            cart?.customer?.first_name,
+                          last_name:
+                            cart?.billing_address?.last_name ??
+                            cart?.shipping_address?.last_name ??
+                            cart?.customer?.last_name,
+                          phone:
+                            cart?.billing_address?.phone ??
+                            cart?.shipping_address?.phone ??
+                            cart?.customer?.phone,
+                        },
+                        billing_address: cart?.billing_address,
+                      },
+                    })
+                    const pendingSession =
+                      payc?.payment_collection?.payment_sessions?.find(
+                        (s: any) => s.status === "pending"
+                      )
+                    const href = pendingSession?.data?.href as
+                      | string
+                      | undefined
+                    if (href) {
+                      window.location.href = href
+                      return
+                    }
+                    setErrorMessage(
+                      "Could not start Clover checkout. Please try again."
+                    )
+                  } catch (err: any) {
+                    console.error("[sounds] payment error", err)
+                    setErrorMessage(
+                      err?.message || "Payment failed. Please try again."
+                    )
+                  } finally {
+                    setSubmitting(false)
+                  }
+                }}
+                disabled={submitting || !cart}
+                className="w-full h-14 text-base bg-dark-green hover:bg-dark-green text-white rounded-full"
+              >
+                {submitting ? "Redirecting…" : "Pay with Clover"}
+              </Button>
+              {errorMessage && (
+                <p className="text-red-300 mt-3 text-sm">{errorMessage}</p>
+              )}
             </div>
           </div>
         </div>

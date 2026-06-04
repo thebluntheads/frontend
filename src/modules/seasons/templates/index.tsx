@@ -159,17 +159,44 @@ export default function SeasonTemplate({
       if (isSeasonInCart) {
         setIsPaymentPopupOpen(true)
       } else {
+        // Primary: the season itself — must succeed.
         await addToStreamCart({
           variantId,
           quantity: 1,
           countryCode: "us",
         })
 
-        await addToStreamCart({
-          variantId: "variant_01JRVTERWFJQ9HXWZP17H13HXT",
-          quantity: 1,
-          countryCode,
-        })
+        // Companion: the season's **soundtrack album** is bundled with every
+        // season purchase. The album variant id is driven by
+        // `NEXT_PUBLIC_SEASON_SOUNDTRACK_VARIANT_ID` so production can point
+        // at the real soundtrack variant while dev/staging can leave it
+        // unset (no price → would otherwise throw). Still wrapped in
+        // try/catch so a misconfigured env never breaks the payment popup
+        // flow — the user can still buy the season alone.
+        //
+        // ⚠️ Today there is only one season (Season 1) and one soundtrack,
+        // so a single env var is sufficient. If the catalog ever grows to
+        // multiple seasons each with their own soundtrack, the right move
+        // is to link Album → Season via `DigitalProduct.parent_id` and
+        // resolve the soundtrack dynamically from `/store/digital-products
+        // ?type=album&parent_id=<season.id>`. See architecture note below.
+        const soundtrackVariantId =
+          process.env.NEXT_PUBLIC_SEASON_SOUNDTRACK_VARIANT_ID ??
+          "variant_01JRVTERWFJQ9HXWZP17H13HXT"
+        if (soundtrackVariantId) {
+          try {
+            await addToStreamCart({
+              variantId: soundtrackVariantId,
+              quantity: 1,
+              countryCode,
+            })
+          } catch (soundtrackErr) {
+            console.warn(
+              "[season-template] soundtrack album add failed — continuing without it",
+              { soundtrackVariantId, error: soundtrackErr }
+            )
+          }
+        }
 
         const updatedCart = await retrieveStreamCart()
         setCart(updatedCart)
@@ -317,10 +344,10 @@ export default function SeasonTemplate({
         )}
       </div>
 
-      {/* Payment Popup */}
-      {Number(cart?.items?.length) > 0 && (
+      {/* Payment Popup — always mounted when a cart exists, isOpen controls visibility */}
+      {cart && (
         <EpisodePaymentPopup
-          cart={cart!}
+          cart={cart}
           availablePaymentMethods={availablePaymentMethods}
           availableShippingMethods={availableShippingMethods}
           isOpen={isPaymentPopupOpen}
