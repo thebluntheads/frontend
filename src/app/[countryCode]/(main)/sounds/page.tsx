@@ -346,127 +346,81 @@ export default function SoundsPage() {
     }
   }
 
+  // WALLET-DISABLED: Apple Pay + Google Pay handlers — kept for reference.
+  // Wallet payments now flow through Clover Hosted Checkout on Clover's
+  // hosted page. Search for "WALLET-DISABLED:" in this file to re-enable.
+  /*
   const handleApplePay = async () => {
     try {
-      // Check if Apple Pay is available
       if (
         !window.ApplePaySession ||
         !window.ApplePaySession.canMakePayments()
       ) {
         throw new Error("Apple Pay is not available on this device or browser")
       }
-
-      // Configure the payment request
       const paymentRequest = {
         countryCode: "US",
         currencyCode: "USD",
         supportedNetworks: ["visa", "masterCard", "amex", "discover"],
-        merchantCapabilities: [
-          "supports3DS",
-          "supportsCredit",
-          "supportsDebit",
-        ],
+        merchantCapabilities: ["supports3DS", "supportsCredit", "supportsDebit"],
         requiredBillingContactFields: ["postalAddress", "email", "phone"],
-        total: {
-          label: "The Blunt Heads",
-          amount: cart.total.toFixed(2),
-        },
+        total: { label: "The Blunt Heads", amount: cart.total.toFixed(2) },
       }
-
-      // Create an Apple Pay session
       const session = new window.ApplePaySession(3, paymentRequest)
-      // Handle payment authorization
       return new Promise<{ token: string; billing_address: any }>(
         (resolve, reject) => {
           session.onvalidatemerchant = async (event: any) => {
             try {
-              // Call your backend to validate the merchant with Apple's validation URL
               const response = await fetch("/api/apple-pay/validate-merchant", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  validationURL: event.validationURL,
-                }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ validationURL: event.validationURL }),
               })
-
               if (!response.ok) {
                 const errorText = await response.text()
                 throw new Error(`Merchant validation failed: ${errorText}`)
               }
-
               const merchantSession = await response.json()
-
-              // Complete merchant validation with the session from Apple
               session.completeMerchantValidation(merchantSession)
             } catch (error) {
-              console.error("Merchant validation failed:", error)
               session.abort()
               reject(error as Error)
             }
           }
-
           session.onpaymentauthorized = async (event: any) => {
             try {
-              // Get the payment data from the event
               const token = event.payment.token.paymentData
               const base64 = window.btoa(JSON.stringify(token))
               const billingContact = event.payment.billingContact
-
-              // Complete the payment
               session.completePayment(window.ApplePaySession.STATUS_SUCCESS)
-
-              const billing_address = billingContact
-                ? billingContact
-                : cart?.billing_address
-
-              // Return the token for processing with Authorize.Net
               resolve({
                 token: base64,
-                billing_address: billing_address,
+                billing_address: billingContact || cart?.billing_address,
               })
             } catch (error) {
-              console.error("Payment authorization failed:", error)
               session.completePayment(window.ApplePaySession.STATUS_FAILURE)
               reject(error as Error)
             }
           }
-
-          session.oncancel = () => {
-            reject(new Error("Apple Pay payment was canceled"))
-          }
-
-          // Start the session
+          session.oncancel = () => reject(new Error("Apple Pay payment was canceled"))
           session.begin()
         }
       )
     } catch (error) {
-      console.error("Apple Pay error:", error)
       throw error
     }
   }
 
   const handleGooglePay = async () => {
-    try {
-      const tokenData = paymentData?.paymentMethodData.tokenizationData.token!
-      const base64 = window.btoa(tokenData)
-      const billingAddress =
-        paymentData?.paymentMethodData?.info?.billingAddress
-
-      const billing_address = billingAddress
-        ? billingAddress
-        : cart?.billing_address
-
-      return {
-        token: base64,
-        billing_address: billing_address,
-      }
-    } catch (error) {
-      console.error("Google Pay error:", error)
-      throw error
+    const tokenData = paymentData?.paymentMethodData.tokenizationData.token!
+    const base64 = window.btoa(tokenData)
+    const billingAddress = paymentData?.paymentMethodData?.info?.billingAddress
+    return {
+      token: base64,
+      billing_address: billingAddress || cart?.billing_address,
     }
   }
+  */
 
   // Handle payment completion
   const handlePaymentComplete = async () => {
@@ -474,12 +428,14 @@ export default function SoundsPage() {
     setErrorMessage(null)
 
     try {
+      // WALLET-DISABLED: Apple Pay / Google Pay direct-wallet submission paths.
+      // walletPaymentType is always null since the buttons that set it are
+      // commented out. Kept for reference only.
+      /*
       if (walletPaymentType) {
         let walletPaymentData
-
         if (walletPaymentType === "apple-pay") {
           walletPaymentData = await handleApplePay()
-
           const payc = await initiatePaymentSession(cart, {
             provider_id: selectedPaymentMethod,
             data: {
@@ -488,12 +444,10 @@ export default function SoundsPage() {
               applePayData: walletPaymentData.token,
             },
           })
-
           const pendingSession =
             payc?.payment_collection?.payment_sessions?.find(
               (session: any) => session.status === "pending"
             )
-
           if (pendingSession) {
             setSubmitting(true)
             await placeDigitalProductOrder()
@@ -501,7 +455,6 @@ export default function SoundsPage() {
           }
         } else if (walletPaymentType === "google-pay") {
           walletPaymentData = await handleGooglePay()
-
           const payc = await initiatePaymentSession(cart, {
             provider_id: selectedPaymentMethod,
             data: {
@@ -510,25 +463,22 @@ export default function SoundsPage() {
               googlePayData: walletPaymentData?.token!,
             },
           })
-
           const pendingSession =
             payc?.payment_collection?.payment_sessions?.find(
               (session: any) => session.status === "pending"
             )
-
           if (pendingSession) {
             setSubmitting(true)
             await placeDigitalProductOrder()
             return
           }
         }
-
-        // Handle unexpected session state
         setErrorMessage(
           "Digital wallet payment session initiation failed. Please try again."
         )
         return
       }
+      */
 
       if (cardData.cardNumber) {
         // Step 1: Send card data to Authorize.Net
