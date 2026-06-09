@@ -49,6 +49,23 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return {
+      // Apple Pay / Clover domain verification fetches this path with NO file
+      // extension and expects to *read* it (text/plain) — not download it.
+      // Serving the extensionless static file gives `application/octet-stream`,
+      // which browsers download. Rewrite to the `.txt` twin so it's served
+      // inline as text/plain. `beforeFiles` so this resolves before the static
+      // handler would serve the extensionless copy as octet-stream.
+      beforeFiles: [
+        {
+          source: "/.well-known/apple-developer-merchantid-domain-association",
+          destination:
+            "/.well-known/apple-developer-merchantid-domain-association.txt",
+        },
+      ],
+    }
+  },
 }
 const withNextIntl = createNextIntlPlugin()
 
